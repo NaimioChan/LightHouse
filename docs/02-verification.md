@@ -6,13 +6,14 @@
 ## 第一层：各站的内容契约校验（node，秒级）
 
 ```bash
-for d in html5-lab css-lab js-lab ts-lab; do (cd $d && node tools/verify-content.mjs); done
-# 或一次跑完全部站里 node 侧的那几个：
-node tools/verify-all.mjs
+node tools/verify-all.mjs          # 一次跑完各站里 node 侧的那几支（站列表从 labs.json 读）
+node tools/verify-all.mjs --lab vue   # 只跑一座
 ```
 
 覆盖：章节/段落/练习的字段完整性；参考答案必须让全部断言通过；起始代码必须至少挂一条断言
-（否则这道题抓不住空实现）；示例的 `expect` 与真实执行输出逐字比对；`ts-lab` 另跑类型判题与编译器自检。
+（否则这道题抓不住空实现）；示例的 `expect` 与真实执行输出逐字比对；`ts-lab` 另跑类型判题与编译器自检；
+`vue-lab` 另跑 `verify-compile.mjs`（SFC 改写内核的单测：import 别名方向、模板-only、反引号禁令）。
+哪座站没有某支脚本就跳过哪支。
 
 ## 第二层：入口页与清单（node + 无头浏览器）
 
@@ -37,6 +38,11 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | `html5-lab` | `node tools/verify-browser.mjs`、`node tools/verify-pages.mjs` | 真渲染结果、逐章渲染对账、示例自检 |
 | `css-lab` | `node tools/verify-browser.mjs`、`node tools/verify-pages.mjs` | 几何断言、两阶段练习卡、媒体查询重估 |
 | `ts-lab` | `node tools/verify-judge.mjs`、`node tools/verify-types.mjs`、`node tools/verify-pages.mjs` | 真类型诊断、等价判定、逐章编译产物 |
+| `vue-lab` | `node tools/verify-compile.mjs`、`node tools/verify-browser.mjs`、`node tools/verify-ui.mjs`、`node tools/verify-pages.mjs` | SFC 改写内核单测、两条路各跑一遍全部练习、真实按键与四档视口、逐章渲染对账 |
+
+`vue-lab` 的 `verify-browser.mjs` 会把每个练习跑两遍（参考答案必须全过、起始代码必须至少挂一条），
+`http` 与 `file://` 各一轮 —— 第五座站的执行模型是「沙箱里跑第三方运行时」，
+`file://` 那条路尤其容易假绿（vendor 的读法只要不对，整站会静默不判题）。
 
 这几支脚本慢（几分钟），且要起无头 Edge 与 http.server，所以不放进每轮迭代。
 
@@ -63,3 +69,18 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 入口页在三种宽度下对齐 | `node tools/verify-portal.mjs` | 101 项全过：2000/1200px 两列、760px 一列，同列卡片左右边缘极差 0px，同一行按钮底边齐平，三种宽度都没有横向溢出；含 `file://` 直开的一轮 |
 | 入口页对站数与领域保持中立 | `node tools/verify-manifest.mjs`、`verify-portal.mjs` | 大标题/副标题/卡片内容里不出现任何一座站的名字、目录名、语言列表与「前端/四个」这类限定 |
 | 四座站并入后仍各自通过自己的校验 | `node tools/verify-all.mjs --fast` | 10 支（内容契约、括号配对、类型判题与编译器自检）全过 |
+
+## 第五座站（vue-lab）接入后的对账
+
+`vue-lab` 不是搬运进来的，是并入后新写的，所以它走的是「加站清单」那五步（见根 `AGENTS.md`），
+没有「逐字节搬运」这一栏。接入时实际跑过的：
+
+| 检查 | 命令 | 结果 |
+|---|---|---|
+| 内容结构 | `vue-lab/node tools/verify-content.mjs` | 12 章 / 48 练习 / 48 示例 / 428 断言 |
+| SFC 改写内核 | `vue-lab/node tools/verify-compile.mjs` | 22 项全过（含「内核函数体里不许有反引号」） |
+| 两条路各跑一遍全部练习 | `vue-lab/node tools/verify-browser.mjs` | http 与 `file://` 都是 示例 48/48、参考答案 48/48、起始代码被抓 48/48 |
+| 真实按键与四档视口 | `vue-lab/node tools/verify-ui.mjs --fast` | 全过（含 390px 抽屉与顶栏粘住那条） |
+| 各站 node 侧校验一起跑 | `node tools/verify-all.mjs` | 18 支全过（五座站） |
+| 清单与门户 | `node tools/build-manifest.mjs` → `verify-manifest.mjs` → `verify-portal.mjs` | 66 章 / 305 练习；门户全过（含 vue-lab 的星号与 390px 两项） |
+| 设计令牌 | `designmd lint`（根与 `vue-lab/DESIGN.md`） | 两处都 0 errors 0 warnings |
