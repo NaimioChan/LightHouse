@@ -21,10 +21,10 @@ node tools/verify-manifest.mjs   # 重新生成清单，与提交的 assets/js/m
 node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入口页与四座站入口页
 ```
 
-`verify-portal.mjs` 检查的东西：入口页四张卡片的数字与清单一致；「选哪个」表里有四个入口；
-四座站的入口页从根服务取到后，侧栏章节数与清单一致、编辑器有起始代码、没有未捕获错误；
-全站资源没有 404；读 localStorage 的进度分支能正确显示「已通过 N/M」与「继续第 N 章」
-（测试前备份、测试后还原原有的进度键，不碰用户真实进度）。
+`verify-portal.mjs` 检查的东西：入口页的大标题 / 副标题 / 简介长度（≤140 字）、四张卡片的数字与一句话、
+卡片顺序与入口链接、三档宽度下的对齐与列数；四座站入口页从根服务取到后，侧栏章节数与清单一致、
+编辑器有起始代码、没有未捕获错误；全站资源没有 404；读 localStorage 的进度分支能正确显示
+「已通过 N/M」与「继续第 N 章」（测试前备份、测试后还原原有的进度键）；最后再走一遍 `file://` 直开。
 
 ## 第三层：各站自己的真浏览器行为验收（最权威）
 
@@ -55,5 +55,5 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 四个目录逐字节一致 | `diff -r --brief -x .git -x .cache <原目录> LightHouse/<目录>` | 四座全部「字节一致」 |
 | 内容规模与各站自报一致 | 各站 `node tools/verify-content.mjs` 与 `node tools/build-manifest.mjs` | 14/12/12/12 章、61/58/60/62 练习、52/50/36/77 示例，两边完全吻合 |
 | 设计令牌无拼写/对比度问题 | `npx -y -p @google/design.md designmd lint DESIGN.md` | 0 errors 0 warnings |
-| 入口页在三种宽度下对齐 | `node tools/verify-portal.mjs` | 75 项全过：2000/1200px 两列、760px 一列，同列卡片左右边缘极差 0px，三种宽度都没有横向溢出；含 `file://` 直开的一轮 |
+| 入口页在三种宽度下对齐 | `node tools/verify-portal.mjs` | 78 项全过：2000/1200px 两列、760px 一列，同列卡片左右边缘极差 0px，三种宽度都没有横向溢出；含 `file://` 直开的一轮 |
 | 四座站并入后仍各自通过自己的校验 | `node tools/verify-all.mjs --fast` | 10 支（内容契约、括号配对、类型判题与编译器自检）全过 |

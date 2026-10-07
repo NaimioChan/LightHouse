@@ -26,11 +26,6 @@ const { record, finish } = reporter();
 const children = [];
 
 const LABS = build();
-const TOTAL = LABS.reduce((a, l) => ({
-  chapters: a.chapters + l.stats.chapters,
-  exercises: a.exercises + l.stats.exercises,
-  examples: a.examples + l.stats.examples,
-}), { chapters: 0, exercises: 0, examples: 0 });
 
 /* 四座站的入口页都请求过 favicon，缺它只是 404 噪音，不算缺陷 */
 const isNoise = (line) => /favicon/.test(line);
@@ -108,41 +103,38 @@ async function checkPortal(cdp) {
     const cards = [...document.querySelectorAll('#cards .card')];
     const attr = (el, name) => (el ? el.getAttribute(name) : null);
     const text = (el) => (el ? el.textContent : null);
-    return cards.map(c => ({
-      key: c.dataset.lab,
-      stats: text(c.querySelector('.card-stats')),
-      title: attr(c.querySelector('.card-title a'), 'href'),
-      enter: attr(c.querySelector('.btn-enter'), 'href'),
-      cont: attr(c.querySelector('[data-continue]'), 'href'),
-      accent: getComputedStyle(c).borderTopColor,
-    }));
+    return {
+      hero: text(document.querySelector('.hero h1')),
+      sub: text(document.querySelector('.hero .sub')),
+      intro: text(document.querySelector('.hero .intro')),
+      cards: cards.map(c => ({
+        key: c.dataset.lab,
+        stats: text(c.querySelector('.card-stats')),
+        blurb: text(c.querySelector('.card-blurb')),
+        title: attr(c.querySelector('.card-title a'), 'href'),
+        enter: attr(c.querySelector('.btn-enter'), 'href'),
+        cont: attr(c.querySelector('[data-continue]'), 'href'),
+        accent: getComputedStyle(c).borderTopColor,
+      })),
+    };
   })()`);
+
+  record('大标题就是 LightHouse', dom.hero === 'LightHouse', dom.hero);
+  record('副标题点出四座站', /HTML5/.test(dom.sub) && /CSS/.test(dom.sub) && /JS/.test(dom.sub) && /TypeScript/.test(dom.sub), dom.sub);
+  record('简介是一小段（≤140 字，不许堆介绍）', dom.intro.length > 20 && dom.intro.length <= 140, `${dom.intro.length} 字：${dom.intro}`);
 
   LABS.forEach((lab, i) => {
-    const d = dom.find((x) => x.key === lab.key) || {};
+    const d = dom.cards.find((x) => x.key === lab.key) || {};
     record(`${lab.title} 卡片规模数字与清单一致`,
       d.stats === `${lab.stats.chapters} 章 · ${lab.stats.exercises} 练习 · ${lab.stats.examples} 示例`, d.stats);
+    record(`${lab.title} 卡片的一句话与 labs.json 一致`, d.blurb === lab.blurb, d.blurb);
     record(`${lab.title} 卡片的入口链接指向它自己的目录`, d.enter === lab.entry && d.title === lab.entry, String(d.enter));
   });
-  record('四张卡片的顶边颜色互不相同', new Set(dom.map((d) => d.accent)).size === LABS.length, dom.map((d) => d.accent).join(' / '));
-
-  const pick = await cdp.eval(`(() => {
-    const rows = [...document.querySelectorAll('#pick-body tr')];
-    const attr = (el, name) => (el ? el.getAttribute(name) : null);
-    return { n: rows.length, first: attr(rows[0].querySelector('a'), 'href'), last: attr(rows[rows.length - 1].querySelector('a'), 'href') };
-  })()`);
-  record('选哪个表是「四座站 + 一行不确定」', pick.n === LABS.length + 1, `${pick.n} 行`);
-  record('选哪个表按学习顺序排列，末行指向方向评估文档',
-    pick.first === LABS[0].entry && /方向评估/.test(pick.last || ''), `${pick.first} → ${pick.last}`);
-
-  const summary = await cdp.eval(`document.getElementById('summary').textContent`);
-  record('合计条与清单相加一致',
-    summary.includes(`${TOTAL.chapters}章`) && summary.includes(`${TOTAL.exercises}个练习`) && summary.includes(`${TOTAL.examples}个当场运行的示例`),
-    summary.replace(/\s+/g, ' ').trim());
+  record('四张卡片的顶边颜色互不相同', new Set(dom.cards.map((d) => d.accent)).size === LABS.length, dom.cards.map((d) => d.accent).join(' / '));
+  record('页面按学习顺序排列四座站', dom.cards.map((c) => c.key).join(',') === LABS.map((l) => l.key).join(','), dom.cards.map((c) => c.key).join(','));
 
   const noProgress = await cdp.eval(`document.querySelectorAll('[data-continue]').length`);
-  const mini = await cdp.eval(`document.getElementById('mini-text').textContent`);
-  console.log(`  （当前浏览器配置里已有进度的站：${noProgress} 个；顶栏显示 ${mini.replace(/\s+/g, ' ').trim()}）`);
+  console.log(`  （当前浏览器配置里已有进度的站：${noProgress} 个）`);
 
   const errs = await cdp.eval('window.__errs || []');
   record('入口页没有未捕获错误', errs.length === 0, errs.slice(0, 3).join(' ｜ '));
@@ -155,7 +147,12 @@ async function checkPortal(cdp) {
     await cdp.send('Emulation.setDeviceMetricsOverride', { width: w, height: 1000, deviceScaleFactor: 1, mobile: false });
     await sleep(300);
     const m = await cdp.eval(`(() => {
-      const r = (el) => { const b = el.getBoundingClientRect(); return { l: Math.round(b.left), r: Math.round(b.right), t: Math.round(b.top), b: Math.round(b.bottom) }; };
+      const r = (el) => {
+        const b = el.getBoundingClientRect();
+        const act = el.querySelector('.card-actions');
+        return { l: Math.round(b.left), r: Math.round(b.right), t: Math.round(b.top), b: Math.round(b.bottom),
+                 btnBottom: act ? Math.round(act.getBoundingClientRect().bottom) : Math.round(b.bottom) };
+      };
       const page = r(document.querySelector('.page'));
       const cards = [...document.querySelectorAll('#cards .card')].map(r);
       return {
@@ -173,6 +170,11 @@ async function checkPortal(cdp) {
     record(`${w}px 宽：卡片网格 ${expectCols} 列`, m.cols === expectCols, `${m.cols} 列`);
     record(`${w}px 宽：同列卡片左右边缘对齐（极差 ≤ 2px）`, aligned(col1) && aligned(col2), `左 ${lefts.join('/')}　右 ${rights.join('/')}`);
     record(`${w}px 宽：四张卡片等宽（极差 ≤ 2px）`, spread(widths) <= 2, `宽 ${widths.join('/')}`);
+    /* 同一行（top 相同的那些卡）按钮底边要齐；一列布局时每行只有一张，跳过 */
+    const rowsByTop = {};
+    m.cards.forEach((c) => { (rowsByTop[c.t] = rowsByTop[c.t] || []).push(c.btnBottom); });
+    const rowsOk = Object.values(rowsByTop).every((g) => g.length < 2 || spread(g) <= 2);
+    record(`${w}px 宽：同一行的卡片按钮底边对齐（极差 ≤ 2px）`, rowsOk, `按钮底边 ${m.cards.map((c) => c.btnBottom).join('/')}`);
     record(`${w}px 宽：内容在页面里居中（|左留白 − 右留白| ≤ 3px）`,
       Math.abs(m.page.l - (m.client - m.page.r)) <= 3, `左 ${m.page.l}　右 ${m.client - m.page.r}`);
     record(`${w}px 宽：没有横向溢出`, m.scrollW <= m.client + 1, `scrollWidth ${m.scrollW} / clientWidth ${m.client}`);
@@ -242,12 +244,10 @@ async function checkProgress(cdp) {
   const blank = await cdp.eval(`(() => ({
     cont: document.querySelectorAll('[data-continue]').length,
     lines: [...document.querySelectorAll('#cards .card .progress-line')].map(n => n.textContent.replace(/\\s+/g, ' ').trim()),
-    mini: document.getElementById('mini-text').textContent.replace(/\\s+/g, ''),
     widths: [...document.querySelectorAll('#cards .card .track > span')].map(n => n.style.width),
   }))()`);
   record('没有进度时不出现「继续」按钮', blank.cont === 0, blank.cont + ' 个');
   record('没有进度时四张卡片都写「还没开始」', blank.lines.every((t) => t.includes('还没开始')), blank.lines[0]);
-  record('顶栏总进度是 0 / 练习总数', blank.mini === `0/${TOTAL.exercises}（0%）`, blank.mini);
   record('没有进度时进度条宽度为 0', blank.widths.every((w) => w === '0%'), blank.widths.join(' '));
 
   /* 造 3 条进度 */
@@ -270,7 +270,6 @@ async function checkProgress(cdp) {
       width: card.querySelector('.track > span').style.width,
       cont: card.querySelector('[data-continue]').getAttribute('href'),
       label: card.querySelector('[data-continue]').textContent,
-      mini: document.getElementById('mini-text').textContent.replace(/\\s+/g, ''),
       doneCards: [...document.querySelectorAll('[data-continue]')].length,
     };
   })()`);
@@ -281,7 +280,6 @@ async function checkProgress(cdp) {
     shown.cont === `${target.entry}#${next.ch.id}` && shown.label.includes(`第 ${next.index + 1} 章`),
     `${shown.cont}　${shown.label}`);
   record('只有造过进度的那座站出现「继续」', shown.doneCards === 1, shown.doneCards + ' 个');
-  record('顶栏总进度跟着走', shown.mini === `3/${TOTAL.exercises}（${Math.round(3 / TOTAL.exercises * 100)}%）`, shown.mini);
 
   const restored = await cdp.eval(`(() => {
     const saved = ${JSON.stringify(backup)};

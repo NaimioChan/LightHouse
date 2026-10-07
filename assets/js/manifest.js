@@ -10,16 +10,7 @@
       "entry": "html5-lab/index.html",
       "progressKey": "h5lab.v1.passed",
       "accentToken": "lab-html5",
-      "prereq": "零基础",
-      "want": "写页面结构、表单与媒体元素",
-      "blurb": "页面骨架、语义分区、表单、媒体与图形。标签写对了，后面的 CSS 与 JS 才有落点。",
-      "learn": [
-        "文档骨架与语义分区",
-        "文本、列表、表格",
-        "链接、图片与媒体元素",
-        "表单与原生校验",
-        "Canvas、SVG 与本地存储"
-      ],
+      "blurb": "语义标签、文本与表格、链接与媒体、表单校验、Canvas / SVG",
       "note": "",
       "stats": {
         "chapters": 12,
@@ -167,17 +158,7 @@
       "entry": "css-lab/index.html",
       "progressKey": "csslab.v1.passed",
       "accentToken": "lab-css",
-      "prereq": "认得出 HTML 标签",
-      "want": "让页面好看、能布局、能适配窄屏",
-      "blurb": "选择器命中、层叠与优先级、盒模型、flex 与 grid、变量、响应式与状态样式。样式不生效时能自己找出原因。",
-      "learn": [
-        "选择器与命中",
-        "层叠、优先级与继承",
-        "盒模型与 display",
-        "flex 与 grid 布局",
-        "变量、嵌套与响应式",
-        "过渡、状态与无障碍"
-      ],
+      "blurb": "选择器命中、层叠与优先级、盒模型、flex 与 grid、变量与响应式",
       "note": "",
       "stats": {
         "chapters": 12,
@@ -327,17 +308,7 @@
       "entry": "js-lab/index.html",
       "progressKey": "jslab.v1.passed",
       "accentToken": "lab-js",
-      "prereq": "HTML 与 CSS 各过一遍",
-      "want": "让页面动起来、处理数据与事件",
-      "blurb": "值、函数、数组对象、闭包、类、错误处理、异步与 DOM 操作。练习在沙箱里跑，断言逐条给出期望与实际。",
-      "learn": [
-        "值、变量与类型",
-        "分支、循环与函数",
-        "数组、对象与字符串",
-        "闭包、类与错误处理",
-        "异步与 Promise",
-        "DOM 操作与常用套路"
-      ],
+      "blurb": "值、函数、数组对象、闭包与类、异步、DOM",
       "note": "",
       "stats": {
         "chapters": 14,
@@ -500,18 +471,8 @@
       "entry": "ts-lab/index.html",
       "progressKey": "tslab.v1.passed",
       "accentToken": "lab-ts",
-      "prereq": "会写基本 JS",
-      "want": "给代码加类型、看懂 strict 报错",
-      "blurb": "类型注解与推断、收窄、泛型、工具类型、strict 报错与模块。判题打在真的类型检查器上，报错就是你以后会遇到的那条。",
-      "learn": [
-        "类型注解与推断",
-        "对象、函数与收窄",
-        "数组、元组与接口",
-        "泛型与工具类型",
-        "类、守卫与断言",
-        "strict 报错与模块"
-      ],
-      "note": "首次打开要加载约 12 MB 的类型检查器，只需一次；之后每次判题 2–8 ms。",
+      "blurb": "类型注解与推断、收窄、泛型、工具类型、strict 报错",
+      "note": "首次打开要加载约 12 MB 的类型检查器，只需一次。",
       "stats": {
         "chapters": 12,
         "exercises": 62,

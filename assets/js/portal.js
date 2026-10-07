@@ -1,91 +1,40 @@
-/* portal.js — 入口页：按 manifest.js 渲染总览、选哪个、四张卡片，并读各训练场的本地进度。
+/* portal.js — 入口页：按 manifest.js 渲染四座训练场，并读它们各自记在本地存储里的进度。
  *
- * 入口页是只读的：不写 localStorage，不改任何训练场的数据。进度只用来显示「你上次停在哪」。
+ * 只读：不写 localStorage，不改任何训练场的数据。进度只用来显示「你上次停在哪」。
  */
 (function () {
   var LABS = window.LIGHTHOUSE_LABS || [];
 
-  /* ---------- 小工具 ---------- */
   function el(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
     if (text !== undefined && text !== null) n.textContent = String(text);
     return n;
   }
-  function num(n) { return String(n); }
 
-  /* ---------- 进度：先读各自训练场写下的 localStorage ---------- */
-  function readMap(key) {
-    var out = { map: {}, blocked: false };
-    try {
-      var raw = localStorage.getItem(key);
-      var parsed = raw ? JSON.parse(raw) : {};
-      if (parsed && typeof parsed === 'object') out.map = parsed;
-    } catch (e) {
-      out.blocked = true;   // 隐私模式下 localStorage 会抛，入口页不该因此空着
-    }
-    return out;
-  }
-
+  /* ---------- 进度：读各站自己写的键（形状是 { <练习 id>: 1 }） ---------- */
   function progressOf(lab) {
-    var read = readMap(lab.progressKey);
+    var map = {}, blocked = false;
+    try {
+      var raw = localStorage.getItem(lab.progressKey);
+      var parsed = raw ? JSON.parse(raw) : {};
+      if (parsed && typeof parsed === 'object') map = parsed;
+    } catch (e) {
+      blocked = true;   // 隐私模式下 localStorage 会抛，入口页不该因此空着
+    }
     var done = 0, total = 0, next = null, nextIndex = 0;
     lab.chapters.forEach(function (ch, i) {
       var hit = 0;
       (ch.exercises || []).forEach(function (id) {
         total++;
-        if (read.map[id]) { hit++; done++; }
+        if (map[id]) { hit++; done++; }
       });
       if (!next && hit < (ch.exercises || []).length) { next = ch; nextIndex = i; }
     });
-    return { done: done, total: total, next: next, nextIndex: nextIndex, blocked: read.blocked };
+    return { done: done, total: total, next: next, nextIndex: nextIndex, blocked: blocked };
   }
 
-  /* ---------- 顶部合计 ---------- */
-  function renderSummary(labs) {
-    var t = labs.reduce(function (a, l) {
-      return {
-        chapters: a.chapters + l.stats.chapters,
-        exercises: a.exercises + l.stats.exercises,
-        examples: a.examples + l.stats.examples,
-      };
-    }, { chapters: 0, exercises: 0, examples: 0 });
-
-    var box = document.getElementById('summary');
-    [
-      [t.chapters, '章'],
-      [t.exercises, '个练习'],
-      [t.examples, '个当场运行的示例'],
-      [labs.length, '座训练场'],
-    ].forEach(function (pair, i) {
-      if (i) box.appendChild(el('span', 'sep', '·'));
-      box.appendChild(el('strong', null, num(pair[0])));
-      box.appendChild(el('span', null, pair[1]));
-    });
-    box.appendChild(el('span', 'src', '按 tools/labs.json 与各训练场内容生成'));
-    return t;
-  }
-
-  /* ---------- 选哪个：行由清单生成，最后一行（不确定先学哪个）写在 HTML 里 ---------- */
-  function renderPick(labs) {
-    var tbody = document.getElementById('pick-body');
-    var fixed = [].slice.call(tbody.children);   // HTML 里写死的行（排到最后）
-    tbody.textContent = '';
-    labs.forEach(function (lab) {
-      var tr = el('tr');
-      tr.appendChild(el('td', null, lab.want));
-      var to = el('td', 'to');
-      var a = el('a', null, lab.title);
-      a.href = lab.entry;
-      to.appendChild(a);
-      tr.appendChild(to);
-      tr.appendChild(el('td', 'pre', lab.prereq));
-      tbody.appendChild(tr);
-    });
-    fixed.forEach(function (r) { tbody.appendChild(r); });
-  }
-
-  /* ---------- 卡片 ---------- */
+  /* ---------- 一张卡片：站名 + 规模 + 教什么 + 进度 + 入口 ---------- */
   function renderCard(lab) {
     var p = progressOf(lab);
     var card = el('article', 'card');
@@ -99,27 +48,24 @@
     link.href = lab.entry;
     title.appendChild(link);
     head.appendChild(title);
-    head.appendChild(el('div', 'card-stats',
-      num(lab.stats.chapters) + ' 章 · ' + num(lab.stats.exercises) + ' 练习 · ' + num(lab.stats.examples) + ' 示例'));
+    head.appendChild(el('span', 'card-stats',
+      lab.stats.chapters + ' 章 · ' + lab.stats.exercises + ' 练习 · ' + lab.stats.examples + ' 示例'));
     card.appendChild(head);
 
     card.appendChild(el('p', 'card-blurb', lab.blurb));
+    if (lab.note) card.appendChild(el('p', 'card-note', lab.note));
 
-    var chips = el('ul', 'chips');
-    (lab.learn || []).forEach(function (s) { chips.appendChild(el('li', null, s)); });
-    card.appendChild(chips);
-
+    /* 底部区域（进度 + 按钮）用 margin-top:auto 压在卡片底部，同一行两张卡的按钮才会齐 */
     var area = el('div', 'card-area');
+
     var line = el('div', 'progress-line');
     if (p.blocked) {
-      line.appendChild(el('span', null, '浏览器禁用了本地存储，进度读不到（练习照样能做，只是记不住）'));
+      line.appendChild(el('span', null, '本地存储被禁用，进度读不到（练习照做，只是记不住）'));
     } else if (p.done === 0) {
       line.appendChild(el('span', null, '还没开始'));
-      line.appendChild(el('span', null, '共 ' + num(p.total) + ' 个练习'));
     } else {
       line.appendChild(el('span', null, '已通过'));
-      line.appendChild(el('b', null, num(p.done) + ' / ' + num(p.total)));
-      line.appendChild(el('span', null, p.done === p.total ? '全部完成' : '继续加油'));
+      line.appendChild(el('b', null, p.done + ' / ' + p.total));
     }
     area.appendChild(line);
 
@@ -134,7 +80,7 @@
     enter.href = lab.entry;
     actions.appendChild(enter);
     if (!p.blocked && p.done > 0 && p.next) {
-      var cont = el('a', 'btn btn-ghost', '继续 · 第 ' + num(p.nextIndex + 1) + ' 章');
+      var cont = el('a', 'btn btn-ghost', '继续 · 第 ' + (p.nextIndex + 1) + ' 章');
       cont.href = lab.entry + '#' + p.next.id;
       cont.setAttribute('data-continue', lab.key);
       actions.appendChild(cont);
@@ -142,27 +88,10 @@
     area.appendChild(actions);
     card.appendChild(area);
 
-    if (lab.note) card.appendChild(el('p', 'card-note', lab.note));
-    return { node: card, progress: p };
+    return card;
   }
 
-  function renderCards(labs) {
-    var box = document.getElementById('cards');
-    var sum = { done: 0, total: 0 };
-    labs.forEach(function (lab) {
-      var r = renderCard(lab);
-      box.appendChild(r.node);
-      sum.done += r.progress.done;
-      sum.total += r.progress.total;
-    });
-    var mini = document.getElementById('mini-fill');
-    var text = document.getElementById('mini-text');
-    var pct = sum.total ? Math.round(sum.done / sum.total * 100) : 0;
-    mini.style.width = pct + '%';
-    text.textContent = sum.done + ' / ' + sum.total + '（' + pct + '%）';
-  }
-
-  /* ---------- 保活与缓存提示：与四个训练场同款 ---------- */
+  /* ---------- 保活与缓存提示：与四座训练场同款（只在本地 serve.py 下生效） ---------- */
   function staleBanner(tag) {
     if (document.getElementById('stale-banner')) return;
     var b = el('div', 'stale-banner');
@@ -195,16 +124,14 @@
     }, 12000);
   }
 
-  /* ---------- 启动 ---------- */
   function boot() {
     keepAlive();
+    var box = document.getElementById('cards');
     if (!LABS.length) {
-      document.getElementById('summary').appendChild(el('span', null, '清单没加载出来：assets/js/manifest.js 缺失或损坏，跑一下 node tools/build-manifest.mjs。'));
+      box.appendChild(el('p', null, '清单没加载出来：assets/js/manifest.js 缺失或损坏，跑一下 node tools/build-manifest.mjs。'));
       return;
     }
-    renderSummary(LABS);
-    renderPick(LABS);
-    renderCards(LABS);
+    LABS.forEach(function (lab) { box.appendChild(renderCard(lab)); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

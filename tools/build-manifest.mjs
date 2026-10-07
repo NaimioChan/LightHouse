@@ -59,10 +59,7 @@ export function build() {
       entry: lab.entry,
       progressKey: lab.progressKey,
       accentToken: lab.accentToken,
-      prereq: lab.prereq,
-      want: lab.want,
       blurb: lab.blurb,
-      learn: lab.learn,
       note: lab.note,
       stats: {
         chapters: chapters.length,

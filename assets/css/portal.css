@@ -1,20 +1,19 @@
 /* portal.css — 入口页样式。色值与字体以 DESIGN.md 为唯一来源。
  *
- * 纸色、墨色、线色、字体、圆角与四个训练场完全一致（那边是各自的 base.css）；
- * 入口页自己的强调色是灯塔金，四个训练场各自的颜色只在对应卡片上出现。
+ * 纸色、墨色、线色、字体、圆角与四座训练场完全一致（那边是各自的 base.css）；
+ * 入口页自己的强调色是灯塔金，四座站各自的颜色只出现在对应卡片上。
  */
 :root {
-  /* 纸与墨（与四个训练场同值） */
+  /* 纸与墨（与四座训练场同值） */
   --ink: #232019;
   --ink-soft: #4a453a;
   --muted: #6b6558;
   --paper: #f0eee6;
   --panel: #faf9f5;
   --line: #e0dbcc;
-  --code-bg: #f6f4ec;
 
   /* 入口页自己的强调色：灯塔金 */
-  --accent: #c08a2e;          /* 装饰：色条、进度槽的填充、hover 描边 */
+  --accent: #c08a2e;          /* 装饰：品牌竖条、进度条填充、hover 描边 */
   --accent-strong: #8a5a00;   /* 承载文字：按钮实底、小字、链接 */
 
   /* 四座训练场的识别色（装饰用）与承载文字用的深支，取自各自 base.css */
@@ -28,9 +27,8 @@
   --mono: "Cascadia Code", Consolas, "Courier New", monospace;
 
   --r-sm: 4px;
-  --r-md: 8px;
   --r-lg: 14px;
-  --page-max: 1180px;
+  --page-max: 1080px;
 }
 
 * { box-sizing: border-box; }
@@ -48,13 +46,6 @@ body {
 a { color: var(--accent-strong); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; }
-h1 { font-size: 2rem; line-height: 1.3; margin: 0 0 10px; }
-h2 { font-size: 1.25rem; line-height: 1.4; margin: 44px 0 10px; }
-h3 { font-size: 1rem; margin: 24px 0 6px; }
-p { margin: 0 0 12px; }
-code, kbd { font-family: var(--mono); font-size: 0.86rem; }
-
 ::selection { background: rgba(192, 138, 46, 0.24); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -62,88 +53,46 @@ code, kbd { font-family: var(--mono); font-size: 0.86rem; }
 *::-webkit-scrollbar { width: 10px; height: 10px; }
 *::-webkit-scrollbar-thumb { background: #cec7b4; border-radius: 6px; border: 3px solid transparent; background-clip: content-box; }
 
-/* ---------- 顶栏 ---------- */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 24px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--line);
-}
-.brand {
+.page { max-width: var(--page-max); margin: 0 auto; padding: 72px 24px 64px; }
+
+/* ---------- 标题区 ---------- */
+.hero { margin: 0 0 48px; }
+.hero h1 {
+  margin: 0 0 10px;
   font-family: var(--serif);
-  font-size: 1.05rem;
+  font-size: 3.5rem;
   font-weight: 600;
-  color: var(--ink);
-  letter-spacing: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
-.brand::before {
+.hero h1::before {
   content: "";
-  width: 3px;
-  height: 18px;
-  border-radius: 2px;
+  display: inline-block;
+  width: 6px;
+  height: 0.78em;
+  margin-right: 18px;
+  border-radius: 3px;
   background: var(--accent);
+  vertical-align: -0.02em;
 }
-.brand:hover { text-decoration: none; color: var(--accent-strong); }
-.topbar-sub { color: var(--muted); font-size: 0.82rem; }
-.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-
-.mini-progress { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--muted); }
-.mini-track { width: 130px; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
-.mini-fill { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s ease; }
-
-/* ---------- 页身 ---------- */
-.page { max-width: var(--page-max); margin: 0 auto; padding: 40px 24px 72px; }
-.lede { max-width: 46em; color: var(--ink-soft); }
-
-.summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 14px;
-  margin: 26px 0 0;
-  padding: 14px 18px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-}
-.summary strong { font-family: var(--serif); font-size: 1.15rem; }
-.summary .sep { color: var(--line); }
-.summary .src { margin-left: auto; color: var(--muted); font-size: 0.82rem; }
-
-/* ---------- 选哪个 ---------- */
-table.pick {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  overflow: hidden;
+.hero .sub {
+  margin: 0 0 18px;
+  color: var(--muted);
   font-size: 0.9rem;
+  letter-spacing: 0.01em;
 }
-table.pick th, table.pick td {
-  text-align: left;
-  padding: 9px 16px;
-  border-bottom: 1px solid var(--line);
-  vertical-align: top;
+.hero .intro {
+  max-width: 42em;
+  margin: 0;
+  color: var(--ink-soft);
+  /* 中文行内不按字拆词：只在标点处断行；真放不下时再由 overflow-wrap 兜底 */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
-table.pick thead th { font-family: var(--serif); font-weight: 600; color: var(--ink); background: var(--code-bg); }
-table.pick tbody tr:last-child td { border-bottom: 0; }
-table.pick td.to { white-space: nowrap; }
-table.pick td.to a { font-weight: 600; }
-table.pick td.pre { color: var(--muted); }
-.pick-note { color: var(--muted); font-size: 0.82rem; margin: 10px 0 0; }
 
-/* ---------- 卡片网格 ---------- */
+/* ---------- 卡片 ---------- */
 .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-@media (max-width: 900px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 880px) { .cards { grid-template-columns: minmax(0, 1fr); } }
 
 .card {
   display: flex;
@@ -152,37 +101,28 @@ table.pick td.pre { color: var(--muted); }
   border: 1px solid var(--line);
   border-top: 3px solid var(--card-accent);
   border-radius: var(--r-lg);
-  padding: 20px 22px 18px;
+  padding: 18px 20px 16px;
 }
 .card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.card-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 600; margin: 0; line-height: 1.4; }
+.card-title { margin: 0; font-family: var(--serif); font-size: 1.2rem; font-weight: 600; line-height: 1.4; }
 .card-title a { color: var(--ink); }
 .card-title a:hover { color: var(--card-accent-strong); text-decoration: none; }
 .card-stats { margin-left: auto; color: var(--muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
-.card-blurb { margin: 8px 0 12px; color: var(--ink-soft); }
+.card-blurb { margin: 6px 0 8px; color: var(--ink-soft); font-size: 0.9rem; }
+.card-note { margin: 0 0 8px; color: var(--muted); font-size: 0.82rem; }
 
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; }
-.chips li {
-  font-size: 0.82rem;
-  color: var(--muted);
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  padding: 1px 8px;
-  background: var(--code-bg);
-}
+.card-area { margin-top: auto; }
 
-.card-area { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); }
-.progress-line { display: flex; align-items: baseline; gap: 10px; font-size: 0.82rem; color: var(--muted); }
+.progress-line { display: flex; align-items: baseline; gap: 8px; color: var(--muted); font-size: 0.82rem; }
 .progress-line b { color: var(--ink); font-variant-numeric: tabular-nums; }
-.track { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; margin: 8px 0 12px; }
-.track > span { display: block; height: 100%; width: 0; background: var(--card-accent); transition: width 0.25s ease; }
+.track { height: 5px; margin: 8px 0 14px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.track > span { display: block; height: 100%; width: 0; background: var(--card-accent); }
 
 .card-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .btn {
   display: inline-block;
-  font-family: var(--sans);
   font-size: 0.86rem;
-  padding: 6px 14px;
+  padding: 5px 13px;
   border-radius: var(--r-sm);
   border: 1px solid transparent;
   cursor: pointer;
@@ -193,11 +133,11 @@ table.pick td.pre { color: var(--muted); }
 .btn-ghost:hover { border-color: var(--card-accent); text-decoration: none; }
 .card-note { margin: 12px 0 0; color: var(--muted); font-size: 0.82rem; }
 
-/* ---------- 页脚 ---------- */
-.foot { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
-.foot p { margin: 0 0 6px; }
-.noscript { max-width: 46em; }
-.noscript ul { padding-left: 20px; }
+/* ---------- 页脚与无脚本回退 ---------- */
+.foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
+.foot p { margin: 0; }
+.plain { margin: 0; padding-left: 20px; }
+.plain li { margin: 4px 0; }
 
 /* 缓存提示条：与各训练场同款，只在检测到旧页面时出现一次 */
 .stale-banner {

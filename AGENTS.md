@@ -5,7 +5,8 @@
 ## 这个仓库是什么
 
 - **入口页**（仓库根）：`index.html` + `assets/css/portal.css` + `assets/js/portal.js` + 生成的 `assets/js/manifest.js`。
-  只做三件事：说明四座站各自解决什么、把访问者送进去、把四座站的本地进度汇总显示。
+  只做两件事：说清这里有哪四座站，把访问者送进去（顺带按各站自己的进度显示「继续第 N 章」）。
+  **保持简洁是硬要求**：大标题 + 副标题 + 一段简介 + 四张卡，别再往里加板块（见 `DESIGN.md` 的 Do's and Don'ts）。
 - **四座训练场**（`html5-lab/` `css-lab/` `js-lab/` `ts-lab/`）：各自完整自洽的离线静态站，
   含 `assets/ content/ tools/ docs/ AGENTS.md DESIGN.md serve.py run.bat`。并入时**一个字节都没改**。
 - **合并是目录级的，不是引擎级的**：四座站的引擎（各自的 `harness.js` / `sandbox.js` / `render.js` …）保持独立。
