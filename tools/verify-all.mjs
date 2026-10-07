@@ -18,12 +18,10 @@ const argv = process.argv.slice(2);
 const fast = argv.includes('--fast');
 const only = argv.includes('--lab') ? argv[argv.indexOf('--lab') + 1] : null;
 
-const PLAN = [
-  { dir: 'html5-lab', scripts: ['verify-content.mjs', 'verify-pair.mjs', 'verify-quit.mjs'] },
-  { dir: 'css-lab', scripts: ['verify-content.mjs', 'verify-pair.mjs', 'verify-quit.mjs'] },
-  { dir: 'js-lab', scripts: ['verify-content.mjs', 'verify-pair.mjs', 'verify-quit.mjs'] },
-  { dir: 'ts-lab', scripts: ['verify-content.mjs', 'verify-pair.mjs', 'verify-types.mjs', 'verify-judge.mjs', 'verify-quit.mjs'] },
-];
+/* 站列表从清单读（加站不用改这里）；每座站跑它自己有的那几支 node 侧校验 */
+const SCRIPTS = ['verify-content.mjs', 'verify-pair.mjs', 'verify-types.mjs', 'verify-judge.mjs', 'verify-quit.mjs'];
+const PLAN = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'labs.json'), 'utf8'))
+  .map((lab) => ({ dir: lab.dir, scripts: SCRIPTS }));
 
 function run(cwd, script) {
   return new Promise((resolve) => {

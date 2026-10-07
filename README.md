@@ -80,7 +80,7 @@ cd js-lab && node tools/verify-ui.mjs      # 另外三座：verify-browser.mjs /
 ## 诚实说明的限制
 
 - **TypeScript 站首次打开要加载约 12 MB 的类型检查器**（`ts-lab/vendor/`）。只需一次，之后每次判题 2–8 ms；
-  `file://` 直开也能用。这也是本仓库 25 MB 里的大头。
+  `file://` 直开也能用。这也是本仓库约 15 MB 里的大头（这个目录 12.1 MB）。
 - **判题不是编译器级完备的**：JS/HTML/CSS 的练习跑在 `sandbox="allow-scripts"` 的 iframe 里，
   死循环会被 5 秒超时掐掉（页面会提示「可能是循环没写终止条件」），异步示例最多等 1.5 秒。
   控制台输出格式与 DevTools 不完全一致。
