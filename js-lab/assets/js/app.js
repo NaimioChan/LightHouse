@@ -86,8 +86,53 @@
     var back = R.el('a', 'side-back', '← LightHouse 目录');
     back.href = /\/tools\/[^/]*$/.test(location.pathname) ? '../../index.html' : '../index.html';
     box.appendChild(back);
+    /* 窄屏顶栏放不下「重置进度」，这个按钮只在窄屏的抽屉底部显示（顶栏那个在宽屏用） */
+    var resetDrawer = R.el('button', 'btn btn-sm side-reset', '重置进度');
+    resetDrawer.setAttribute('data-reset', 'drawer');
+    resetDrawer.addEventListener('click', resetProgress);
+    box.appendChild(resetDrawer);
     box.appendChild(R.el('p', 'side-credit', '© 2026 非茗 · Naimio'));
     return box;
+  }
+
+  /* ---------- 窄屏目录抽屉 ---------- */
+  function closeNav() {
+    document.body.classList.remove('nav-open');
+    var b = document.getElementById('nav-btn');
+    if (b) b.setAttribute('aria-expanded', 'false');
+  }
+
+  function initNavDrawer() {
+    var btn = document.getElementById('nav-btn');
+    var backdrop = document.getElementById('nav-backdrop');
+    var sb = document.getElementById('sidebar');
+    if (!btn || !backdrop || !sb) return;
+
+    btn.addEventListener('click', function () {
+      var open = !document.body.classList.contains('nav-open');
+      document.body.classList.toggle('nav-open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    backdrop.addEventListener('click', closeNav);
+    /* 侧栏是静态骨架（buildSidebar 只跑一次），这里挂一次代理就够：点任何链接都收起抽屉 */
+    sb.addEventListener('click', function (ev) {
+      var a = ev.target && ev.target.closest ? ev.target.closest('a') : null;
+      if (a) closeNav();
+    });
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' || ev.keyCode === 27) closeNav();
+    });
+  }
+
+  function resetProgress() {
+    R.confirmBox('重置全部进度？', '练习代码与已通过记录都会被清掉，无法撤销。', '重置', function () {
+      try {
+        Object.keys(localStorage).filter(function (k) { return k.indexOf('jslab.v1.') === 0; })
+          .forEach(function (k) { localStorage.removeItem(k); });
+      } catch (e) {}
+      passedMap = {};
+      location.reload();
+    });
   }
 
   function markActive(route) {
@@ -362,6 +407,7 @@
   function boot() {
     keepAlive();
     buildSidebar();
+    initNavDrawer();
     window.addEventListener('hashchange', route);
     document.getElementById('auto-run').addEventListener('change', function (ev) {
       try { localStorage.setItem('jslab.v1.auto', ev.target.checked ? '1' : '0'); } catch (e) {}
@@ -371,16 +417,7 @@
       if (auto === '0') document.getElementById('auto-run').checked = false;
     } catch (e) {}
 
-    document.getElementById('reset-progress').addEventListener('click', function () {
-      R.confirmBox('重置全部进度？', '练习代码与已通过记录都会被清掉，无法撤销。', '重置', function () {
-        try {
-          Object.keys(localStorage).filter(function (k) { return k.indexOf('jslab.v1.') === 0; })
-            .forEach(function (k) { localStorage.removeItem(k); });
-        } catch (e) {}
-        passedMap = {};
-        location.reload();
-      });
-    });
+    document.getElementById('reset-progress').addEventListener('click', resetProgress);
 
     route();
 

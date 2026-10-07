@@ -244,6 +244,103 @@ async function main() {
       record(`${w}px：断言清单与按钮栏左对齐到编辑器`, Math.abs(m.testsOffset) <= 2 && Math.abs(m.actionsOffset) <= 2, `差 ${m.testsOffset} / ${m.actionsOffset}px`);
     }
   }
+
+  /* --- 顶栏粘住：往下滚一屏后仍在视口顶部 ---
+     踩过的坑：`html, body { height: 100% }` 会把 body 的 sticky 包含块限在一屏内，
+     滚过一屏顶栏就被推走。窄屏的证据更硬——顶栏那条「目录」按钮直接点不到。 */
+  async function probeStick(w, h) {
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile: false });
+    await cdp.eval(`window.scrollTo(0, 0); "ok"`);
+    await sleep(200);
+    await cdp.eval(`window.scrollTo(0, 1600); "ok"`);
+    await sleep(250);
+    const m = await cdp.eval(`(() => {
+      const t = document.querySelector('.topbar');
+      const b = t.getBoundingClientRect();
+      const btn = document.getElementById('nav-btn');
+      const r = btn.getBoundingClientRect();
+      return { top: Math.round(b.top), height: Math.round(b.height), scrollY: Math.round(window.scrollY),
+        btnHit: (() => { const e = document.elementFromPoint(Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)); return e ? (e.id || e.tagName) : null; })(),
+        btnVisible: getComputedStyle(btn).display !== 'none' };
+    })()`);
+    await cdp.eval(`window.scrollTo(0, 0); "ok"`);
+    await sleep(200);
+    return m;
+  }
+
+  const stickWide = await probeStick(1400, 900);
+  record('宽屏：往下滚一屏后顶栏仍粘在视口顶部', stickWide.top === 0 && stickWide.scrollY > 1000,
+    `滚到 ${stickWide.scrollY}px，顶栏 top=${stickWide.top}`);
+  const stickPhone = await probeStick(390, 844);
+  record('窄屏：往下滚一屏后顶栏仍粘在顶部，且「目录」按钮点得到',
+    stickPhone.top === 0 && stickPhone.btnHit === 'nav-btn',
+    `顶栏 top=${stickPhone.top}，按钮位置命中 ${stickPhone.btnHit}`);
+
+  /* --- 手机竖屏：目录抽屉 + 不横向溢出 + 输入控件不被浏览器放大 --- */
+  async function probePhone(w, h, hash) {
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile: true });
+    if (hash) { await cdp.eval(`location.hash = '${hash}'; "ok"`); }
+    await sleep(600);
+    return cdp.eval(`(() => {
+      const sb = document.getElementById('sidebar');
+      const cs = getComputedStyle(sb);
+      return {
+        client: document.documentElement.clientWidth,
+        scrollW: document.documentElement.scrollWidth,
+        sidebarFixed: cs.position === 'fixed',
+        /** 抽屉收起时侧栏用 visibility: hidden 藏起来（比只看 transform 可靠：不依赖过渡是否跑完） */
+        drawerHidden: cs.visibility === 'hidden',
+        /** 正文拿回整屏宽度：抽屉形态下不该再被侧栏挤掉 240px */
+        mainShare: Math.round(document.querySelector('.main').getBoundingClientRect().width / document.documentElement.clientWidth * 100),
+        topbarH: Math.round(document.querySelector('.topbar').getBoundingClientRect().height),
+        /** 只量可见的编辑器（隐藏页签/iframe 里的不算），取最小值 */
+        editorFont: Math.min(...[...document.querySelectorAll('.editor-ta')]
+          .filter((t) => t.offsetParent !== null)
+          .map((t) => parseFloat(getComputedStyle(t).fontSize))),
+        navMinH: Math.min(...[...document.querySelectorAll('.nav-item')].map((n) => Math.round(n.getBoundingClientRect().height))),
+      };
+    })()`);
+  }
+
+  const phone = await probePhone(390, 844, 'ch01');
+  record('390px：目录栏收成抽屉（侧栏脱离文档流、正文拿回整屏）',
+    phone.sidebarFixed && phone.mainShare >= 98, `侧栏 ${phone.sidebarFixed ? 'fixed' : '仍在流里'}，正文占 ${phone.mainShare}%`);
+  record('390px：抽屉默认收起', phone.drawerHidden, `visibility ${phone.drawerHidden ? 'hidden' : '可见'}`);
+  record('390px：顶栏放得下（不换行、不裁切）', phone.topbarH <= 60, `顶栏高 ${phone.topbarH}px`);
+  record('390px：没有横向溢出', phone.scrollW <= phone.client + 1, `scrollWidth ${phone.scrollW} / clientWidth ${phone.client}`);
+  record('390px：编辑器字号 ≥ 16px（否则手机浏览器会放大整页）', phone.editorFont >= 16, `${phone.editorFont}px`);
+  record('390px：目录项够手指点（≥ 44px）', phone.navMinH >= 44, `最矮 ${phone.navMinH}px`);
+
+  /* 点开抽屉：真点按钮，然后点一个章节链接，必须自动收起 */
+  const openBox = await cdp.eval(`(() => {
+    const b = document.getElementById('nav-btn').getBoundingClientRect();
+    return { x: Math.round(b.left + b.width / 2), y: Math.round(b.top + b.height / 2) };
+  })()`);
+  for (const type of ['mousePressed', 'mouseReleased']) {
+    await cdp.send('Input.dispatchMouseEvent', { type, x: openBox.x, y: openBox.y, button: 'left', clickCount: 1 });
+  }
+  await sleep(450);
+  const opened = await cdp.eval(`(() => ({
+    open: document.body.classList.contains('nav-open'),
+    vis: getComputedStyle(document.getElementById('sidebar')).visibility,
+    btn: document.getElementById('nav-btn').getAttribute('aria-expanded'),
+  }))()`);
+  record('点「目录」按钮能展开抽屉', opened.open === true && opened.vis === 'visible' && opened.btn === 'true', JSON.stringify(opened));
+
+  await cdp.eval(`document.querySelector('.nav-item[data-ch="ch01"]').click(); "ok"`);
+  await sleep(500);
+  const afterPick = await cdp.eval(`(() => ({
+    open: document.body.classList.contains('nav-open'),
+    vis: getComputedStyle(document.getElementById('sidebar')).visibility,
+  }))()`);
+  record('选完章节抽屉自动收起（不挡正文）', afterPick.open === false && afterPick.vis === 'hidden', JSON.stringify(afterPick));
+  await cdp.eval(`document.getElementById('nav-btn').click(); "ok"`);
+  await sleep(300);
+  await cdp.eval(`document.getElementById('nav-backdrop').click(); "ok"`);
+  await sleep(300);
+  const afterBackdrop = await cdp.eval(`document.body.classList.contains('nav-open')`);
+  record('点遮罩能收起抽屉', afterBackdrop === false, String(afterBackdrop));
+
   await cdp.send('Emulation.clearDeviceMetricsOverride');
 
   /* ---------- 三、file:// 直开 ---------- */

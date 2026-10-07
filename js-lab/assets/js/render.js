@@ -499,7 +499,10 @@
           tb.appendChild(r);
         });
         t.appendChild(tb);
-        readHost.appendChild(t);
+        /* 表格包一层横向滚动容器：窄屏下宽表自己滚，而不是把整页撑宽 */
+        var tw = el('div', 'tbl-wrap');
+        tw.appendChild(t);
+        readHost.appendChild(tw);
       } else if (sec.kind === 'code') {
         readHost.appendChild(exampleBlock(sec));
       }

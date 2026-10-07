@@ -43,6 +43,9 @@
 8. 每一章必须自洽：只使用本章及之前章节讲过的语法（`content/CHANGELOG` 不需要，靠章节顺序保证）。
 9. **编辑器辅助只做括号配对**，判定在 `assets/js/pair.js`（纯函数），浏览器与 node 共用。
    不引第三方编辑器（CodeMirror 之类是 ESM + 需要打包，会破坏 `file://` 直开），不做关键字补全、不做标签自动闭合。
+10. **窄屏形态四座站一致**（`docs/04-mobile-layout.md`）：≤900px 目录栏收成抽屉（顶栏 `#nav-btn` + `body.nav-open`）、
+    顶栏只留「目录/进度/自动运行」、「重置进度」进抽屉、表格包 `.tbl-wrap`、编辑器字号 ≥16px。
+    改窄屏版式后跑 `node tools/verify-ui.mjs --fast`（含 390px 那一档）。
 
 ## 写作规范（文案与断言）
 

@@ -179,9 +179,9 @@ async function checkPortal(cdp) {
   record('入口页资源没有 404', bad.length === 0, bad.slice(0, 3).join(' ｜ '));
   if (shots) await shot(cdp, 'portal-1600');
 
-  /* 三种宽度：列数、卡片左右边缘对齐、有没有横向溢出 */
-  for (const [w, expectCols] of [[2000, 2], [1200, 2], [760, 1]]) {
-    await cdp.send('Emulation.setDeviceMetricsOverride', { width: w, height: 1000, deviceScaleFactor: 1, mobile: false });
+  /* 三种宽度：列数、卡片左右边缘对齐、有没有横向溢出；再加上手机竖屏一档 */
+  for (const [w, h, expectCols] of [[2000, 1000, 2], [1200, 1000, 2], [760, 1000, 1], [390, 844, 1]]) {
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile: w < 500 });
     await sleep(300);
     const m = await cdp.eval(`(() => {
       const r = (el) => {
@@ -217,6 +217,32 @@ async function checkPortal(cdp) {
     record(`${w}px 宽：没有横向溢出`, m.scrollW <= m.client + 1, `scrollWidth ${m.scrollW} / clientWidth ${m.client}`);
     if (shots) await shot(cdp, `portal-${w}`);
   }
+  await cdp.send('Emulation.clearDeviceMetricsOverride');
+  await sleep(200);
+
+  /* 手机竖屏：入口页也要能把人送进场（卡片按钮可见、不溢出） */
+  await cdp.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await sleep(300);
+  const phonePortal = await cdp.eval(`(() => {
+    const card = document.querySelector('#cards .card');
+    const btn = card ? card.querySelector('.btn-enter') : null;
+    const b = btn ? btn.getBoundingClientRect() : null;
+    return {
+      client: document.documentElement.clientWidth,
+      scrollW: document.documentElement.scrollWidth,
+      btnW: b ? Math.round(b.width) : 0, btnH: b ? Math.round(b.height) : 0,
+      btnText: btn ? btn.textContent.trim() : null,
+      introLines: (() => { const p = document.querySelector('.hero .intro'); if (!p) return 0;
+        const r = document.createRange(); r.selectNodeContents(p);
+        const rects = [...r.getClientRects()];
+        const tops = new Set(rects.map((x) => Math.round(x.top)));
+        return tops.size; })(),
+    };
+  })()`);
+  record('入口页 390px：没有横向溢出', phonePortal.scrollW <= phonePortal.client + 1,
+    `scrollWidth ${phonePortal.scrollW} / clientWidth ${phonePortal.client}`);
+  record('入口页 390px：卡片的进入按钮够点（≥ 32px 高、文字完整）',
+    phonePortal.btnH >= 32 && phonePortal.btnW >= 60 && !!phonePortal.btnText, `${phonePortal.btnW}×${phonePortal.btnH}　${phonePortal.btnText}`);
   await cdp.send('Emulation.clearDeviceMetricsOverride');
   await sleep(200);
 }
@@ -268,6 +294,31 @@ async function checkLabs(cdp) {
     record(`${prefix} 按钮在最后一条章节链接之下（目录栏底部）`, foot.belowList === true,
       `按钮底边 ${foot.backBottom} / 侧栏底边 ${foot.sideBottom}`);
     record(`${prefix} 目录栏底部有版权行`, foot.creditText === '© 2026 非茗 · Naimio', String(foot.creditText));
+
+    /* 手机竖屏：目录栏必须能收成抽屉。竖屏下侧栏是 240px 固定列，正文只剩 ~140px，
+       宽表与代码块会把整页撑出横向滚动（实测 539–638px），这是移动端最直接的坏法。 */
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    await sleep(500);
+    const mob = await cdp.eval(`(() => {
+      const sb = document.getElementById('sidebar');
+      const cs = getComputedStyle(sb);
+      const btn = document.getElementById('nav-btn');
+      return {
+        fixed: cs.position === 'fixed',
+        hidden: cs.visibility === 'hidden',
+        btn: !!btn && getComputedStyle(btn).display !== 'none',
+        client: document.documentElement.clientWidth,
+        scrollW: document.documentElement.scrollWidth,
+        mainShare: Math.round(document.querySelector('.main').getBoundingClientRect().width / document.documentElement.clientWidth * 100),
+        editorFont: (() => { const t = document.querySelector('.editor-ta'); return t ? parseFloat(getComputedStyle(t).fontSize) : null; })(),
+      };
+    })()`);
+    record(`${prefix} 390px：目录栏收成抽屉、顶栏有「目录」按钮、正文不被挤掉`,
+      mob.fixed && mob.hidden && mob.btn && mob.mainShare >= 98, JSON.stringify(mob));
+    record(`${prefix} 390px：没有横向溢出`, mob.scrollW <= mob.client + 1, `scrollWidth ${mob.scrollW} / clientWidth ${mob.client}`);
+    record(`${prefix} 390px：编辑器字号 ≥ 16px`, mob.editorFont === null || mob.editorFont >= 16, `${mob.editorFont}px`);
+    await cdp.send('Emulation.clearDeviceMetricsOverride');
+    await sleep(300);
 
     /* 迷你 markdown：行内代码里的星号必须原样显示（js-lab ch02 的 `+ - * / %` 与 `**` 踩过这个坑） */
     const probe = await cdp.eval(`(() => {

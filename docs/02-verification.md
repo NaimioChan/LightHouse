@@ -40,6 +40,10 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 
 这几支脚本慢（几分钟），且要起无头 Edge 与 http.server，所以不放进每轮迭代。
 
+其中各站的 `verify-ui.mjs` 除了三档桌面视口（2000/1200/760），还有一档 390px 手机竖屏：
+目录栏是否收成抽屉、顶栏是否还粘在顶部、有没有横向溢出、编辑器字号是否 ≥16px、抽屉能不能真点开又自动收起。
+根 `tools/verify-portal.mjs` 同样带 390px 一档。改窄屏版式前先读 `docs/04-mobile-layout.md`。
+
 ## CDP 验收的三条硬规矩（踩过）
 
 1. 前台 `terminal` 超时超过 600s 会被提升为后台进程，随后带 `stdin is not a tty` 立刻死掉——脚本输出要重定向到 `.cache/`。

@@ -33,7 +33,11 @@
 
 * { box-sizing: border-box; }
 
-html, body { height: 100%; }
+/* body 高度交给内容（min-height 保证首屏铺满）。
+   早先是 html, body 都写 height: 100%，body 因此只有一屏高，顶栏 position: sticky 的
+   包含块被限在一屏内 —— 往下滚过一屏后顶栏就被一起推走了（窄屏上还能直接导致打不开目录抽屉）。 */
+html { height: 100%; }
+body { min-height: 100%; }
 
 body {
   margin: 0;

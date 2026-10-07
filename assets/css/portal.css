@@ -151,3 +151,16 @@ a:hover { text-decoration: underline; }
   font-size: 0.82rem;
 }
 .stale-banner kbd { background: rgba(255, 255, 255, 0.18); border-radius: 3px; padding: 0 4px; }
+
+/* ---------- 窄屏（手机竖屏）：留白收一收，按钮够手指点 ---------- */
+@media (max-width: 560px) {
+  .page { padding: 44px 18px 48px; }
+  .hero { margin-bottom: 32px; }
+  .hero h1 { font-size: 2.4rem; }
+  .hero h1::before { margin-right: 12px; width: 5px; }
+  .cards { gap: 16px; }
+  .card { padding: 16px 16px 14px; }
+  .card-actions { gap: 8px; }
+  /* iOS 的可点面积下限是 44px，入口页这两个按钮至少要过 36px */
+  .btn { padding: 8px 14px; }
+}

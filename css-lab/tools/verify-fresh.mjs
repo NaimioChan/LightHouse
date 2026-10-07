@@ -147,7 +147,7 @@ async function connect() {
 
 /* 页面上的排版探针：阅读块左右边缘的极差（旧版会是几十像素，新版是 0） */
 const PROBE = `(() => {
-  const blocks = [...document.querySelectorAll('.content .read > h1, .content .read > .md, .content .read > .tbl, .content .read > .case')];
+  const blocks = [...document.querySelectorAll('.content .read > h1, .content .read > .md, .content .read > .tbl-wrap, .content .read > .case')];
   const lefts = blocks.map(e => e.getBoundingClientRect().left);
   const rights = blocks.map(e => e.getBoundingClientRect().right);
   return {

@@ -72,6 +72,24 @@
 .side-back:hover { border-color: var(--accent); text-decoration: none; }
 .side-credit { margin: 0; font-size: .72rem; color: var(--muted); }
 
+/* 顶部「目录」按钮与遮罩：只在窄屏出现（见文件末尾的窄屏段） */
+.nav-btn {
+  display: none;
+  font-family: var(--sans); font-size: .84rem; line-height: 1.5;
+  padding: 5px 11px; border-radius: var(--r-sm);
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  cursor: pointer;
+}
+.nav-btn:hover { border-color: var(--accent-strong); color: var(--accent-strong); }
+.nav-backdrop { display: none; }
+
+/* 宽表：包一层横向滚动，免得把整页撑宽（窄屏下表格自己滚） */
+.tbl-wrap { max-width: 100%; }
+.tbl-wrap .tbl { margin: 0; }
+
+/* 抽屉底部的「重置进度」：只在窄屏出现（顶栏那个 >900px 时显示） */
+.side-reset { display: none; width: 100%; margin-bottom: 10px; }
+
 .main { flex: 1 1 auto; min-width: 0; padding: 36px 40px 140px; }
 .content { width: 100%; max-width: var(--work-max); margin-inline: auto; }
 
@@ -324,4 +342,59 @@ kbd {
   font-family: var(--sans); font-size: .68rem; line-height: 1.5;
   border: 1px solid var(--accent); border-radius: var(--r-sm);
   color: var(--accent-strong); vertical-align: 1px;
+}
+
+/* ---------- 窄屏（手机 / 竖屏平板）：目录栏收成抽屉 ----------
+   断点 900px 与练习卡的两栏断点一致。桌面端（>900px）这套规则一条都不生效。
+   宽度判据用 900px 而不是 768px：390px 的横屏手机（约 844px 宽）也要吃到抽屉形态。 */
+@media (max-width: 900px) {
+  .topbar { gap: 10px; padding: 0 12px; }
+  .nav-btn { display: block; flex: 0 0 auto; }
+  .topnav { display: none; }
+  .topbar-right { gap: 12px; font-size: .78rem; }
+  /* 进度条压窄，给「自动运行」腾出位置 */
+  .progress-mini-track { width: 56px; }
+  /* 重置进度在窄屏是低频危险操作，挪进抽屉底部，别占顶栏 */
+  #reset-progress { display: none; }
+
+  /* 侧栏改成从左侧滑出的抽屉：不占正文宽度，正文拿回整屏 */
+  .sidebar {
+    position: fixed; top: 56px; bottom: 0; left: 0; z-index: 45;
+    height: auto;
+    width: 82vw; max-width: 300px; flex: none;
+    padding: 18px 12px 28px;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    transform: translateX(-102%);
+    visibility: hidden;
+    transition: transform .22s ease, visibility .22s;
+    overscroll-behavior: contain;
+  }
+  body.nav-open .sidebar { transform: none; visibility: visible; }
+  .nav-backdrop {
+    display: block; position: fixed; inset: 56px 0 0; z-index: 40;
+    background: rgba(35, 32, 25, .38);
+    opacity: 0; pointer-events: none; transition: opacity .22s ease;
+  }
+  body.nav-open .nav-backdrop { opacity: 1; pointer-events: auto; }
+  /* 目录项在手机上要够手指点：44px 是 iOS 的可点面积下限 */
+  .nav-item { min-height: 44px; align-items: center; font-size: .9rem; }
+  .side-back { min-height: 44px; display: flex; align-items: center; justify-content: center; }
+
+  .main { padding: 20px 14px 96px; }
+
+  /* 手机浏览器（iOS Safari）在字号小于 16px 的输入控件上会自动放大页面 */
+  .editor-ta, .editor-hl { font-size: 1rem; }
+  .ex-grid .editor-cell { height: 240px; }
+  .pg-grid .editor-cell { height: 260px; }
+  .pg-grid .preview-box { height: 300px; }
+  .pg-grid .console-box { max-height: 140px; }
+  .example pre, .tbl { font-size: .8rem; }
+  /* 宽表在手机上自己横向滚动 */
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tbl { min-width: 100%; }
+
+  .modal { width: calc(100vw - 40px); max-width: none; }
+  .pager { flex-wrap: wrap; }
+  .side-reset { display: block; }
 }

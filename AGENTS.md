@@ -45,6 +45,9 @@
 9. **各座站的目录栏底部固定有两样东西**：回入口页的「← LightHouse 目录」按钮与一行 `© 2026 非茗 · Naimio`
    （`app.js` 的 `sideFoot()` + `app.css` 的 `.side-foot`）。改动侧栏时别把它们删掉；入口页的版权在
    `index.html` 的 `.foot .credit`。
+10. **手机版式四座站一致，契约在 `docs/04-mobile-layout.md`**：≤900px 目录栏收成抽屉（顶栏 `#nav-btn` +
+   `body.nav-open`）、顶栏只留「目录/进度/自动运行」、「重置进度」进抽屉、宽表包 `.tbl-wrap`、
+   编辑器字号 ≥16px。改一座就得改其余三座，改完各自跑 `tools/verify-ui.mjs`（含 390px 那一档）。
 
 ## 加一座新站
 
@@ -61,6 +64,9 @@ node tools/verify-manifest.mjs     # 清单与内容一致；入口页没写死�
 node tools/verify-all.mjs          # 各站的 node 侧校验（内容契约、括号配对、类型判题）
 node tools/verify-portal.mjs       # 真浏览器：入口页与各站入口页、进度读取、资源无 404、file:// 直开
 ```
+
+动过某座站的窄屏版式（`base.css` / `app.css` / `app.js` / `render.js` 的表格容器）后，还得在**那座目录**里跑
+`node tools/verify-ui.mjs --fast`——四座站的移动端形态契约与验收点见 `docs/04-mobile-layout.md`。
 
 改某一座站的内容后，还要在**那座目录**里跑它自己的验收（真浏览器行为校验，最权威）：
 
