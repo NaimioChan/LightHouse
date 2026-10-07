@@ -82,7 +82,6 @@ a:hover { text-decoration: underline; }
   letter-spacing: 0.01em;
 }
 .hero .intro {
-  max-width: 42em;
   margin: 0;
   color: var(--ink-soft);
   /* 断行交给浏览器的中文规则（默认 word-break: normal）：中文允许在任意两字之间断行，
