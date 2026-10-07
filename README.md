@@ -28,6 +28,10 @@
 合计 50 章 · 241 个练习 · 215 个示例。这些数字由 `tools/build-manifest.mjs` 从各站内容里读出来生成到
 `assets/js/manifest.js`，入口页只读这份清单；改动内容后重跑生成器，数字不会过期。
 
+![入口页](docs/screenshot-portal.png)
+
+（宽屏两列；窄屏一列见 `docs/screenshot-portal-narrow.png`。两张都是校验脚本 `node tools/verify-portal.mjs --shots` 里截的。）
+
 ## 目录结构
 
 ```
