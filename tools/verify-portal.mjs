@@ -27,6 +27,12 @@ const children = [];
 
 const LABS = build();
 
+/* 各站的渲染入口全局名（内容注册表是 <X>_CHAPTERS，渲染器是 <X>_render）——从 labs.json 读，不写死 */
+const RENDER_GLOBAL = Object.fromEntries(
+  JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'labs.json'), 'utf8'))
+    .map((l) => [l.dir, l.registry.replace('_CHAPTERS', '_render')]),
+);
+
 /* 各站的入口页都请求过 favicon，缺它只是 404 噪音，不算缺陷 */
 const isNoise = (line) => /favicon/.test(line);
 
@@ -126,6 +132,34 @@ async function checkPortal(cdp) {
     !LABS.some((l) => dom.sub.includes(l.title)) && !/HTML5|TypeScript|前端/.test(dom.sub), dom.sub);
   record('简介是一小段（≤140 字，不许堆介绍）', dom.intro.length > 20 && dom.intro.length <= 140, `${dom.intro.length} 字：${dom.intro}`);
 
+  /* 简介的断行：宽屏下两行，且除末行外每行都要用满——按标点硬断（word-break: keep-all）
+     会让第一行空掉四成、末尾多一行孤字，这里连行宽一起量 */
+  const introWrap = await cdp.eval(`(() => {
+    const p = document.querySelector('.hero .intro');
+    const node = p.firstChild;
+    const r = document.createRange();
+    const boxes = [];
+    for (let i = 0; i < node.data.length; i++) {
+      r.setStart(node, i); r.setEnd(node, i + 1);
+      const b = r.getBoundingClientRect();
+      boxes.push({ top: Math.round(b.top), left: b.left, right: b.right });
+    }
+    const lines = []; let cur = [], top = boxes[0].top;
+    for (const b of boxes) { if (Math.abs(b.top - top) > 2) { lines.push(cur); cur = []; top = b.top; } cur.push(b); }
+    lines.push(cur);
+    return {
+      count: lines.length,
+      used: lines.map(l => Math.round(l[l.length - 1].right - l[0].left)),
+      box: Math.round(p.getBoundingClientRect().width),
+    };
+  })()`);
+  const linesFull = introWrap.used.slice(0, -1).every((u) => u >= introWrap.box * 0.85);
+  record('宽屏下简介断成两行、每行都用满（不按标点提前换行）',
+    introWrap.count === 2 && linesFull, `${introWrap.count} 行：${introWrap.used.join('/')} px（行宽 ${introWrap.box}）`);
+
+  const footText = await cdp.eval("(document.querySelector('.foot') || {}).textContent || ''");
+  record('入口页页脚有版权行', footText.includes('© 2026 非茗 · Naimio'), footText.trim().slice(0, 60));
+
   LABS.forEach((lab, i) => {
     const d = dom.cards.find((x) => x.key === lab.key) || {};
     record(`${lab.title} 卡片规模数字与清单一致`,
@@ -212,6 +246,52 @@ async function checkLabs(cdp) {
     record(`${prefix} 页面没有未捕获错误`, seen.errs.length === 0, seen.errs.slice(0, 3).join(' ｜ '));
     const bad = cdp.failedRequests().filter((l) => !isNoise(l));
     record(`${prefix} 资源没有 404`, bad.length === 0, bad.slice(0, 3).join(' ｜ '));
+
+    /* 目录栏底部：回入口页的按钮 + 版权行（侧栏是静态骨架，每个路由都在） */
+    const foot = await cdp.eval(`(() => {
+      const rect = (el) => (el ? el.getBoundingClientRect() : null);
+      const back = document.querySelector('#sidebar .side-back');
+      const credit = document.querySelector('#sidebar .side-credit');
+      const lastNav = [...document.querySelectorAll('#sidebar a[data-ch]')].pop();
+      return {
+        backText: back ? back.textContent.trim() : null,
+        backHref: back ? back.getAttribute('href') : null,
+        backBottom: rect(back) ? Math.round(rect(back).bottom) : null,
+        sideBottom: Math.round(rect(document.querySelector('#sidebar')).bottom),
+        belowList: !!(back && lastNav && rect(back).top >= rect(lastNav).top),
+        creditText: credit ? credit.textContent.trim() : null,
+      };
+    })()`);
+    const resolved = foot.backHref ? new URL(foot.backHref, `${ctx.base}/${lab.entry}`).pathname : '';
+    record(`${prefix} 目录栏底部有回入口页的按钮`,
+      resolved === '/index.html' && /LightHouse/.test(foot.backText || ''), `${foot.backText} → ${resolved}`);
+    record(`${prefix} 按钮在最后一条章节链接之下（目录栏底部）`, foot.belowList === true,
+      `按钮底边 ${foot.backBottom} / 侧栏底边 ${foot.sideBottom}`);
+    record(`${prefix} 目录栏底部有版权行`, foot.creditText === '© 2026 非茗 · Naimio', String(foot.creditText));
+
+    /* 迷你 markdown：行内代码里的星号必须原样显示（js-lab ch02 的 `+ - * / %` 与 `**` 踩过这个坑） */
+    const probe = await cdp.eval(`(() => {
+      const R = window[${JSON.stringify(RENDER_GLOBAL[lab.dir])}];
+      if (!R || typeof R.md !== 'function') return null;
+      return R.md(${JSON.stringify('运算符 `+ - * / %` 与 `**` 都是符号。')});
+    })()`);
+    const codeTexts = typeof probe === 'string' ? probe.split('<code>').slice(1).map((s) => s.split('</code>')[0]) : [];
+    record(`${prefix} 行内代码里的星号不被当成强调标记`,
+      !!probe && codeTexts.includes('+ - * / %') && codeTexts.includes('**') && !probe.includes('<em>'),
+      String(probe).slice(0, 110));
+
+    if (lab.key === 'js') {
+      await navigate(cdp, `${ctx.base}/${lab.entry}?v=verify#ch02`);
+      await cdp.waitFor("document.querySelectorAll('.read .md code').length > 0", 20000).catch(() => {});
+      const op = await cdp.eval(`(() => {
+        const md = [...document.querySelectorAll('.read .md')].find((n) => n.textContent.indexOf('算术运算符') >= 0);
+        return md ? { html: md.innerHTML, text: md.textContent } : null;
+      })()`);
+      record('js-lab 第 2 章运算符文案原样渲染（不丢乘号、乘方号不变乘号）',
+        !!op && op.text.includes('算术运算符：+ - * / %（取余）和 **（乘方）。') && !op.html.includes('<em>'),
+        op ? op.text.slice(0, 90) : '没找到那一段');
+    }
+
     if (shots) await shot(cdp, 'lab-' + lab.key);
   }
 }

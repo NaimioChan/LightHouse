@@ -78,7 +78,18 @@
     pg.setAttribute('data-route-item', 'playground');
     pg.appendChild(R.el('span', 'nav-label', '练习场'));
     sb.appendChild(pg);
+    sb.appendChild(sideFoot());
     refreshChrome();
+  }
+
+  /* 目录栏底部：回 LightHouse 目录 + 版权（工具页在 tools/ 下，往回退一级） */
+  function sideFoot() {
+    var box = R.el('div', 'side-foot');
+    var back = R.el('a', 'side-back', '← LightHouse 目录');
+    back.href = /\/tools\/[^/]*$/.test(location.pathname) ? '../../index.html' : '../index.html';
+    box.appendChild(back);
+    box.appendChild(R.el('p', 'side-credit', '© 2026 非茗 · Naimio'));
+    return box;
   }
 
   function markActive(route) {

@@ -20,10 +20,13 @@
   /* ---------- 迷你 markdown（子集见契约文档） ---------- */
   function inline(s) {
     s = esc(s);
-    s = s.replace(/`([^`]+)`/g, function (_, c) { return '<code>' + c + '</code>'; });
+    /* 行内代码先摘出来占位：反引号里常出现 `*`（通配选择器、乘号），
+       直接跑强调规则会把代码里的星号当斜体标记吃掉（js-lab 的 `+ - * / %` 与 `**` 那段踩过这个坑） */
+    var codes = [];
+    s = s.replace(/`([^`]+)`/g, function (_, c) { codes.push(c); return '\u0000' + (codes.length - 1) + '\u0000'; });
     s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     s = s.replace(/(^|[\s（(])\*([^*\n]+)\*/g, '$1<em>$2</em>');
-    return s;
+    return s.replace(/\u0000(\d+)\u0000/g, function (_, i) { return '<code>' + codes[+i] + '</code>'; });
   }
 
   function md(text) {

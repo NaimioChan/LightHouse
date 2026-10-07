@@ -85,8 +85,9 @@ a:hover { text-decoration: underline; }
   max-width: 42em;
   margin: 0;
   color: var(--ink-soft);
-  /* 中文行内不按字拆词：只在标点处断行；真放不下时再由 overflow-wrap 兜底 */
-  word-break: keep-all;
+  /* 断行交给浏览器的中文规则（默认 word-break: normal）：中文允许在任意两字之间断行，
+     只在标点处断会让一句话被提前截断。早先这里是 word-break: keep-all，全宽下
+     简介在「编程贬值」后面空掉四成再换行、末尾多出一行孤字。 */
   overflow-wrap: anywhere;
 }
 
@@ -136,6 +137,7 @@ a:hover { text-decoration: underline; }
 /* ---------- 页脚与无脚本回退 ---------- */
 .foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
 .foot p { margin: 0; }
+.foot .credit { margin-top: 6px; }
 .noscript-note { color: var(--muted); font-size: 0.9rem; }
 
 /* 缓存提示条：与各训练场同款，只在检测到旧页面时出现一次 */

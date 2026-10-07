@@ -54,6 +54,23 @@
 .nav-item.done .nav-count { color: var(--sage); }
 .nav-item.active.done .nav-count { color: var(--panel); }
 .nav-sep { height: 1px; background: var(--line); margin: 14px 8px; }
+/* 目录栏底部：回 LightHouse 目录 + 版权。margin-top:auto 把它压到底（侧栏本身是滚动容器） */
+.side-foot {
+  margin-top: auto;
+  padding: 14px 10px 0;
+  border-top: 1px solid var(--line);
+}
+.side-back {
+  display: block;
+  padding: 5px 9px;
+  margin-bottom: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  font-size: .8rem;
+  color: var(--accent-strong);
+}
+.side-back:hover { border-color: var(--accent); text-decoration: none; }
+.side-credit { margin: 0; font-size: .72rem; color: var(--muted); }
 
 .main { flex: 1 1 auto; min-width: 0; padding: 36px 40px 140px; }
 .content { width: 100%; max-width: var(--work-max); margin-inline: auto; }

@@ -42,6 +42,9 @@
    改内容 schema 必须同时改契约（`docs/01-content-schema.md`）、校验器、渲染三处。
 7. **`run.bat` 必须纯 ASCII**（cmd 按 GBK 解析，中文注释会破坏批处理）。
 8. **中文文案**守 `anti-slop`：不写「值得注意的是」「综上所述」，不排比，不写总结式收尾。
+9. **各座站的目录栏底部固定有两样东西**：回入口页的「← LightHouse 目录」按钮与一行 `© 2026 非茗 · Naimio`
+   （`app.js` 的 `sideFoot()` + `app.css` 的 `.side-foot`）。改动侧栏时别把它们删掉；入口页的版权在
+   `index.html` 的 `.foot .credit`。
 
 ## 加一座新站
 
