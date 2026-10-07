@@ -55,5 +55,5 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 四个目录逐字节一致 | `diff -r --brief -x .git -x .cache <原目录> LightHouse/<目录>` | 四座全部「字节一致」 |
 | 内容规模与各站自报一致 | 各站 `node tools/verify-content.mjs` 与 `node tools/build-manifest.mjs` | 14/12/12/12 章、61/58/60/62 练习、52/50/36/77 示例，两边完全吻合 |
 | 设计令牌无拼写/对比度问题 | `npx -y -p @google/design.md designmd lint DESIGN.md` | 0 errors 0 warnings |
-| 入口页在三种宽度下对齐 | `node tools/verify-portal.mjs` | 71 项全过：2000/1200px 两列、760px 一列，同列卡片左右边缘极差 0px，三种宽度都没有横向溢出 |
+| 入口页在三种宽度下对齐 | `node tools/verify-portal.mjs` | 75 项全过：2000/1200px 两列、760px 一列，同列卡片左右边缘极差 0px，三种宽度都没有横向溢出；含 `file://` 直开的一轮 |
 | 四座站并入后仍各自通过自己的校验 | `node tools/verify-all.mjs --fast` | 10 支（内容契约、括号配对、类型判题与编译器自检）全过 |

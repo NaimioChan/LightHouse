@@ -11,7 +11,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { paths, startServer, startBrowser, waitHttp, connect, armErrorCollector, reporter, killAll, cacheDir, sleep } from './lib/cdp.mjs';
+import { ROOT, paths, startServer, startBrowser, waitHttp, connect, armErrorCollector, reporter, killAll, cacheDir, sleep } from './lib/cdp.mjs';
 import { build } from './build-manifest.mjs';
 
 const argv = process.argv.slice(2);
@@ -295,6 +295,25 @@ async function checkProgress(cdp) {
   record('测试用的进度键已还原', JSON.stringify(restored) === JSON.stringify(backup), JSON.stringify(restored).slice(0, 80));
 }
 
+/* ---------- 五、双击 index.html 的 file:// 路径 ---------- */
+async function checkFileMode(cdp) {
+  const url = 'file:///' + ROOT.replace(/\\/g, '/') + '/index.html';
+  await armErrorCollector(cdp);
+  await navigate(cdp, url);
+  await cdp.waitFor(`document.querySelectorAll('#cards .card').length === ${LABS.length}`, 20000).catch(() => {});
+  const seen = await cdp.eval(`(() => ({
+    cards: document.querySelectorAll('#cards .card').length,
+    banner: !!document.getElementById('stale-banner'),
+    lines: [...document.querySelectorAll('#cards .card .progress-line')].map(n => n.textContent.replace(/\\s+/g, ' ').trim()),
+    errs: window.__errs || [],
+  }))()`);
+  record('file:// 直开也能渲染出四张卡片', seen.cards === LABS.length, seen.cards + ' 张');
+  record('file:// 下不误报「缓存旧版本」横幅', seen.banner === false);
+  record('file:// 下进度读不到时不崩（照常显示文案）', seen.lines.length === LABS.length, seen.lines[0]);
+  record('file:// 下没有未捕获错误', seen.errs.length === 0, seen.errs.slice(0, 3).join(' ｜ '));
+  if (shots) await shot(cdp, 'portal-file');
+}
+
 /* ---------- 跑 ---------- */
 async function main() {
   children.push(startServer({}, HTTP_PORT));
@@ -311,6 +330,8 @@ async function main() {
   await checkLabs(cdp);
   console.log('\n=== 进度显示 ===');
   await checkProgress(cdp);
+  console.log('\n=== 离线 file:// 直开 ===');
+  await checkFileMode(cdp);
 }
 
 main()
