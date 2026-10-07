@@ -1,0 +1,93 @@
+/* verify-pair.mjs — 括号配对的纯逻辑校验，不起浏览器，秒级跑完。
+ *
+ * 用法：node tools/verify-pair.mjs
+ * 覆盖：开括号补对 / 选区包裹 / 闭括号跳过 / Backspace 成对删除 /
+ *       修饰键与输入法组合放行 / 引号与尖括号不插手 / 不修改入参。
+ * 浏览器里的真实按键路径由 tools/verify-ui.mjs 验，这里只管判定逻辑。
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+import { fileURLToPath } from 'node:url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+vm.runInThisContext(fs.readFileSync(path.join(root, 'assets/js/pair.js'), 'utf8'), { filename: 'pair.js' });
+const P = globalThis.JSLAB_pairs;
+
+let failures = 0;
+function check(name, got, want) {
+  const ok = JSON.stringify(got) === JSON.stringify(want);
+  if (!ok) failures++;
+  const detail = ok ? '' : `  — 期望 ${JSON.stringify(want)}，实际 ${JSON.stringify(got)}`;
+  console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail}`);
+}
+
+/* 敲键：返回判定结果的精简形态；null 表示「交给浏览器」 */
+const type = (key, value, start, end, extra = {}) =>
+  P.decide({ key, value, start, end: end == null ? start : end, ...extra });
+const back = (value, start, end, extra = {}) =>
+  P.decideBackspace({ key: 'Backspace', value, start, end: end == null ? start : end, ...extra });
+const edit = (value, start, end) => ({ value, start, end });
+
+/* ---------- 开括号 ---------- */
+check('空文本敲 ( 补出 ()', type('(', '', 0), edit('()', 1, 1));
+check('空文本敲 [ 补出 []', type('[', '', 0), edit('[]', 1, 1));
+check('空文本敲 { 补出 {}', type('{', '', 0), edit('{}', 1, 1));
+check('文本中间敲 ( 不吞掉后面的字', type('(', 'ab', 1), edit('a()b', 2, 2));
+check('文末敲 ( 补在末尾', type('(', 'foo', 3), edit('foo()', 4, 4));
+check('选中内容用括号包住', type('(', 'abc', 0, 3), edit('(abc)', 1, 4));
+check('选中内容用花括号包住', type('{', 'abc', 0, 3), edit('{abc}', 1, 4));
+check('多行选区也能包住', type('[', 'a\nb', 0, 3), edit('[a\nb]', 1, 4));
+check('中文内容包住不影响', type('(', '数字', 0, 2), edit('(数字)', 1, 3));
+
+/* ---------- 闭括号 ---------- */
+check('闭括号正好在光标后：跳过不重复', type(')', '()', 1), edit('()', 2, 2));
+check('闭方括号跳过', type(']', '[]', 1), edit('[]', 2, 2));
+check('闭花括号跳过', type('}', '{}', 1), edit('{}', 2, 2));
+check('嵌套时跳最内层', type(')', '(())', 2), edit('(())', 3, 3));
+check('闭括号对不上：交给浏览器', type(']', '()', 1), null);
+check('后面没有闭括号：交给浏览器', type(')', '', 0), null);
+check('闭括号后面是别的字符：交给浏览器', type(')', '(a', 1), null);
+check('有选区时敲闭括号：交给浏览器', type(')', '()', 0, 2), null);
+
+/* ---------- 不插手的输入 ---------- */
+check('普通字符不插手', type('a', '', 0), null);
+check('单引号不补', type("'", '', 0), null);
+check('双引号不补', type('"', '', 0), null);
+check('反引号不补', type('`', '', 0), null);
+check('左尖括号不补', type('<', '', 0), null);
+check('右尖括号不补', type('>', '', 0), null);
+check('Enter 不插手', type('Enter', 'ab', 1), null);
+check('Tab 不插手', type('Tab', 'ab', 1), null);
+check('Process（输入法中继键）不插手', type('Process', 'ab', 1), null);
+check('Ctrl+( 放行', type('(', '', 0, null, { ctrlKey: true }), null);
+check('Alt+( 放行', type('(', '', 0, null, { altKey: true }), null);
+check('Meta+( 放行', type('(', '', 0, null, { metaKey: true }), null);
+check('输入法组合期间敲 ( 放行', type('(', '', 0, null, { composing: true }), null);
+check('输入法组合期间敲 ) 也不跳', type(')', '()', 1, null, { composing: true }), null);
+
+/* ---------- Backspace ---------- */
+check('空括号中间 Backspace 删一对', back('()', 1), edit('', 0, 0));
+check('空方括号同样', back('[]', 1), edit('', 0, 0));
+check('空花括号同样', back('{}', 1), edit('', 0, 0));
+check('括号里有内容时只删一个字', back('(a)', 2), null);
+check('光标在闭括号之后照常删', back('(a)', 3), null);
+check('跨行的一对括号不误删', back('(\n)', 2), null);
+check('配不上对：交给浏览器', back('a)', 1), null);
+check('有选区：交给浏览器', back('()', 0, 2), null);
+check('文首：交给浏览器', back('()', 0), null);
+check('输入法组合期间 Backspace 放行', back('()', 1, null, { composing: true }), null);
+check('Ctrl+Backspace 放行', back('()', 1, null, { ctrlKey: true }), null);
+
+/* ---------- 纯函数：不许改入参 ---------- */
+{
+  const st = { key: '(', value: 'ab', start: 1, end: 1 };
+  P.decide(st);
+  check('decide 不修改入参', st, { key: '(', value: 'ab', start: 1, end: 1 });
+  const st2 = { key: 'Backspace', value: '()', start: 1, end: 1 };
+  P.decideBackspace(st2);
+  check('decideBackspace 不修改入参', st2, { key: 'Backspace', value: '()', start: 1, end: 1 });
+}
+
+console.log(`\n${failures === 0 ? '✓ 全部通过' : '✗ ' + failures + ' 项失败'}`);
+process.exit(failures === 0 ? 0 : 1);

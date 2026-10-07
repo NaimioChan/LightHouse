@@ -1,0 +1,4 @@
+# 校验脚本的临时产物（截图、毒化副本等，由 node tools/verify-*.mjs 自动重建）
+.cache/
+*.log
+__pycache__/

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTML5 训练场 — 从页面骨架到表单、媒体与存储</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#home">HTML5 训练场</a>
+  <nav class="topnav">
+    <a href="#home" data-route="home">总览</a>
+    <a href="#playground" data-route="playground">练习场</a>
+  </nav>
+  <div class="topbar-right">
+    <label class="switch" title="停止输入后自动渲染并检验">
+      <input type="checkbox" id="auto-run" checked> 自动运行
+    </label>
+    <div class="progress-mini" title="总进度">
+      <div class="progress-mini-track"><div class="progress-mini-fill" id="progress-fill"></div></div>
+      <span id="progress-text">0/0</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="reset-progress">重置进度</button>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script src="assets/js/harness.js"></script>
+<script src="assets/js/preview.js"></script>
+<script src="assets/js/highlight.js"></script>
+<script src="assets/js/pair.js"></script>
+<script src="assets/js/render.js"></script>
+<script src="content/ch01-skeleton.js"></script>
+<script src="content/ch02-text-lists.js"></script>
+<script src="content/ch03-links-images.js"></script>
+<script src="content/ch04-tables.js"></script>
+<script src="content/ch05-forms-basics.js"></script>
+<script src="content/ch06-forms-validation.js"></script>
+<script src="content/ch07-media.js"></script>
+<script src="content/ch08-canvas.js"></script>
+<script src="content/ch09-svg.js"></script>
+<script src="content/ch10-modern-tags.js"></script>
+<script src="content/ch11-data-and-dom.js"></script>
+<script src="content/ch12-storage.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

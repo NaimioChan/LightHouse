@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>HTML5 训练场 · 自测台（工具页，不面向读者）</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body>
+<!--
+  工具页：给 tools/verify-browser.mjs 用。它按 ?files=a.js,b.js 载入内容文件，
+  再调用 app.js 挂出来的 window.H5LAB_SELFTEST()。这样验证脚本不必和 index.html 的
+  章节清单重复维护一份，也不会因为章节文件还没写进去而 404。
+-->
+<header class="topbar">
+  <span class="brand">自测台</span>
+  <div class="topbar-right"><label class="switch"><input type="checkbox" id="auto-run" checked> 自动运行</label>
+    <div class="progress-mini"><div class="progress-mini-track"><div class="progress-mini-fill" id="progress-fill"></div></div><span id="progress-text">0/0</span></div>
+    <button class="btn btn-ghost btn-sm" id="reset-progress">重置进度</button>
+  </div>
+</header>
+<div class="shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script src="../assets/js/harness.js"></script>
+<script src="../assets/js/preview.js"></script>
+<script src="../assets/js/highlight.js"></script>
+<script src="../assets/js/render.js"></script>
+<script>
+  window.__LOADED = [];
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var files = (q.get('files') || '').split(',').filter(Boolean);
+    for (var i = 0; i < files.length; i++) {
+      document.write('<script src="../content/' + files[i] + '"><\/script>');
+      window.__LOADED.push(files[i]);
+    }
+  })();
+</script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

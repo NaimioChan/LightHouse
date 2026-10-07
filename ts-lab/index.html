@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TypeScript 训练场 — 从类型注解到 strict 报错</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#home">TypeScript 训练场</a>
+  <nav class="topnav">
+    <a href="#home" data-route="home">总览</a>
+    <a href="#playground" data-route="playground">练习场</a>
+  </nav>
+  <div class="topbar-right">
+    <label class="switch" title="停止输入后自动判题">
+      <input type="checkbox" id="auto-run" checked> 自动判题
+    </label>
+    <div class="progress-mini" title="总进度">
+      <div class="progress-mini-track"><div class="progress-mini-fill" id="progress-fill"></div></div>
+      <span id="progress-text">0/0</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="reset-progress">重置进度</button>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<div class="boot-strip" id="boot-strip">正在加载 TypeScript 编译器（约 12 MB，只需一次）……</div>
+
+<script src="assets/js/format.js"></script>
+<script src="assets/js/judge.js"></script>
+<script src="assets/js/harness.js"></script>
+<script src="assets/js/sandbox.js"></script>
+<script src="assets/js/highlight.js"></script>
+<script src="assets/js/pair.js"></script>
+<script src="assets/js/render.js"></script>
+<script src="content/ch01-annotations.js"></script>
+<script src="content/ch02-objects-functions.js"></script>
+<script src="content/ch03-narrowing.js"></script>
+<script src="content/ch04-arrays-tuples.js"></script>
+<script src="content/ch05-interfaces.js"></script>
+<script src="content/ch06-generics.js"></script>
+<script src="content/ch07-utility-types.js"></script>
+<script src="content/ch08-classes.js"></script>
+<script src="content/ch09-guards-assertions.js"></script>
+<script src="content/ch10-enums-runtime.js"></script>
+<script src="content/ch11-strict-errors.js"></script>
+<script src="content/ch12-modules-async.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
