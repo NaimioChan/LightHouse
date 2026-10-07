@@ -1,0 +1,659 @@
+/* assets/js/manifest.js — 自动生成，不要手改：node tools/build-manifest.mjs
+ * 来源：tools/labs.json（文字）+ 各训练场 content/*.js（章节、练习 id、数量）。
+ * 校验：node tools/verify-manifest.mjs 会重新生成一次，与本文件逐字节比对。 */
+(function (root) {
+  root.LIGHTHOUSE_LABS = [
+    {
+      "key": "html5",
+      "dir": "html5-lab",
+      "title": "HTML5 训练场",
+      "entry": "html5-lab/index.html",
+      "progressKey": "h5lab.v1.passed",
+      "accentToken": "lab-html5",
+      "prereq": "零基础",
+      "want": "写页面结构、表单与媒体元素",
+      "blurb": "页面骨架、语义分区、表单、媒体与图形。标签写对了，后面的 CSS 与 JS 才有落点。",
+      "learn": [
+        "文档骨架与语义分区",
+        "文本、列表、表格",
+        "链接、图片与媒体元素",
+        "表单与原生校验",
+        "Canvas、SVG 与本地存储"
+      ],
+      "note": "",
+      "stats": {
+        "chapters": 12,
+        "exercises": 58,
+        "examples": 50,
+        "tests": 242
+      },
+      "chapters": [
+        {
+          "id": "ch01",
+          "title": "第 1 章 · 文档骨架与语义分区",
+          "exercises": [
+            "ex01-1",
+            "ex01-2",
+            "ex01-3",
+            "ex01-4"
+          ]
+        },
+        {
+          "id": "ch02",
+          "title": "第 2 章 · 文本与列表",
+          "exercises": [
+            "ex02-1",
+            "ex02-2",
+            "ex02-3",
+            "ex02-4",
+            "ex02-5"
+          ]
+        },
+        {
+          "id": "ch03",
+          "title": "第 3 章 · 链接与图片",
+          "exercises": [
+            "ex03-1",
+            "ex03-2",
+            "ex03-3",
+            "ex03-4",
+            "ex03-5"
+          ]
+        },
+        {
+          "id": "ch04",
+          "title": "第 4 章 · 表格",
+          "exercises": [
+            "ex04-1",
+            "ex04-2",
+            "ex04-3",
+            "ex04-4",
+            "ex04-5"
+          ]
+        },
+        {
+          "id": "ch05",
+          "title": "第 5 章 · 表单基础",
+          "exercises": [
+            "ex05-1",
+            "ex05-2",
+            "ex05-3",
+            "ex05-4",
+            "ex05-5"
+          ]
+        },
+        {
+          "id": "ch06",
+          "title": "第 6 章 · 表单校验与更多控件",
+          "exercises": [
+            "ex06-1",
+            "ex06-2",
+            "ex06-3",
+            "ex06-4",
+            "ex06-5"
+          ]
+        },
+        {
+          "id": "ch07",
+          "title": "第 7 章 · 音频与视频",
+          "exercises": [
+            "ex07-1",
+            "ex07-2",
+            "ex07-3",
+            "ex07-4",
+            "ex07-5"
+          ]
+        },
+        {
+          "id": "ch08",
+          "title": "第 8 章 · Canvas 绘图",
+          "exercises": [
+            "ex08-1",
+            "ex08-2",
+            "ex08-3",
+            "ex08-4",
+            "ex08-5"
+          ]
+        },
+        {
+          "id": "ch09",
+          "title": "第 9 章 · 内联 SVG",
+          "exercises": [
+            "ex09-1",
+            "ex09-2",
+            "ex09-3",
+            "ex09-4",
+            "ex09-5"
+          ]
+        },
+        {
+          "id": "ch10",
+          "title": "第 10 章 · 现代标签",
+          "exercises": [
+            "ex10-1",
+            "ex10-2",
+            "ex10-3",
+            "ex10-4",
+            "ex10-5",
+            "ex10-6"
+          ]
+        },
+        {
+          "id": "ch11",
+          "title": "第 11 章 · data 属性与 DOM 交互",
+          "exercises": [
+            "ex11-1",
+            "ex11-2",
+            "ex11-3",
+            "ex11-4"
+          ]
+        },
+        {
+          "id": "ch12",
+          "title": "第 12 章 · 浏览器存储",
+          "exercises": [
+            "ex12-1",
+            "ex12-2",
+            "ex12-3",
+            "ex12-4"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "css",
+      "dir": "css-lab",
+      "title": "CSS 训练场",
+      "entry": "css-lab/index.html",
+      "progressKey": "csslab.v1.passed",
+      "accentToken": "lab-css",
+      "prereq": "认得出 HTML 标签",
+      "want": "让页面好看、能布局、能适配窄屏",
+      "blurb": "选择器命中、层叠与优先级、盒模型、flex 与 grid、变量、响应式与状态样式。样式不生效时能自己找出原因。",
+      "learn": [
+        "选择器与命中",
+        "层叠、优先级与继承",
+        "盒模型与 display",
+        "flex 与 grid 布局",
+        "变量、嵌套与响应式",
+        "过渡、状态与无障碍"
+      ],
+      "note": "",
+      "stats": {
+        "chapters": 12,
+        "exercises": 60,
+        "examples": 36,
+        "tests": 182
+      },
+      "chapters": [
+        {
+          "id": "ch01",
+          "title": "第 1 章 · 选择器与命中",
+          "exercises": [
+            "ex01-1",
+            "ex01-2",
+            "ex01-3",
+            "ex01-4",
+            "ex01-5"
+          ]
+        },
+        {
+          "id": "ch02",
+          "title": "第 2 章 · 盒模型与尺寸",
+          "exercises": [
+            "ex02-1",
+            "ex02-2",
+            "ex02-3",
+            "ex02-4",
+            "ex02-5"
+          ]
+        },
+        {
+          "id": "ch03",
+          "title": "第 3 章 · 层叠、优先级与继承",
+          "exercises": [
+            "ex03-1",
+            "ex03-2",
+            "ex03-3",
+            "ex03-4",
+            "ex03-5"
+          ]
+        },
+        {
+          "id": "ch04",
+          "title": "第 4 章 · 显示方式与定位",
+          "exercises": [
+            "ex04-1",
+            "ex04-2",
+            "ex04-3",
+            "ex04-4",
+            "ex04-5"
+          ]
+        },
+        {
+          "id": "ch05",
+          "title": "第 5 章 · flex 弹性布局",
+          "exercises": [
+            "ex05-1",
+            "ex05-2",
+            "ex05-3",
+            "ex05-4",
+            "ex05-5"
+          ]
+        },
+        {
+          "id": "ch06",
+          "title": "第 6 章 · grid 网格布局",
+          "exercises": [
+            "ex06-1",
+            "ex06-2",
+            "ex06-3",
+            "ex06-4",
+            "ex06-5"
+          ]
+        },
+        {
+          "id": "ch07",
+          "title": "第 7 章 · 变量、嵌套与 :has()",
+          "exercises": [
+            "ex07-1",
+            "ex07-2",
+            "ex07-3",
+            "ex07-4",
+            "ex07-5"
+          ]
+        },
+        {
+          "id": "ch08",
+          "title": "第 8 章 · 排版、颜色与背景",
+          "exercises": [
+            "ex08-1",
+            "ex08-2",
+            "ex08-3",
+            "ex08-4",
+            "ex08-5"
+          ]
+        },
+        {
+          "id": "ch09",
+          "title": "第 9 章 · 响应式与媒体查询",
+          "exercises": [
+            "ex09-1",
+            "ex09-2",
+            "ex09-3",
+            "ex09-4",
+            "ex09-5"
+          ]
+        },
+        {
+          "id": "ch10",
+          "title": "第 10 章 · 容器查询与工具类",
+          "exercises": [
+            "ex10-1",
+            "ex10-2",
+            "ex10-3",
+            "ex10-4",
+            "ex10-5"
+          ]
+        },
+        {
+          "id": "ch11",
+          "title": "第 11 章 · 过渡与动画",
+          "exercises": [
+            "ex11-1",
+            "ex11-2",
+            "ex11-3",
+            "ex11-4",
+            "ex11-5"
+          ]
+        },
+        {
+          "id": "ch12",
+          "title": "第 12 章 · 状态、表单与无障碍",
+          "exercises": [
+            "ex12-1",
+            "ex12-2",
+            "ex12-3",
+            "ex12-4",
+            "ex12-5"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "js",
+      "dir": "js-lab",
+      "title": "JS 训练场",
+      "entry": "js-lab/index.html",
+      "progressKey": "jslab.v1.passed",
+      "accentToken": "lab-js",
+      "prereq": "HTML 与 CSS 各过一遍",
+      "want": "让页面动起来、处理数据与事件",
+      "blurb": "值、函数、数组对象、闭包、类、错误处理、异步与 DOM 操作。练习在沙箱里跑，断言逐条给出期望与实际。",
+      "learn": [
+        "值、变量与类型",
+        "分支、循环与函数",
+        "数组、对象与字符串",
+        "闭包、类与错误处理",
+        "异步与 Promise",
+        "DOM 操作与常用套路"
+      ],
+      "note": "",
+      "stats": {
+        "chapters": 14,
+        "exercises": 61,
+        "examples": 52,
+        "tests": 211
+      },
+      "chapters": [
+        {
+          "id": "ch01",
+          "title": "第 1 章 · 值、变量与类型",
+          "exercises": [
+            "ex01-1",
+            "ex01-2",
+            "ex01-3",
+            "ex01-4"
+          ]
+        },
+        {
+          "id": "ch02",
+          "title": "第 2 章 · 运算符与分支",
+          "exercises": [
+            "ex02-1",
+            "ex02-2",
+            "ex02-3",
+            "ex02-4",
+            "ex02-5"
+          ]
+        },
+        {
+          "id": "ch03",
+          "title": "第 3 章 · 循环与迭代",
+          "exercises": [
+            "ex03-1",
+            "ex03-2",
+            "ex03-3",
+            "ex03-4"
+          ]
+        },
+        {
+          "id": "ch04",
+          "title": "第 4 章 · 函数",
+          "exercises": [
+            "ex04-1",
+            "ex04-2",
+            "ex04-3",
+            "ex04-4"
+          ]
+        },
+        {
+          "id": "ch05",
+          "title": "第 5 章 · 数组方法",
+          "exercises": [
+            "ex05-1",
+            "ex05-2",
+            "ex05-3",
+            "ex05-4",
+            "ex05-5"
+          ]
+        },
+        {
+          "id": "ch06",
+          "title": "第 6 章 · 对象与解构",
+          "exercises": [
+            "ex06-1",
+            "ex06-2",
+            "ex06-3",
+            "ex06-4"
+          ]
+        },
+        {
+          "id": "ch07",
+          "title": "第 7 章 · 字符串、数字与 Math",
+          "exercises": [
+            "ex07-1",
+            "ex07-2",
+            "ex07-3",
+            "ex07-4",
+            "ex07-5"
+          ]
+        },
+        {
+          "id": "ch08",
+          "title": "第 8 章 · 闭包、高阶函数与递归",
+          "exercises": [
+            "ex08-1",
+            "ex08-2",
+            "ex08-3",
+            "ex08-4"
+          ]
+        },
+        {
+          "id": "ch09",
+          "title": "第 9 章 · 类、原型与 this",
+          "exercises": [
+            "ex09-1",
+            "ex09-2",
+            "ex09-3",
+            "ex09-4"
+          ]
+        },
+        {
+          "id": "ch10",
+          "title": "第 10 章 · 错误处理与调试",
+          "exercises": [
+            "ex10-1",
+            "ex10-2",
+            "ex10-3",
+            "ex10-4"
+          ]
+        },
+        {
+          "id": "ch11",
+          "title": "第 11 章 · 异步：Promise 与 async/await",
+          "exercises": [
+            "ex11-1",
+            "ex11-2",
+            "ex11-3",
+            "ex11-4"
+          ]
+        },
+        {
+          "id": "ch12",
+          "title": "第 12 章 · DOM 与事件",
+          "exercises": [
+            "ex12-1",
+            "ex12-2",
+            "ex12-3",
+            "ex12-4"
+          ]
+        },
+        {
+          "id": "ch13",
+          "title": "第 13 章 · 现代工具箱",
+          "exercises": [
+            "ex13-1",
+            "ex13-2",
+            "ex13-3",
+            "ex13-4",
+            "ex13-5"
+          ]
+        },
+        {
+          "id": "ch14",
+          "title": "第 14 章 · 熟练篇：模式与陷阱",
+          "exercises": [
+            "ex14-1",
+            "ex14-2",
+            "ex14-3",
+            "ex14-4",
+            "ex14-5"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ts",
+      "dir": "ts-lab",
+      "title": "TypeScript 训练场",
+      "entry": "ts-lab/index.html",
+      "progressKey": "tslab.v1.passed",
+      "accentToken": "lab-ts",
+      "prereq": "会写基本 JS",
+      "want": "给代码加类型、看懂 strict 报错",
+      "blurb": "类型注解与推断、收窄、泛型、工具类型、strict 报错与模块。判题打在真的类型检查器上，报错就是你以后会遇到的那条。",
+      "learn": [
+        "类型注解与推断",
+        "对象、函数与收窄",
+        "数组、元组与接口",
+        "泛型与工具类型",
+        "类、守卫与断言",
+        "strict 报错与模块"
+      ],
+      "note": "首次打开要加载约 12 MB 的类型检查器，只需一次；之后每次判题 2–8 ms。",
+      "stats": {
+        "chapters": 12,
+        "exercises": 62,
+        "examples": 77,
+        "tests": 219
+      },
+      "chapters": [
+        {
+          "id": "ch01",
+          "title": "第 1 章 · 类型注解与推断",
+          "exercises": [
+            "ex01-1",
+            "ex01-2",
+            "ex01-3",
+            "ex01-4",
+            "ex01-5"
+          ]
+        },
+        {
+          "id": "ch02",
+          "title": "第 2 章 · 对象与函数类型",
+          "exercises": [
+            "ex02-1",
+            "ex02-2",
+            "ex02-3",
+            "ex02-4",
+            "ex02-5"
+          ]
+        },
+        {
+          "id": "ch03",
+          "title": "第 3 章 · 联合与收窄",
+          "exercises": [
+            "ex03-1",
+            "ex03-2",
+            "ex03-3",
+            "ex03-4",
+            "ex03-5"
+          ]
+        },
+        {
+          "id": "ch04",
+          "title": "第 4 章 · 数组、元组与索引签名",
+          "exercises": [
+            "ex04-1",
+            "ex04-2",
+            "ex04-3",
+            "ex04-4",
+            "ex04-5",
+            "ex04-6"
+          ]
+        },
+        {
+          "id": "ch05",
+          "title": "第 5 章 · 接口与类型别名",
+          "exercises": [
+            "ex05-1",
+            "ex05-2",
+            "ex05-3",
+            "ex05-4",
+            "ex05-5"
+          ]
+        },
+        {
+          "id": "ch06",
+          "title": "第 6 章 · 泛型",
+          "exercises": [
+            "ex06-1",
+            "ex06-2",
+            "ex06-3",
+            "ex06-4",
+            "ex06-5"
+          ]
+        },
+        {
+          "id": "ch07",
+          "title": "第 7 章 · 工具类型",
+          "exercises": [
+            "ex07-1",
+            "ex07-2",
+            "ex07-3",
+            "ex07-4",
+            "ex07-5"
+          ]
+        },
+        {
+          "id": "ch08",
+          "title": "第 8 章 · 类",
+          "exercises": [
+            "ex08-1",
+            "ex08-2",
+            "ex08-3",
+            "ex08-4",
+            "ex08-5"
+          ]
+        },
+        {
+          "id": "ch09",
+          "title": "第 9 章 · 类型守卫与断言",
+          "exercises": [
+            "ex09-1",
+            "ex09-2",
+            "ex09-3",
+            "ex09-4",
+            "ex09-5"
+          ]
+        },
+        {
+          "id": "ch10",
+          "title": "第 10 章 · 枚举与运行时的类型",
+          "exercises": [
+            "ex10-1",
+            "ex10-2",
+            "ex10-3",
+            "ex10-4",
+            "ex10-5"
+          ]
+        },
+        {
+          "id": "ch11",
+          "title": "第 11 章 · strict 下的常见报错",
+          "exercises": [
+            "ex11-1",
+            "ex11-2",
+            "ex11-3",
+            "ex11-4",
+            "ex11-5",
+            "ex11-6"
+          ]
+        },
+        {
+          "id": "ch12",
+          "title": "第 12 章 · 异步与 Promise 的类型",
+          "exercises": [
+            "ex12-1",
+            "ex12-2",
+            "ex12-3",
+            "ex12-4",
+            "ex12-5"
+          ]
+        }
+      ]
+    }
+  ];
+})(typeof window !== 'undefined' ? window : globalThis);

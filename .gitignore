@@ -1,0 +1,5 @@
+# 本地缓存：截图、校验输出、探针页、毒化副本（各训练场的 tools/verify-*.mjs 自动重建）
+.cache/
+__pycache__/
+*.pyc
+*.log

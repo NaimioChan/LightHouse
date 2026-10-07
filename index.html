@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LightHouse — 前端演练场总目录</title>
+<link rel="stylesheet" href="assets/css/portal.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="index.html">LightHouse</a>
+  <span class="topbar-sub">前端演练场 · 总目录</span>
+  <div class="topbar-right">
+    <div class="mini-progress" title="四座训练场的练习通过进度（记在这台浏览器里）">
+      <span>总进度</span>
+      <span class="mini-track"><span class="mini-fill" id="mini-fill"></span></span>
+      <span id="mini-text">0 / 0</span>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <h1>四座训练场，一个入口</h1>
+  <div class="lede">
+    <p>同一个系列的四座离线演练场：HTML5、CSS、JS、TypeScript。每座的节奏都一样——顺着章节读，示例当场运行，练习自己动手写，停手自动判题，断言逐条告诉你期望与实际。没有注册，没有后端，进度只存在你自己的浏览器里。</p>
+    <p>双击 <code>run.bat</code> 起一个本地服务（页面关掉窗口就跟着关），或者直接双击各个训练场自己的 <code>index.html</code>。四座站的代码与文档都在本目录下，各自可独立运行、独立校验。</p>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <h2>该进哪一座</h2>
+  <table class="pick">
+    <thead>
+      <tr><th scope="col">你想做的事</th><th scope="col">进哪座训练场</th><th scope="col">前置</th></tr>
+    </thead>
+    <tbody id="pick-body">
+      <tr>
+        <td>不确定先后顺序，想先看选型依据</td>
+        <td class="to"><a href="docs/前端演练场-方向评估与实测.md">方向评估与实测（仓库内文档）</a></td>
+        <td class="pre">—</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="pick-note">四座站的语言基础是递进的，但每一座都能单独读：只想补 CSS 就进 CSS，不必从 HTML5 开始。</p>
+
+  <h2>目录</h2>
+  <div class="cards" id="cards"></div>
+
+  <noscript>
+    <div class="noscript">
+      <h2>目录（这个页面需要 JavaScript 才能显示进度）</h2>
+      <ul>
+        <li><a href="html5-lab/index.html">HTML5 训练场</a> — 文档骨架、语义分区、表单、媒体、Canvas/SVG、本地存储</li>
+        <li><a href="css-lab/index.html">CSS 训练场</a> — 选择器与命中、层叠、盒模型、flex/grid、变量、响应式、状态样式</li>
+        <li><a href="js-lab/index.html">JS 训练场</a> — 值与类型、函数、数组对象、闭包、类、错误、异步、DOM</li>
+        <li><a href="ts-lab/index.html">TypeScript 训练场</a> — 类型注解与推断、收窄、泛型、工具类型、strict 报错</li>
+      </ul>
+    </div>
+  </noscript>
+
+  <footer class="foot">
+    <p>四座训练场都是纯静态站：无构建、无依赖、无 CDN，双击就能跑。用户代码跑在 <code>sandbox="allow-scripts"</code> 的 iframe 里，断言清单由页面内的判题内核给出。</p>
+    <p>进度只写 <code>localStorage</code>，四个站各自一个键；哪座站的数据都不出这台机器。数字口径与校验方式见 <code>README.md</code> 与 <code>docs/</code>。</p>
+  </footer>
+
+</main>
+
+<script src="assets/js/manifest.js"></script>
+<script src="assets/js/portal.js"></script>
+</body>
+</html>
