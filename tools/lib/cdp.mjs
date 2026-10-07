@@ -112,12 +112,19 @@ export class CDP {
   /** 本轮收集到的失败请求（>=400 或直接失败），返回 ['404 url', ...] */
   failedRequests() {
     const out = [];
+    /* requestId → URL：loadingFailed 事件本身不带 URL，得从 requestWillBeSent 反查 */
+    const urlById = new Map();
+    for (const e of this.events) {
+      if (e.method === 'Network.requestWillBeSent') urlById.set(e.params.requestId, e.params.request.url);
+    }
     for (const e of this.events) {
       if (e.method === 'Network.responseReceived' && e.params.response.status >= 400) {
         out.push(`${e.params.response.status} ${e.params.response.url}`);
       }
       if (e.method === 'Network.loadingFailed') {
-        out.push(`FAILED ${e.params.errorText} ${e.params.requestId}`);
+        const url = urlById.get(e.params.requestId) || '(未知请求)';
+        const canceled = e.params.canceled ? '（被导航取消）' : '';
+        out.push(`FAILED ${e.params.errorText}${canceled} ${e.params.type} ${url}`);
       }
     }
     return out;

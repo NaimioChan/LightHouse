@@ -20,6 +20,11 @@
 - 也必须能直接双击 `index.html` 打开。因此：**禁止 ES module、fetch、CDN、字体文件**（file:// 下全部失效）。
 - 内容校验（改任何 `content/*.js` 后必跑）：`node tools/verify-content.mjs`
   —— 每个练习的参考答案必须全部通过、起始代码必须至少挂一条断言、每个示例的 `expect` 必须与实际输出逐字一致。
+- 写多行字符串（`[...].join('\n')`）时注意转义层级：写成 `'\\n'` 会得到**字面反斜杠 + n**，
+  CSS/HTML 不会换行、直接失效。**这类错误 `verify-content` 抓不到**（练习的断言可能照样过），
+  唯一的现场是 `verify-browser` 里示例自检挂掉、或页面里样式整段不生效。写完一章先肉眼看一眼 `join('\n')`。
+- 指针类练习（第 15 章）：`new PointerEvent("pointermove", { clientX, clientY })` 会正常进监听器，
+  可以「派发 → 读 DOM/文本」。但 `:hover` 合成不出来，别指望它。
 - 浏览器端验收：`node tools/verify-ui.mjs`（真实输入管线 + 三档视口排版 + 全量自测；`--fast` 跳过全量自测）。
   其中包含括号配对的真实按键路径（`Input.dispatchKeyEvent`）。
 - 括号配对逻辑（`assets/js/pair.js`）：纯函数、浏览器与 node 共用，改判定规则后跑 `node tools/verify-pair.mjs`（秒级，44 项）。

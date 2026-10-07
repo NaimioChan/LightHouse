@@ -11,6 +11,14 @@
 几何断言辅助（`rect/px/tracks/near`）与两阶段判题（改窄这一帧的宽度后重跑一遍断言，用来判媒体查询与响应式）。
 色板同源，强调色换成 CSS 官方的蓝。
 
+判题能读到什么、读不到什么（第 13–15 章踩实的边界，写新内容前先看这一段）：
+
+- 读得到：`mix-blend-mode`、`background-blend-mode`、`isolation`、`mask-image`、`clip-path`、`filter`、
+  `animation-name`、`animation-range`、`perspective`，以及 `document.styleSheets` 里的规则文本。
+- 读不到：`animation-timeline` 只回显成 `scroll()` / `view()`，括号里的参数丢了；
+  滚动驱动动画的进度在预览帧里恒为 0（帧不接收真实滚动事件），`scrollTop` 改了也不驱动样式。
+  涉及滚动的练习只判「时间轴与关键帧挂对了没有」，并在正文里把这条限制讲给读者。
+
 ## 运行与验证
 
 - 双击 `run.bat`：跑 `python serve.py`（起静态服务 + 打开浏览器）。**页面关掉后服务自己退出，终端窗口跟着关**
@@ -25,6 +33,10 @@
 - 也必须能直接双击 `index.html` 打开。因此：**禁止 ES module、fetch、CDN、字体文件**（file:// 下全部失效）。
 - 内容静态校验（改任何 `content/*.js` 后必跑，秒级）：`node tools/verify-content.mjs`
   —— 必填字段、id 唯一、断言 ≥2 条且用了内置辅助、hints ≥1、starter ≠ solution、两阶段断言的阶段划分。
+- **多行字符串的转义层级是这里踩过的最贵的一脚**：`[...].join('\n')` 若写成 `join('\\n')`，
+  字符串里是**字面反斜杠 + n**，注入到 `<style>` 里就成了一条废规则——**整段 CSS 静默失效**。
+  结构校验抓不到它（练习断言可能照样过），只有 `verify-browser.mjs` 的示例自检会挂。
+  写完一章先确认 CSS/HTML 栏里出现的是真换行。
 - 内容行为校验（真浏览器里跑，慢但唯一说得上话的）：`node tools/verify-browser.mjs`
   —— 每个练习的参考解必须全过、起始代码必须至少挂一条、每个示例的 `checks` 必须全过。
   它可以 `--chapter ch05` 只跑一章。同一条路径在页面 console 里也能手动跑：`await CSSLAB_SELFTEST()`。
