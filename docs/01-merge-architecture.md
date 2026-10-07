@@ -1,6 +1,6 @@
 # 01 · 这次合并做了什么，没做什么
 
-四座训练场原先各自一个仓库、各自一份 `serve.py` / `run.bat` / `README.md`，彼此不认识。合并成 LightHouse 后
+这四座训练场原先各自一个仓库、各自一份 `serve.py` / `run.bat` / `README.md`，彼此不认识。合并成 LightHouse 后
 形状是「一个门厅 + 四间屋」，这次改动只在门厅层面，屋子里一个字节都没动。
 
 ## 目录级合并，不是引擎级合并
@@ -53,4 +53,7 @@
 3. `assets/css/portal.css` 里加它的识别色两个变量（浅支 + 深支，深支要在纸白上过 WCAG AA 4.5:1），
    `DESIGN.md` 的 `colors` 与 `card-rule-*` / `card-button-*` 组件同步加。
 4. `node tools/build-manifest.mjs`，然后 `node tools/verify-manifest.mjs` 与 `node tools/verify-portal.mjs`。
-5. 根 `serve.py` 的 `LAB_DIRS` 加上目录名（`/__whoami` 的站名识别靠它）。
+5. 根 `serve.py` 不用改：它的站名识别表（`/__whoami` 靠它）与启动时打印的目录清单都是从 `tools/labs.json` 读的。
+6. 站数多起来之后（大约六座以上）再考虑在 `tools/labs.json` 里加一个 `group` 字段按领域分组、入口页分组显示；
+   现在只有一批站，加了就是没人用的代码，**别提前建**。
+7. 新站的判题若需要服务端（例如 Rust），形状就不一样了：先读 `docs/03-languages-and-scale.md`。

@@ -1,8 +1,8 @@
-/* verify-portal.mjs — 入口页 + 四座站入口页的真浏览器验收（起根 serve.py + 无头 Edge，走 CDP）。
+/* verify-portal.mjs — 入口页 + 各座站入口页的真浏览器验收（起根 serve.py + 无头 Edge，走 CDP）。
  *
  * 验的东西：令牌入口与 302 跳转、HTML 里资源 URL 的令牌改写、按 Referer 认站名的 /__whoami、
- * 四张卡片的数字与清单一致、选哪个表、三种宽度下的对齐与列数、四座站入口页的章节数与编辑器、
- * 全站没有 404、以及「读进度 → 显示已通过 / 继续第 N 章」这条分支（测试前后备份还原，不碰真实进度）。
+ * 入口页的标题/副标题/简介与卡片内容是否与清单一致、三种宽度下的对齐与列数、各座站入口页的章节数与编辑器、
+ * 全站没有 404、以及「读进度 → 显示已通过 / 继续第 N 章」这条分支（测试前后备份还原），最后走一遍 file://。
  *
  * 用法：
  *   node tools/verify-portal.mjs                # 全部
@@ -27,7 +27,7 @@ const children = [];
 
 const LABS = build();
 
-/* 四座站的入口页都请求过 favicon，缺它只是 404 噪音，不算缺陷 */
+/* 各站的入口页都请求过 favicon，缺它只是 404 噪音，不算缺陷 */
 const isNoise = (line) => /favicon/.test(line);
 
 async function navigate(cdp, url) {
@@ -65,6 +65,8 @@ async function checkServer() {
   record('入口页 HTML 里资源 URL 带上本轮令牌',
     portal.status === 200 && portal.text.includes(`assets/css/portal.css?v=${token}`) && portal.text.includes(`assets/js/manifest.js?v=${token}`),
     `token=${token}`);
+  record('服务出去的入口页不限定领域与站数（不写死站名/目录名/前端）',
+    !LABS.some((l) => portal.text.includes(l.title) || portal.text.includes(l.dir)) && !/前端|四座|四个站/.test(portal.text));
 
   const labDir = await head('/css-lab/');
   record('目录请求 302 到该站 index.html', labDir.status === 302 && /^\/css-lab\/index\.html\?v=.+/.test(labDir.location || ''), `${labDir.status} ${labDir.location}`);
@@ -97,7 +99,7 @@ async function checkPortal(cdp) {
   await armErrorCollector(cdp);
   await navigate(cdp, ctx.base + '/index.html?v=verify');
   await cdp.waitFor(`document.querySelectorAll('#cards .card').length === ${LABS.length}`, 20000);
-  record('入口页渲染出四张卡片', true, `${LABS.length} 张`);
+  record('入口页渲染出每座站一张卡片', true, `${LABS.length} 张`);
 
   const dom = await cdp.eval(`(() => {
     const cards = [...document.querySelectorAll('#cards .card')];
@@ -120,7 +122,8 @@ async function checkPortal(cdp) {
   })()`);
 
   record('大标题就是 LightHouse', dom.hero === 'LightHouse', dom.hero);
-  record('副标题点出四座站', /HTML5/.test(dom.sub) && /CSS/.test(dom.sub) && /JS/.test(dom.sub) && /TypeScript/.test(dom.sub), dom.sub);
+  record('副标题保持领域中立（不列语言、不列站名）',
+    !LABS.some((l) => dom.sub.includes(l.title)) && !/HTML5|TypeScript|前端/.test(dom.sub), dom.sub);
   record('简介是一小段（≤140 字，不许堆介绍）', dom.intro.length > 20 && dom.intro.length <= 140, `${dom.intro.length} 字：${dom.intro}`);
 
   LABS.forEach((lab, i) => {
@@ -130,8 +133,8 @@ async function checkPortal(cdp) {
     record(`${lab.title} 卡片的一句话与 labs.json 一致`, d.blurb === lab.blurb, d.blurb);
     record(`${lab.title} 卡片的入口链接指向它自己的目录`, d.enter === lab.entry && d.title === lab.entry, String(d.enter));
   });
-  record('四张卡片的顶边颜色互不相同', new Set(dom.cards.map((d) => d.accent)).size === LABS.length, dom.cards.map((d) => d.accent).join(' / '));
-  record('页面按学习顺序排列四座站', dom.cards.map((c) => c.key).join(',') === LABS.map((l) => l.key).join(','), dom.cards.map((c) => c.key).join(','));
+  record('每张卡片的顶边颜色互不相同', new Set(dom.cards.map((d) => d.accent)).size === LABS.length, dom.cards.map((d) => d.accent).join(' / '));
+  record('页面按清单顺序排列各座站', dom.cards.map((c) => c.key).join(',') === LABS.map((l) => l.key).join(','), dom.cards.map((c) => c.key).join(','));
 
   const noProgress = await cdp.eval(`document.querySelectorAll('[data-continue]').length`);
   console.log(`  （当前浏览器配置里已有进度的站：${noProgress} 个）`);
@@ -169,7 +172,7 @@ async function checkPortal(cdp) {
     const aligned = (rows) => rows.length < 2 || (spread(rows.map((c) => c.l)) <= 2 && spread(rows.map((c) => c.r)) <= 2);
     record(`${w}px 宽：卡片网格 ${expectCols} 列`, m.cols === expectCols, `${m.cols} 列`);
     record(`${w}px 宽：同列卡片左右边缘对齐（极差 ≤ 2px）`, aligned(col1) && aligned(col2), `左 ${lefts.join('/')}　右 ${rights.join('/')}`);
-    record(`${w}px 宽：四张卡片等宽（极差 ≤ 2px）`, spread(widths) <= 2, `宽 ${widths.join('/')}`);
+    record(`${w}px 宽：每张卡片等宽（极差 ≤ 2px）`, spread(widths) <= 2, `宽 ${widths.join('/')}`);
     /* 同一行（top 相同的那些卡）按钮底边要齐；一列布局时每行只有一张，跳过 */
     const rowsByTop = {};
     m.cards.forEach((c) => { (rowsByTop[c.t] = rowsByTop[c.t] || []).push(c.btnBottom); });
@@ -184,7 +187,7 @@ async function checkPortal(cdp) {
   await sleep(200);
 }
 
-/* ---------- 三、四座站自己的入口页 ---------- */
+/* ---------- 三、各站自己的入口页 ---------- */
 async function checkLabs(cdp) {
   for (const lab of LABS) {
     await armErrorCollector(cdp);
@@ -247,7 +250,7 @@ async function checkProgress(cdp) {
     widths: [...document.querySelectorAll('#cards .card .track > span')].map(n => n.style.width),
   }))()`);
   record('没有进度时不出现「继续」按钮', blank.cont === 0, blank.cont + ' 个');
-  record('没有进度时四张卡片都写「还没开始」', blank.lines.every((t) => t.includes('还没开始')), blank.lines[0]);
+  record('没有进度时每张卡片都写「还没开始」', blank.lines.every((t) => t.includes('还没开始')), blank.lines[0]);
   record('没有进度时进度条宽度为 0', blank.widths.every((w) => w === '0%'), blank.widths.join(' '));
 
   /* 造 3 条进度 */
@@ -305,7 +308,7 @@ async function checkFileMode(cdp) {
     lines: [...document.querySelectorAll('#cards .card .progress-line')].map(n => n.textContent.replace(/\\s+/g, ' ').trim()),
     errs: window.__errs || [],
   }))()`);
-  record('file:// 直开也能渲染出四张卡片', seen.cards === LABS.length, seen.cards + ' 张');
+  record('file:// 直开也能渲染出全部卡片', seen.cards === LABS.length, seen.cards + ' 张');
   record('file:// 下不误报「缓存旧版本」横幅', seen.banner === false);
   record('file:// 下进度读不到时不崩（照常显示文案）', seen.lines.length === LABS.length, seen.lines[0]);
   record('file:// 下没有未捕获错误', seen.errs.length === 0, seen.errs.slice(0, 3).join(' ｜ '));
@@ -324,7 +327,7 @@ async function main() {
   const cdp = await connect(ctx);
   console.log('\n=== 入口页 ===');
   await checkPortal(cdp);
-  console.log('\n=== 四座训练场入口页 ===');
+  console.log('\n=== 各座训练场入口页 ===');
   await checkLabs(cdp);
   console.log('\n=== 进度显示 ===');
   await checkProgress(cdp);

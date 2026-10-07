@@ -1,10 +1,10 @@
 /* portal.css — 入口页样式。色值与字体以 DESIGN.md 为唯一来源。
  *
- * 纸色、墨色、线色、字体、圆角与四座训练场完全一致（那边是各自的 base.css）；
- * 入口页自己的强调色是灯塔金，四座站各自的颜色只出现在对应卡片上。
+ * 纸色、墨色、线色、字体、圆角与各座训练场一致（它们各自有自己的 base.css）；
+ * 入口页自己的强调色是灯塔金，每座站的颜色只出现在对应卡片上。
  */
 :root {
-  /* 纸与墨（与四座训练场同值） */
+  /* 纸与墨（与各座训练场同值） */
   --ink: #232019;
   --ink-soft: #4a453a;
   --muted: #6b6558;
@@ -16,7 +16,8 @@
   --accent: #c08a2e;          /* 装饰：品牌竖条、进度条填充、hover 描边 */
   --accent-strong: #8a5a00;   /* 承载文字：按钮实底、小字、链接 */
 
-  /* 四座训练场的识别色（装饰用）与承载文字用的深支，取自各自 base.css */
+  /* 各座训练场的识别色（装饰用）与承载文字用的深支，取自各自 base.css；
+     新增一座站时在这里加两条变量，并在 DESIGN.md 的 colors 里同步 */
   --lab-html5: #d25319;  --lab-html5-strong: #b04a16;
   --lab-css: #2965f1;    --lab-css-strong: #2456c8;
   --lab-js: #c15f3c;     --lab-js-strong: #b4522f;
@@ -24,7 +25,6 @@
 
   --serif: "Source Han Serif SC", "Noto Serif SC", "Times New Roman", Times, serif;
   --sans: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
-  --mono: "Cascadia Code", Consolas, "Courier New", monospace;
 
   --r-sm: 4px;
   --r-lg: 14px;
@@ -136,8 +136,7 @@ a:hover { text-decoration: underline; }
 /* ---------- 页脚与无脚本回退 ---------- */
 .foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
 .foot p { margin: 0; }
-.plain { margin: 0; padding-left: 20px; }
-.plain li { margin: 4px 0; }
+.noscript-note { color: var(--muted); font-size: 0.9rem; }
 
 /* 缓存提示条：与各训练场同款，只在检测到旧页面时出现一次 */
 .stale-banner {

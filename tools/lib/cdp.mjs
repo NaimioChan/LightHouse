@@ -1,6 +1,6 @@
 /* tools/lib/cdp.mjs — 起根 serve.py、起无头 Edge、连 CDP 的那一套，给入口页的验收脚本用。
  *
- * 与四座站各自的同名文件是同一份骨架，差别只有两处：这里起的是仓库根的 serve.py（端口 8876 起），
+ * 与各站各自的同名文件是同一份骨架，差别只有两处：这里起的是仓库根的 serve.py（端口 8876 起），
  * 环境变量前缀是 LIGHTHOUSE_。同一台机器上并行跑两个验收脚本时用环境变量错开端口：
  *   LIGHTHOUSE_HTTP_PORT / LIGHTHOUSE_CDP_PORT
  * Edge 的 --user-data-dir 必须带端口号：共用一个 profile 时第二个实例起不来或抢调试端口。

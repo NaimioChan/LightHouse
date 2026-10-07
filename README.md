@@ -1,27 +1,29 @@
 # LightHouse
 
-四座前端训练场——HTML5、CSS、JS、TypeScript——合并成一个离线静态站，一个入口页当作总目录。
+一个入口页 + 若干座各自独立的离线演练场。每座站都是同一套做法：顺着章节读 → 示例当场运行 → 练习自己动手写 →
+停手自动判题 → 断言逐条给出期望与实际。没有注册，没有后端，没有构建步骤，进度只存在你自己的浏览器里。
 
-每座站都是同一套节奏：顺着章节读 → 示例当场运行 → 练习自己动手写 → 停手自动判题 → 断言逐条给出期望与实际。
-没有注册，没有后端，没有构建步骤，进度只存在你自己的浏览器里。
+仓库对「有几座站、都是什么领域」不作假设：加一座新站 = 新建目录 + 在 `tools/labs.json` 里加一条
+（步骤见 `docs/01-merge-architecture.md`）。目前是 HTML5、CSS、JS、TypeScript 四座；往后要加别的语言
+（包括需要服务端判题的）该怎么走，见 `docs/03-languages-and-scale.md`。
 
 ## 怎么打开
 
 | 方式 | 做法 |
 |---|---|
-| 在线看（推荐） | **https://naimiochan.github.io/LightHouse/** —— 四座站都在这里，进度照样记（同一域名下） |
+| 在线看（推荐） | **https://naimiochan.github.io/LightHouse/** —— 各座站都在这里，进度照样记（同一域名下） |
 | 起本地服务 | 双击 `run.bat`，浏览器打开 `http://127.0.0.1:8876/index.html?v=<每轮不同的令牌>`；关掉页面后命令行窗口自己关 |
-| 完全离线 | 双击 `index.html`（`file://` 直开，四座站都支持） |
+| 完全离线 | 双击 `index.html`（`file://` 直开，每座站都支持） |
 | 只跑某一座站 | 进那座目录双击它自己的 `run.bat`（端口 8877–8880），互不干扰 |
 
-**在线就够了**：站点没有任何后端，GitHub Pages 上跑的就是这套文件，四座站同域，入口页一样读得到进度。
+**在线就够了**：站点没有任何后端，GitHub Pages 上跑的就是这套文件，各座站在同一个域名下，入口页一样读得到进度。
 本地服务只在三种情况下有用——没有网、在改内容想立刻看到效果、或者要跑校验脚本（`tools/` 里的东西要 node 与本地服务）。
 
 入口页按每座站自己的进度显示「已通过 N / M」，并按「第一个没做完的章」给出「继续 · 第 N 章」。
 
-## 四座训练场
+## 已有的演练场
 
-| 训练场 | 规模 | 教什么 | 前置 | 目录 |
+| 站 | 规模 | 教什么 | 前置 | 目录 |
 |---|---|---|---|---|
 | HTML5 训练场 | 12 章 · 58 练习 · 50 示例 · 242 断言 | 文档骨架与语义分区、文本/列表/表格、链接与媒体、表单与校验、Canvas/SVG、本地存储 | 零基础 | `html5-lab/` |
 | CSS 训练场 | 12 章 · 60 练习 · 36 示例 · 182 断言 | 选择器命中、层叠与优先级、盒模型、flex 与 grid、变量与响应式、过渡与状态 | 认得出 HTML 标签 | `css-lab/` |
@@ -41,30 +43,30 @@
 LightHouse/
 ├─ index.html                 入口页（总目录）
 ├─ assets/css/portal.css      入口页样式（设计令牌的唯一来源是 DESIGN.md）
-├─ assets/js/manifest.js      生成的清单：四座站的规模、章节、进度键（别手改）
+├─ assets/js/manifest.js      生成的清单：各站的规模、章节、进度键（别手改）
 ├─ assets/js/portal.js        入口页逻辑：渲染卡片 + 读各站进度
 ├─ serve.py  run.bat          根服务：一个端口服务全部，页面关掉窗口跟着关
 ├─ tools/
-│  ├─ labs.json               四座站的文字（标题、简介、前置、学习点、颜色令牌名）
+│  ├─ labs.json               各站的文字（标题、一句话、进度键、颜色令牌名）
 │  ├─ build-manifest.mjs      清单生成器
 │  ├─ verify-manifest.mjs     清单与内容逐字节对账
-│  ├─ verify-all.mjs          四座站的 node 侧校验（内容契约、括号配对、类型判题）
-│  ├─ verify-portal.mjs       真浏览器验收：入口页 + 四座站入口页 + 进度分支
+│  ├─ verify-all.mjs          各站的 node 侧校验（内容契约、括号配对、类型判题）
+│  ├─ verify-portal.mjs       真浏览器验收：入口页 + 各站入口页 + 进度分支
 │  └─ lib/cdp.mjs             起服务、起无头 Edge、连 CDP 的公共骨架
-├─ docs/                      合并架构说明、校验分层、方向评估与实测数据
+├─ docs/                      合并架构、校验分层、语言与规模、方向评估与实测数据
 ├─ html5-lab/  css-lab/  js-lab/  ts-lab/
 └─ DESIGN.md  AGENTS.md
 ```
 
-四座站在并入时**一个字节都没改**（并入前用 `diff -r` 逐字节比对过）。它们各自带 `AGENTS.md`、`DESIGN.md`、
-内容契约、校验脚本与自己的 `serve.py`，可以单独拿出来跑；本次合并只加了门厅，没有动屋子（见 `docs/01-merge-architecture.md`）。
+这四座站在并入时**一个字节都没改**（并入前用 `diff -r` 逐字节比对过）。它们各自带 `AGENTS.md`、`DESIGN.md`、
+内容契约、校验脚本与自己的 `serve.py`，可以单独拿出来跑；合并只加了门厅，没有动屋子（见 `docs/01-merge-architecture.md`）。
 
 ## 校验
 
 ```bash
-node tools/verify-manifest.mjs     # 清单是否与内容同步（重算一遍逐字节比对）
-node tools/verify-all.mjs          # 四座站的 node 侧校验，含各站 serve.py 的关窗即退
-node tools/verify-portal.mjs       # 真浏览器：入口页与四座站入口页、进度显示、资源无 404
+node tools/verify-manifest.mjs     # 清单是否与内容同步、入口页有没有写死某一座站（重算一遍逐字节比对）
+node tools/verify-all.mjs          # 各站的 node 侧校验，含各站 serve.py 的关窗即退
+node tools/verify-portal.mjs       # 真浏览器：入口页与各站入口页、进度显示、资源无 404、file:// 直开
 ```
 
 改过某一座站的内容或引擎后，还要在那座目录里跑它自己的真浏览器验收（最权威，也最慢）：
@@ -82,8 +84,8 @@ cd js-lab && node tools/verify-ui.mjs      # 另外三座：verify-browser.mjs /
 - **判题不是编译器级完备的**：JS/HTML/CSS 的练习跑在 `sandbox="allow-scripts"` 的 iframe 里，
   死循环会被 5 秒超时掐掉（页面会提示「可能是循环没写终止条件」），异步示例最多等 1.5 秒。
   控制台输出格式与 DevTools 不完全一致。
-- **入口页的目录需要 JavaScript**（四座站本身也需要）。关掉 JS 时页面里有一段 `<noscript>` 静态链接，照样进得去。
-- **四座站的引擎没有合并**，代码有重复（四份高亮/编辑器逻辑）。它们已经各自演化出不同能力，
+- **入口页的目录需要 JavaScript**：关掉 JS 时页面只剩标题、简介与一行提示；每座站的 `index.html` 仍可直接打开。
+- **各座站的引擎没有合并**，代码有重复（每座站一份高亮/编辑器逻辑）。它们已经各自演化出不同能力，
   强行统一是纯粹的回归风险；要不要抽公共内核是另一件事，见 `docs/01-merge-architecture.md`。
 - **进度只看得到同一浏览器**：存在 `localStorage`，换浏览器或清缓存就回到零。入口页只读，不提供重置
   （重置在每座站自己的顶栏里）。

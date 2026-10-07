@@ -1,4 +1,4 @@
-/* portal.js — 入口页：按 manifest.js 渲染四座训练场，并读它们各自记在本地存储里的进度。
+/* portal.js — 入口页：按 manifest.js 渲染各座训练场，并读它们各自记在本地存储里的进度。
  *
  * 只读：不写 localStorage，不改任何训练场的数据。进度只用来显示「你上次停在哪」。
  */
@@ -91,7 +91,7 @@
     return card;
   }
 
-  /* ---------- 保活与缓存提示：与四座训练场同款（只在本地 serve.py 下生效） ---------- */
+  /* ---------- 保活与缓存提示：与各座训练场同款（只在本地 serve.py 下生效） ---------- */
   function staleBanner(tag) {
     if (document.getElementById('stale-banner')) return;
     var b = el('div', 'stale-banner');

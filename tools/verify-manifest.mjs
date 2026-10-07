@@ -39,28 +39,31 @@ for (const lab of labs) {
   record(`${lab.title} 颜色令牌在 portal.css 与 DESIGN.md 里都有`,
     css.includes(`--${lab.accentToken}:`) && css.includes(`--${lab.accentToken}-strong:`) && design.includes(`${lab.accentToken}:`),
     lab.accentToken);
-  record(`${lab.title} 进度键与四座站源码一致`,
+  record(`${lab.title} 进度键与各站源码一致`,
     fs.readFileSync(path.join(ROOT, lab.dir, 'assets', 'js', 'app.js'), 'utf8').includes(`'${lab.progressKey}'`),
     lab.progressKey);
 }
 
 const keys = labs.map((l) => l.progressKey);
-record('四座站的进度键互不重复', new Set(keys).size === keys.length, keys.join(' / '));
+record(`${labs.length} 座训练场的进度键互不重复`, new Set(keys).size === keys.length, keys.join(' / '));
 
-/* 入口页不许写死数字：改了内容而入口页没跟着动，是最容易发生的事 */
+/* 入口页不许写死任何一座站：加站、改名都不该动 index.html。
+   这条同时挡住「前端/四个」这类限定——演练场不止这四个，也不止前端。 */
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 for (const lab of labs) {
-  const stat = `${lab.stats.chapters} 章`;
-  record(`index.html 里没有写死的「${stat}」`, !html.includes(stat), lab.title);
+  record(`index.html 里没有写死「${lab.title}」`, !html.includes(lab.title));
+  record(`index.html 里没有写死目录名 ${lab.dir}`, !html.includes(lab.dir));
+  record(`index.html 里没有写死的「${lab.stats.chapters} 章」`, !html.includes(`${lab.stats.chapters} 章`));
 }
+record('index.html 里没有「前端 / 四个 / 四座」这类限定词',
+  !/前端|四个|四座/.test(html.replace(/<!--[\s\S]*?-->/g, '')), '入口页对演练场的数量与领域保持中立');
 
 const total = labs.reduce((a, l) => a + l.stats.exercises, 0);
 record('练习总数合理（>0 且各站都有练习）', total > 0 && labs.every((l) => l.stats.exercises > 0), `${total} 个`);
 
-/* 根 serve.py 的 whoami 站名识别表必须覆盖四座站 */
+/* 根 serve.py 的站名识别表必须来自清单，不许写死某一批站 */
 const serve = fs.readFileSync(path.join(ROOT, 'serve.py'), 'utf8');
-for (const lab of labs) {
-  record(`serve.py 的 LAB_DIRS 里有 ${lab.dir}`, new RegExp(`LAB_DIRS\\s*=\\s*\\([^)]*'${lab.dir}'`).test(serve));
-}
+record('serve.py 的站名识别从 tools/labs.json 读（不写死）',
+  /labs\.json/.test(serve) && !/\('(html5-lab|css-lab|js-lab|ts-lab)'/.test(serve));
 
 process.exit(finish());

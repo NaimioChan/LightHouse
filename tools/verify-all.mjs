@@ -1,4 +1,4 @@
-/* verify-all.mjs — 把四座训练场里「不需要浏览器」的那几支校验跑一遍，汇总结果。
+/* verify-all.mjs — 把各座训练场里「不需要浏览器」的那几支校验跑一遍，汇总结果。
  *
  * 覆盖：内容契约（字段、参考答案、起始代码必须挂断言、示例输出逐字比对）、编辑器括号配对、
  * ts-lab 的类型判题与编译器自检、以及各站自带 serve.py 的关窗即退（verify-quit.mjs）。
@@ -62,7 +62,7 @@ for (const station of PLAN) {
 }
 
 const total = log.length;
-console.log(`\n四座站共 ${total} 支校验：${failed === 0 ? '全部通过' : failed + ' 支失败（完整输出在 .cache/）'}`);
+console.log(`\n各站共 ${total} 支校验：${failed === 0 ? '全部通过' : failed + ' 支失败（完整输出在 .cache/）'}`);
 if (failed) {
   console.log('失败明细：');
   for (const l of log.filter((x) => x.code !== 0)) console.log(`  ${l.dir}/tools/${l.script}（退出码 ${l.code}）`);
