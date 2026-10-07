@@ -1,6 +1,6 @@
 # AGENTS.md — LightHouse 项目铁律
 
-一个入口页 + 若干座各自独立的离线演练场（目前是 HTML5 / CSS / JS / TypeScript 四座）。改这个仓库之前先读完本文件。
+一个入口页 + 若干座各自独立的离线演练场（目前是 HTML5 / CSS / JS / TypeScript / Vue 3 五座）。改这个仓库之前先读完本文件。
 
 ## 这个仓库是什么
 
@@ -8,7 +8,7 @@
   只做两件事：说清这里有哪些站，把访问者送进去（顺带按各站自己的进度显示「继续第 N 章」）。
   **保持简洁是硬要求**：大标题 + 副标题 + 一段简介 + 卡片，别再往里加板块（见 `DESIGN.md` 的 Do's and Don'ts）。
 - **各座训练场**（`html5-lab/` `css-lab/` `js-lab/` `ts-lab/`，以后会增加）：各自完整自洽的离线静态站，
-  含 `assets/ content/ tools/ docs/ AGENTS.md DESIGN.md serve.py run.bat`。这四座并入时**一个字节都没改**。
+  含 `assets/ content/ tools/ docs/ AGENTS.md DESIGN.md serve.py run.bat`。前四座并入时**一个字节都没改**；`vue-lab/` 是并入后新建的第五座（同样自洽，只是不经过「字节保真搬运」这一步）。
 - **合并是目录级的，不是引擎级的**：各站的引擎（各自的 `harness.js` / `sandbox.js` / `render.js` …）保持独立。
   它们已经各自演化出不同能力（HTML/CSS 判几何、TS 走真类型检查器），强行统一是纯粹的回归风险。
 - **入口页对「有几座站、都是什么领域」保持中立**：站名、目录名、语言列表、章节数一律不进 `index.html`，
@@ -45,7 +45,7 @@
 9. **各座站的目录栏底部固定有两样东西**：回入口页的「← LightHouse 目录」按钮与一行 `© 2026 非茗 · Naimio`
    （`app.js` 的 `sideFoot()` + `app.css` 的 `.side-foot`）。改动侧栏时别把它们删掉；入口页的版权在
    `index.html` 的 `.foot .credit`。
-10. **手机版式四座站一致，契约在 `docs/04-mobile-layout.md`**：≤900px 目录栏收成抽屉（顶栏 `#nav-btn` +
+10. **手机版式五座站一致，契约在 `docs/04-mobile-layout.md`**：≤900px 目录栏收成抽屉（顶栏 `#nav-btn` +
    `body.nav-open`）、顶栏只留「目录/进度/自动运行」、「重置进度」进抽屉、宽表包 `.tbl-wrap`、
    编辑器字号 ≥16px。改一座就得改其余三座，改完各自跑 `tools/verify-ui.mjs`（含 390px 那一档）。
 
@@ -66,7 +66,7 @@ node tools/verify-portal.mjs       # 真浏览器：入口页与各站入口页�
 ```
 
 动过某座站的窄屏版式（`base.css` / `app.css` / `app.js` / `render.js` 的表格容器）后，还得在**那座目录**里跑
-`node tools/verify-ui.mjs --fast`——四座站的移动端形态契约与验收点见 `docs/04-mobile-layout.md`。
+`node tools/verify-ui.mjs --fast`——各座站的移动端形态契约与验收点见 `docs/04-mobile-layout.md`。
 
 改某一座站的内容后，还要在**那座目录**里跑它自己的验收（真浏览器行为校验，最权威）：
 

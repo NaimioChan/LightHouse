@@ -19,6 +19,8 @@ colors:
   lab-js-strong: "#B4522F"
   lab-ts: "#3178C6"
   lab-ts-strong: "#2563A8"
+  lab-vue: "#42B883"
+  lab-vue-strong: "#35785F"
 typography:
   h1:
     fontFamily: Source Han Serif SC
@@ -94,6 +96,9 @@ components:
   card-rule-ts:
     backgroundColor: "{colors.lab-ts}"
     height: 3px
+  card-rule-vue:
+    backgroundColor: "{colors.lab-vue}"
+    height: 3px
   card-button-html5:
     backgroundColor: "{colors.lab-html5-strong}"
     textColor: "{colors.panel}"
@@ -111,6 +116,11 @@ components:
     padding: 5px
   card-button-ts:
     backgroundColor: "{colors.lab-ts-strong}"
+    textColor: "{colors.panel}"
+    rounded: "{rounded.sm}"
+    padding: 5px
+  card-button-vue:
+    backgroundColor: "{colors.lab-vue-strong}"
     textColor: "{colors.panel}"
     rounded: "{rounded.sm}"
     padding: 5px

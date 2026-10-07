@@ -22,6 +22,8 @@
   --lab-css: #2965f1;    --lab-css-strong: #2456c8;
   --lab-js: #c15f3c;     --lab-js-strong: #b4522f;
   --lab-ts: #3178c6;     --lab-ts-strong: #2563a8;
+  /* Vue 的品牌绿在纸白上只有 2.15:1，只做装饰；承载文字用深支 #35785f（4.52:1） */
+  --lab-vue: #42b883;    --lab-vue-strong: #35785f;
 
   --serif: "Source Han Serif SC", "Noto Serif SC", "Times New Roman", Times, serif;
   --sans: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;

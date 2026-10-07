@@ -161,10 +161,10 @@
       "blurb": "选择器命中、层叠与优先级、盒模型、flex 与 grid、变量与响应式",
       "note": "",
       "stats": {
-        "chapters": 12,
-        "exercises": 60,
-        "examples": 36,
-        "tests": 182
+        "chapters": 15,
+        "exercises": 72,
+        "examples": 43,
+        "tests": 219
       },
       "chapters": [
         {
@@ -298,6 +298,36 @@
             "ex12-4",
             "ex12-5"
           ]
+        },
+        {
+          "id": "ch13",
+          "title": "第 13 章 · 混合模式与遮罩",
+          "exercises": [
+            "ex13-1",
+            "ex13-2",
+            "ex13-3",
+            "ex13-4"
+          ]
+        },
+        {
+          "id": "ch14",
+          "title": "第 14 章 · 滚动驱动动画",
+          "exercises": [
+            "ex14-1",
+            "ex14-2",
+            "ex14-3",
+            "ex14-4"
+          ]
+        },
+        {
+          "id": "ch15",
+          "title": "第 15 章 · 滤镜与 SVG 滤镜",
+          "exercises": [
+            "ex15-1",
+            "ex15-2",
+            "ex15-3",
+            "ex15-4"
+          ]
         }
       ]
     },
@@ -311,10 +341,10 @@
       "blurb": "值、函数、数组对象、闭包与类、异步、DOM",
       "note": "",
       "stats": {
-        "chapters": 14,
-        "exercises": 61,
-        "examples": 52,
-        "tests": 211
+        "chapters": 15,
+        "exercises": 65,
+        "examples": 54,
+        "tests": 223
       },
       "chapters": [
         {
@@ -460,6 +490,16 @@
             "ex14-3",
             "ex14-4",
             "ex14-5"
+          ]
+        },
+        {
+          "id": "ch15",
+          "title": "第 15 章 · 指针与动效编排",
+          "exercises": [
+            "ex15-1",
+            "ex15-2",
+            "ex15-3",
+            "ex15-4"
           ]
         }
       ]
@@ -612,6 +652,144 @@
             "ex12-3",
             "ex12-4",
             "ex12-5"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "vue",
+      "dir": "vue-lab",
+      "title": "Vue 3 训练场",
+      "entry": "vue-lab/index.html",
+      "progressKey": "vuelab.v1.passed",
+      "accentToken": "lab-vue",
+      "blurb": "单文件组件、响应式、条件与循环、表单、组件通信、组合式函数",
+      "note": "首次打开要加载约 1 MB 的 Vue 与单文件组件编译器，只需一次。",
+      "stats": {
+        "chapters": 12,
+        "exercises": 48,
+        "examples": 48,
+        "tests": 203
+      },
+      "chapters": [
+        {
+          "id": "ch01",
+          "title": "第 1 章 · 第一个组件",
+          "exercises": [
+            "ex01-1",
+            "ex01-2",
+            "ex01-3",
+            "ex01-4"
+          ]
+        },
+        {
+          "id": "ch02",
+          "title": "第 2 章 · 响应式的两种写法",
+          "exercises": [
+            "ex02-1",
+            "ex02-2",
+            "ex02-3",
+            "ex02-4"
+          ]
+        },
+        {
+          "id": "ch03",
+          "title": "第 3 章 · 模板里的条件与循环",
+          "exercises": [
+            "ex03-1",
+            "ex03-2",
+            "ex03-3",
+            "ex03-4"
+          ]
+        },
+        {
+          "id": "ch04",
+          "title": "第 4 章 · 列表的增删改",
+          "exercises": [
+            "ex04-1",
+            "ex04-2",
+            "ex04-3",
+            "ex04-4"
+          ]
+        },
+        {
+          "id": "ch05",
+          "title": "第 5 章 · 事件与表单",
+          "exercises": [
+            "ex05-1",
+            "ex05-2",
+            "ex05-3",
+            "ex05-4"
+          ]
+        },
+        {
+          "id": "ch06",
+          "title": "第 6 章 · 样式与 class",
+          "exercises": [
+            "ex06-1",
+            "ex06-2",
+            "ex06-3",
+            "ex06-4"
+          ]
+        },
+        {
+          "id": "ch07",
+          "title": "第 7 章 · 组件的 props",
+          "exercises": [
+            "ex07-1",
+            "ex07-2",
+            "ex07-3",
+            "ex07-4"
+          ]
+        },
+        {
+          "id": "ch08",
+          "title": "第 8 章 · 组件的 emit",
+          "exercises": [
+            "ex08-1",
+            "ex08-2",
+            "ex08-3",
+            "ex08-4"
+          ]
+        },
+        {
+          "id": "ch09",
+          "title": "第 9 章 · 插槽",
+          "exercises": [
+            "ex09-1",
+            "ex09-2",
+            "ex09-3",
+            "ex09-4"
+          ]
+        },
+        {
+          "id": "ch10",
+          "title": "第 10 章 · 计算属性与侦听器",
+          "exercises": [
+            "ex10-1",
+            "ex10-2",
+            "ex10-3",
+            "ex10-4"
+          ]
+        },
+        {
+          "id": "ch11",
+          "title": "第 11 章 · 生命周期与模板引用",
+          "exercises": [
+            "ex11-1",
+            "ex11-2",
+            "ex11-3",
+            "ex11-4"
+          ]
+        },
+        {
+          "id": "ch12",
+          "title": "第 12 章 · 组合式函数与跨层通信",
+          "exercises": [
+            "ex12-1",
+            "ex12-2",
+            "ex12-3",
+            "ex12-4"
           ]
         }
       ]

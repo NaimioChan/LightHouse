@@ -1,7 +1,7 @@
 /* tools/lib/cdp.mjs — 起 serve.py、起无头 Edge、连 CDP 的那一套，给几个验收脚本共用。
  *
  * 端口默认按脚本区分（见各自文件），同一台机器上并行跑两个验收脚本时用环境变量错开：
- *   TSLAB_CDP_PORT / TSLAB_HTTP_PORT
+ *   VUELAB_CDP_PORT / VUELAB_HTTP_PORT
  * Edge 的 --user-data-dir 必须带上端口号：共用一个 profile 时第二个实例起不来或抢调试端口。
  */
 import { spawn } from 'node:child_process';
@@ -12,21 +12,21 @@ import { fileURLToPath } from 'node:url';
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export const EDGE = process.env.TSLAB_EDGE || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+export const EDGE = process.env.VUELAB_EDGE || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 
 export function paths({ cdpPort, httpPort }) {
   return {
     cdpPort,
     httpPort,
     base: `http://127.0.0.1:${httpPort}`,
-    userDataDir: path.join(process.env.LOCALAPPDATA || process.env.TEMP, 'Temp', `tslab-cdp-${cdpPort}`),
+    userDataDir: path.join(process.env.LOCALAPPDATA || process.env.TEMP, 'Temp', `vuelab-cdp-${cdpPort}`),
   };
 }
 
 export function startServer(env, port) {
   return spawn('python', ['serve.py'], {
     cwd: ROOT,
-    env: { ...process.env, TSLAB_NO_OPEN: '1', TSLAB_KEEP: '1', TSLAB_PORT: String(port), ...(env || {}) },
+    env: { ...process.env, VUELAB_NO_OPEN: '1', VUELAB_KEEP: '1', VUELAB_PORT: String(port), ...(env || {}) },
     stdio: 'ignore',
   });
 }

@@ -42,5 +42,16 @@
     "progressKey": "tslab.v1.passed",
     "blurb": "类型注解与推断、收窄、泛型、工具类型、strict 报错",
     "note": "首次打开要加载约 12 MB 的类型检查器，只需一次。"
+  },
+  {
+    "key": "vue",
+    "dir": "vue-lab",
+    "title": "Vue 3 训练场",
+    "registry": "VUELAB_CHAPTERS",
+    "accentToken": "lab-vue",
+    "entry": "vue-lab/index.html",
+    "progressKey": "vuelab.v1.passed",
+    "blurb": "单文件组件、响应式、条件与循环、表单、组件通信、组合式函数",
+    "note": "首次打开要加载约 1 MB 的 Vue 与单文件组件编译器，只需一次。"
   }
 ]
