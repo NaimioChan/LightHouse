@@ -21,6 +21,8 @@ colors:
   lab-ts-strong: "#2563A8"
   lab-vue: "#42B883"
   lab-vue-strong: "#35785F"
+  lab-react: "#087EA4"
+  lab-react-strong: "#046E8F"
 typography:
   h1:
     fontFamily: Source Han Serif SC
@@ -99,6 +101,9 @@ components:
   card-rule-vue:
     backgroundColor: "{colors.lab-vue}"
     height: 3px
+  card-rule-react:
+    backgroundColor: "{colors.lab-react}"
+    height: 3px
   card-button-html5:
     backgroundColor: "{colors.lab-html5-strong}"
     textColor: "{colors.panel}"
@@ -121,6 +126,11 @@ components:
     padding: 5px
   card-button-vue:
     backgroundColor: "{colors.lab-vue-strong}"
+    textColor: "{colors.panel}"
+    rounded: "{rounded.sm}"
+    padding: 5px
+  card-button-react:
+    backgroundColor: "{colors.lab-react-strong}"
     textColor: "{colors.panel}"
     rounded: "{rounded.sm}"
     padding: 5px
@@ -167,7 +177,7 @@ components:
 - **Panel (#FAF9F5) 纸白**：卡片底色。
 - **Line (#E0DBCC) 亚麻线**：全局唯一的 1px 描边色。
 - **Ink-soft (#4A453A) 柔墨**：简介与卡片上那句话的正文色。
-- **lab-html5 / lab-css / lab-js / lab-ts 与各自的 -strong 深支**：四座训练场的识别色，取自各自 `DESIGN.md`；
+- **lab-html5 / lab-css / lab-js / lab-ts / lab-vue / lab-react 与各自的 -strong 深支**：各座训练场的识别色，取自各自 `DESIGN.md`；
   装饰用浅支，按钮实底与文字用深支。
 
 ## Typography

@@ -9,6 +9,14 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ---
 
+## 2026-10-08 16:24 · opencode · 新建 React 19 训练场（react-lab，第六座）并接入入口页
+
+- 改：新建 `react-lab/`（整座站，见下），改 `tools/labs.json`、`assets/css/portal.css`、`assets/js/manifest.js`（重跑生成）、`DESIGN.md`（补 `lab-react` 两条识别色）。
+- 做了什么：按 `docs/前端演练场-方向评估与实测.md` §6.4 落成第六座。12 章 48 练习 38 示例。React 19 没有 UMD，也没有 `ReactDOM.render`，所以把 react + react-dom + react-dom/client + htm 用 esbuild 打成**单入口 IIFE**（全局 `RLLAB_REACT`，224 KB），再由 `tools/build-vendor-src.mjs` 生成源码字符串包 `react19-src.js` 供沙箱求值。模板用 `htm` 标签模板，不引 Babel。判题等待点是两轮宏任务 `tick()`（沙箱 iframe 离屏，rAF 不触发，实测过）。
+- 验证：`react-lab` 内 `verify-content` / `verify-compile` / `verify-pair` / `verify-vendor` / `verify-quit` / `verify-pages` / `verify-ui` 全过（`verify-ui` 含 390px 与 `file://` 直开）；`verify-browser` http 与 `file://` 双跑，示例 38/38、参考答案 48/48、起始代码全被抓 48/48；`tools/verify-all.mjs --lab react` 4 支全过；根侧 `verify-manifest`、`verify-portal`（含 react-lab 卡片、侧栏、390px 抽屉）全过。
+- 遗留：根 `AGENTS.md` 有一处与本任务无关的未提交改动（五座 → 所有站点的措辞），未纳入本次提交。
+- 下一步：无。
+
 ## 2026-10-08 11:32 · hermes · 方向评估文件的表格按现况回填
 
 - 改：`docs/前端演练场-方向评估与实测.md`（只动这一份文档）

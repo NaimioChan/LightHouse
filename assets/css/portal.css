@@ -24,6 +24,8 @@
   --lab-ts: #3178c6;     --lab-ts-strong: #2563a8;
   /* Vue 的品牌绿在纸白上只有 2.15:1，只做装饰；承载文字用深支 #35785f（4.52:1） */
   --lab-vue: #42b883;    --lab-vue-strong: #35785f;
+  /* React 的品牌青在纸白上只有 3.99:1，只做装饰；承载文字用深支 #046e8f（4.98:1） */
+  --lab-react: #087ea4;  --lab-react-strong: #046e8f;
 
   --serif: "Source Han Serif SC", "Noto Serif SC", "Times New Roman", Times, serif;
   --sans: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;

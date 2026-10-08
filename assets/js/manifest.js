@@ -793,6 +793,144 @@
           ]
         }
       ]
+    },
+    {
+      "key": "react",
+      "dir": "react-lab",
+      "title": "React 19 训练场",
+      "entry": "react-lab/index.html",
+      "progressKey": "rllab.v1.passed",
+      "accentToken": "lab-react",
+      "blurb": "函数组件、props、列表与 key、state 与事件、受控表单、副作用、状态提升、ref、useReducer、context",
+      "note": "首次打开要加载约 220 KB 的 React 运行库，只需一次。",
+      "stats": {
+        "chapters": 12,
+        "exercises": 48,
+        "examples": 38,
+        "tests": 188
+      },
+      "chapters": [
+        {
+          "id": "ch01",
+          "title": "第 1 章 · 第一个组件",
+          "exercises": [
+            "ex01-1",
+            "ex01-2",
+            "ex01-3",
+            "ex01-4"
+          ]
+        },
+        {
+          "id": "ch02",
+          "title": "第 2 章 · props：把值传进组件",
+          "exercises": [
+            "ex02-1",
+            "ex02-2",
+            "ex02-3",
+            "ex02-4"
+          ]
+        },
+        {
+          "id": "ch03",
+          "title": "第 3 章 · 列表与 key",
+          "exercises": [
+            "ex03-1",
+            "ex03-2",
+            "ex03-3",
+            "ex03-4"
+          ]
+        },
+        {
+          "id": "ch04",
+          "title": "第 4 章 · state 与事件",
+          "exercises": [
+            "ex04-1",
+            "ex04-2",
+            "ex04-3",
+            "ex04-4"
+          ]
+        },
+        {
+          "id": "ch05",
+          "title": "第 5 章 · 受控表单",
+          "exercises": [
+            "ex05-1",
+            "ex05-2",
+            "ex05-3",
+            "ex05-4"
+          ]
+        },
+        {
+          "id": "ch06",
+          "title": "第 6 章 · 派生值与条件渲染",
+          "exercises": [
+            "ex06-1",
+            "ex06-2",
+            "ex06-3",
+            "ex06-4"
+          ]
+        },
+        {
+          "id": "ch07",
+          "title": "第 7 章 · 副作用与清理",
+          "exercises": [
+            "ex07-1",
+            "ex07-2",
+            "ex07-3",
+            "ex07-4"
+          ]
+        },
+        {
+          "id": "ch08",
+          "title": "第 8 章 · 状态提升与共享",
+          "exercises": [
+            "ex08-1",
+            "ex08-2",
+            "ex08-3",
+            "ex08-4"
+          ]
+        },
+        {
+          "id": "ch09",
+          "title": "第 9 章 · ref 与 DOM",
+          "exercises": [
+            "ex09-1",
+            "ex09-2",
+            "ex09-3",
+            "ex09-4"
+          ]
+        },
+        {
+          "id": "ch10",
+          "title": "第 10 章 · 样式",
+          "exercises": [
+            "ex10-1",
+            "ex10-2",
+            "ex10-3",
+            "ex10-4"
+          ]
+        },
+        {
+          "id": "ch11",
+          "title": "第 11 章 · useReducer",
+          "exercises": [
+            "ex11-1",
+            "ex11-2",
+            "ex11-3",
+            "ex11-4"
+          ]
+        },
+        {
+          "id": "ch12",
+          "title": "第 12 章 · context",
+          "exercises": [
+            "ex12-1",
+            "ex12-2",
+            "ex12-3",
+            "ex12-4"
+          ]
+        }
+      ]
     }
   ];
 })(typeof window !== 'undefined' ? window : globalThis);

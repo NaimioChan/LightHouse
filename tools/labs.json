@@ -53,5 +53,16 @@
     "progressKey": "vuelab.v1.passed",
     "blurb": "单文件组件、响应式、条件与循环、表单、组件通信、组合式函数",
     "note": "首次打开要加载约 1 MB 的 Vue 与单文件组件编译器，只需一次。"
+  },
+  {
+    "key": "react",
+    "dir": "react-lab",
+    "title": "React 19 训练场",
+    "registry": "RLLAB_CHAPTERS",
+    "accentToken": "lab-react",
+    "entry": "react-lab/index.html",
+    "progressKey": "rllab.v1.passed",
+    "blurb": "函数组件、props、列表与 key、state 与事件、受控表单、副作用、状态提升、ref、useReducer、context",
+    "note": "首次打开要加载约 220 KB 的 React 运行库，只需一次。"
   }
 ]

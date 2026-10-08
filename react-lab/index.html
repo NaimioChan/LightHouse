@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>React 训练场 — 从函数组件到状态共享</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="nav-btn" id="nav-btn" type="button" aria-expanded="false" aria-controls="sidebar">目录</button>
+  <a class="brand" href="#home">React 训练场</a>
+  <nav class="topnav">
+    <a href="#home" data-route="home">总览</a>
+    <a href="#playground" data-route="playground">练习场</a>
+  </nav>
+  <div class="topbar-right">
+    <label class="switch" title="停止输入后自动检查">
+      <input type="checkbox" id="auto-run" checked> 自动检查
+    </label>
+    <div class="progress-mini" title="总进度">
+      <div class="progress-mini-track"><div class="progress-mini-fill" id="progress-fill"></div></div>
+      <span id="progress-text">0/0</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="reset-progress">重置进度</button>
+  </div>
+</header>
+
+<div class="nav-backdrop" id="nav-backdrop"></div>
+<div class="shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<div class="boot-strip" id="boot-strip">正在加载 React 运行库（约 220 KB，只需一次）……</div>
+
+<!-- vendor：React 单入口产物的**源码字符串**（由 tools/build-vendor-src.mjs 生成）。
+     file:// 下 fetch / XHR 读本地文件全被拦、外链 <script src> 的 textContent 又是空的，
+     只有 classic <script src> 能把本地 js 执行起来 —— 所以源码必须预先编码成字符串。
+     判题与预览都在沙箱里 eval 这个字符串（沙箱是 opaque origin，只能 postMessage）。 -->
+<script src="vendor/react19-src.js"></script>
+
+<script src="assets/js/format.js"></script>
+<script src="assets/js/compile.js"></script>
+<script src="assets/js/harness.js"></script>
+<script src="assets/js/sandbox.js"></script>
+<script src="assets/js/highlight.js"></script>
+<script src="assets/js/pair.js"></script>
+<script src="assets/js/render.js"></script>
+<script src="content/ch01-first-component.js"></script>
+<script src="content/ch02-props.js"></script>
+<script src="content/ch03-lists-keys.js"></script>
+<script src="content/ch04-state-events.js"></script>
+<script src="content/ch05-forms.js"></script>
+<script src="content/ch06-derived-conditional.js"></script>
+<script src="content/ch07-effects.js"></script>
+<script src="content/ch08-shared-state.js"></script>
+<script src="content/ch09-refs-focus.js"></script>
+<script src="content/ch10-styling.js"></script>
+<script src="content/ch11-reducer.js"></script>
+<script src="content/ch12-context.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
