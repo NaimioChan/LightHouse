@@ -42,9 +42,10 @@
    改内容 schema 必须同时改契约（`docs/01-content-schema.md`）、校验器、渲染三处。
 7. **`run.bat` 必须纯 ASCII**（cmd 按 GBK 解析，中文注释会破坏批处理）。
 8. **中文文案**守 `anti-slop`：不写「值得注意的是」「综上所述」，不排比，不写总结式收尾。
-9. **各座站的目录栏底部固定有两样东西**：回入口页的「← LightHouse 目录」按钮与一行 `© 2026 非茗 · Naimio`
-   （`app.js` 的 `sideFoot()` + `app.css` 的 `.side-foot`）。改动侧栏时别把它们删掉；入口页的版权在
-   `index.html` 的 `.foot .credit`。
+9. **各座站的目录栏底部固定有三样东西**：回入口页的「← LightHouse 目录」按钮、一行 `© 2026 非茗 · Naimio`，
+   以及该版权行尾部那个小号 GitHub 图标链接（`.gh-link`，指向 `https://github.com/NaimioChan/LightHouse`）
+   （`app.js` 的 `sideFoot()` + `app.css` 的 `.side-foot` / `.gh-link`）。改动侧栏时别把它们删掉；入口页的版权与
+   GitHub 链接在 `index.html` 的 `.foot .credit`。
 10. **手机版式所有站点一致，契约在 `docs/04-mobile-layout.md`**：≤900px 目录栏收成抽屉（顶栏 `#nav-btn` +
    `body.nav-open`）、顶栏只留「目录/进度/自动运行」、「重置进度」进抽屉、宽表包 `.tbl-wrap`、
    编辑器字号 ≥16px。改一座就得改其余所有站，改完各自跑 `tools/verify-ui.mjs`（含 390px 那一档）。

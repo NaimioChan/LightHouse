@@ -79,7 +79,7 @@ LightHouse/
 ```bash
 node tools/verify-manifest.mjs     # 清单是否与内容同步、入口页有没有写死某一座站（重算一遍逐字节比对）
 node tools/verify-all.mjs          # 各站的 node 侧校验：内容契约、括号配对、类型判题、SFC 改写内核、React 运行时自检（含各站 serve.py 的关窗即退）
-node tools/verify-portal.mjs       # 真浏览器：入口页与六座站入口页、进度显示、资源无 404、file:// 直开（当前 123 项）
+node tools/verify-portal.mjs       # 真浏览器：入口页与六座站入口页、进度显示、资源无 404、file:// 直开（当前 131 项）
 ```
 
 改过某一座站的内容或引擎后，还要在那座目录里跑它自己的真浏览器验收（最权威，也最慢）。每座都有一支

@@ -140,7 +140,11 @@ a:hover { text-decoration: underline; }
 /* ---------- 页脚与无脚本回退 ---------- */
 .foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
 .foot p { margin: 0; }
-.foot .credit { margin-top: 6px; }
+.foot .credit { display: flex; align-items: center; gap: 10px; }
+/* GitHub 图标链接：与版权同行，只一个图标，悬停换承载文字色 */
+.gh-link { display: inline-flex; align-items: center; color: var(--muted); }
+.gh-link:hover { color: var(--accent-strong); text-decoration: none; }
+.gh-link svg { width: 16px; height: 16px; fill: currentColor; display: block; }
 .noscript-note { color: var(--muted); font-size: 0.9rem; }
 
 /* 缓存提示条：与各训练场同款，只在检测到旧页面时出现一次 */

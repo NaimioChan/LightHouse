@@ -159,6 +159,16 @@ async function checkPortal(cdp) {
 
   const footText = await cdp.eval("(document.querySelector('.foot') || {}).textContent || ''");
   record('入口页页脚有版权行', footText.includes('© 2026 非茗 · Naimio'), footText.trim().slice(0, 60));
+  record('入口页页脚不再写「进度只存在/没有后端/源码在 GitHub」那句', !/进度只存在|没有后端|源码与校验脚本/.test(footText), footText.trim().slice(0, 60));
+  const footGh = await cdp.eval(`(() => {
+    const a = document.querySelector('.foot .gh-link');
+    if (!a) return null;
+    const r = a.getBoundingClientRect();
+    return { href: a.getAttribute('href'), w: Math.round(r.width), h: Math.round(r.height) };
+  })()`);
+  record('入口页页脚有 GitHub 图标链接（指向上游仓库、占位非零）',
+    !!footGh && footGh.href === 'https://github.com/NaimioChan/LightHouse' && footGh.w > 0 && footGh.h > 0,
+    footGh ? `${footGh.href}　${footGh.w}×${footGh.h}` : '未找到');
 
   LABS.forEach((lab, i) => {
     const d = dom.cards.find((x) => x.key === lab.key) || {};
@@ -273,12 +283,14 @@ async function checkLabs(cdp) {
     const bad = cdp.failedRequests().filter((l) => !isNoise(l));
     record(`${prefix} 资源没有 404`, bad.length === 0, bad.slice(0, 3).join(' ｜ '));
 
-    /* 目录栏底部：回入口页的按钮 + 版权行（侧栏是静态骨架，每个路由都在） */
+    /* 目录栏底部：回入口页的按钮 + 版权行 + GitHub 图标链接（侧栏是静态骨架，每个路由都在） */
     const foot = await cdp.eval(`(() => {
       const rect = (el) => (el ? el.getBoundingClientRect() : null);
       const back = document.querySelector('#sidebar .side-back');
       const credit = document.querySelector('#sidebar .side-credit');
+      const gh = document.querySelector('#sidebar .side-credit .gh-link');
       const lastNav = [...document.querySelectorAll('#sidebar a[data-ch]')].pop();
+      const ghRect = rect(gh);
       return {
         backText: back ? back.textContent.trim() : null,
         backHref: back ? back.getAttribute('href') : null,
@@ -286,6 +298,9 @@ async function checkLabs(cdp) {
         sideBottom: Math.round(rect(document.querySelector('#sidebar')).bottom),
         belowList: !!(back && lastNav && rect(back).top >= rect(lastNav).top),
         creditText: credit ? credit.textContent.trim() : null,
+        ghHref: gh ? gh.getAttribute('href') : null,
+        ghW: ghRect ? Math.round(ghRect.width) : 0,
+        ghH: ghRect ? Math.round(ghRect.height) : 0,
       };
     })()`);
     const resolved = foot.backHref ? new URL(foot.backHref, `${ctx.base}/${lab.entry}`).pathname : '';
@@ -293,7 +308,10 @@ async function checkLabs(cdp) {
       resolved === '/index.html' && /LightHouse/.test(foot.backText || ''), `${foot.backText} → ${resolved}`);
     record(`${prefix} 按钮在最后一条章节链接之下（目录栏底部）`, foot.belowList === true,
       `按钮底边 ${foot.backBottom} / 侧栏底边 ${foot.sideBottom}`);
-    record(`${prefix} 目录栏底部有版权行`, foot.creditText === '© 2026 非茗 · Naimio', String(foot.creditText));
+    record(`${prefix} 目录栏底部有版权行`, (foot.creditText || '').indexOf('© 2026 非茗 · Naimio') === 0, String(foot.creditText));
+    record(`${prefix} 版权行旁有 GitHub 图标链接（指向上游仓库、占位非零）`,
+      foot.ghHref === 'https://github.com/NaimioChan/LightHouse' && foot.ghW > 0 && foot.ghH > 0,
+      `${foot.ghHref}　${foot.ghW}×${foot.ghH}`);
 
     /* 手机竖屏：目录栏必须能收成抽屉。竖屏下侧栏是 240px 固定列，正文只剩 ~140px，
        宽表与代码块会把整页撑出横向滚动（实测 539–638px），这是移动端最直接的坏法。 */

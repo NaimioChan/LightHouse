@@ -23,8 +23,8 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 ```
 
 `verify-portal.mjs` 检查的东西：入口页的大标题 / 副标题 / 简介长度（≤140 字）与断行（宽屏两行、每行用满）、
-页脚版权行、每张卡片的数字与一句话、卡片顺序与入口链接、三档宽度下的对齐与列数；各座站入口页从根服务取到后，
-侧栏章节数与清单一致、编辑器有起始代码、目录栏底部有回入口页的按钮与版权行、行内代码里的星号没被当成强调标记
+页脚版权行与 GitHub 图标链接、每张卡片的数字与一句话、卡片顺序与入口链接、三档宽度下的对齐与列数；各座站入口页从根服务取到后，
+侧栏章节数与清单一致、编辑器有起始代码、目录栏底部有回入口页的按钮、版权行与 GitHub 图标链接、行内代码里的星号没被当成强调标记
 （js-lab 第 2 章的 `+ - * / %` 与 `**`）、没有未捕获错误；全站资源没有 404；读 localStorage 的进度分支能正确显示
 「已通过 N/M」与「继续第 N 章」（测试前备份、测试后还原原有的进度键）；最后再走一遍 `file://` 直开。
 
@@ -98,7 +98,7 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 真实按键与四档视口 | `react-lab/node tools/verify-ui.mjs` | 全过（含 390px 抽屉、真实按键管线、`file://` 直开、完整自检） |
 | 关窗即退 | `react-lab/node tools/verify-quit.mjs` | 全过 |
 | 各站 node 侧校验一起跑 | `node tools/verify-all.mjs` | 22 支全过（六座站） |
-| 清单与门户 | `node tools/build-manifest.mjs` → `verify-manifest.mjs` → `verify-portal.mjs` | 78 章 / 353 练习；门户 123 项全过（含 react-lab 卡片、侧栏与 390px 抽屉） |
+| 清单与门户 | `node tools/build-manifest.mjs` → `verify-manifest.mjs` → `verify-portal.mjs` | 78 章 / 353 练习；门户 131 项全过（含 react-lab 卡片、侧栏与 390px 抽屉、页脚与各站版权行的 GitHub 图标链接） |
 | 设计令牌 | `designmd lint`（根与 `react-lab/DESIGN.md`） | 两处都 0 errors 0 warnings |
 
 第六座站落地时补的一个跨站修法：五座老站的 `serve.py` 在 Windows 上按控制台代码页（GBK）编码 stdout，

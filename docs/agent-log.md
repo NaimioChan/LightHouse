@@ -9,6 +9,14 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ---
 
+## 2026-10-08 18:45 · opencode · 入口页页脚句子换成 GitHub 图标链接，各站版权行也加一个
+
+- 改：`index.html`、`assets/css/portal.css`；六座站的 `assets/js/app.js`（`sideFoot()`）与 `assets/css/app.css`；`tools/verify-portal.mjs`；`DESIGN.md`、`AGENTS.md`、`docs/02-verification.md`、`README.md`、`docs/前端演练场-方向评估与实测.md`；`docs/screenshot-portal.png` 与 `docs/screenshot-portal-narrow.png`（重截）。
+- 做了什么：① 入口页页脚删掉「进度只存在你自己的浏览器里，没有后端。源码与校验脚本在 GitHub。」整句，只留版权行 `© 2026 非茗 · Naimio`，行尾加一个 GitHub 图标链接（内联 SVG，指向上游仓库）。② 六座站的 `sideFoot()` 里，版权 `<p class="side-credit">` 尾部也塞进同一个图标链接，样式抽成 `.gh-link`，`<p>` 改 flex 同行排列。③ `verify-portal.mjs` 把两处新链接纳入验收：入口页页脚不许再出现那句旧文案、页脚与六站版权行各有一个 href 正确且占位非零的 `.gh-link`。④ 文档同步：DESIGN.md 页脚/组件描述、AGENTS.md 铁律 9、02-verification 的验收清单、README 与评估文档的 verify-portal 项数。
+- 验证：`node tools/verify-manifest.mjs` 全过；`node tools/verify-portal.mjs` 131 项全过（比改动前多 8 项，正是新加的链接断言）；`react-lab/node tools/verify-ui.mjs --fast` 42 项全过、`js-lab` 同款全过（侧栏 flex 行没破坏窄屏版式）；`designmd lint DESIGN.md` 0 errors 0 warnings；`node --check` 过全部改动的 js。
+- 遗留：各站自己的 `verify-ui.mjs` 全量档只跑了 react 与 js 两座，其余四座未逐座重跑全量（改动与它们同构，portal 侧已覆盖六座页脚）。
+- 下一步：无。
+
 ## 2026-10-08 17:05 · opencode · 按 react-lab 增量回填 README 与评估文档，并修掉六座 serve.py 的 GBK 编码
 
 - 改：`README.md`、`docs/前端演练场-方向评估与实测.md`、`docs/02-verification.md`、`DESIGN.md`、`html5-lab/serve.py`、`css-lab/serve.py`、`js-lab/serve.py`、`ts-lab/serve.py`、`vue-lab/serve.py`、`docs/screenshot-portal.png` 与 `docs/screenshot-portal-narrow.png`（重截，含六张卡）。

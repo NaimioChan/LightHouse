@@ -70,7 +70,11 @@
   color: var(--accent-strong);
 }
 .side-back:hover { border-color: var(--accent); text-decoration: none; }
-.side-credit { margin: 0; font-size: .72rem; color: var(--muted); }
+.side-credit { display: flex; align-items: center; gap: 8px; margin: 0; font-size: .72rem; color: var(--muted); }
+/* GitHub 图标链接：与版权同行，悬停换承载文字色 */
+.gh-link { display: inline-flex; align-items: center; color: var(--muted); }
+.gh-link:hover { color: var(--accent-strong); text-decoration: none; }
+.gh-link svg { width: 15px; height: 15px; fill: currentColor; display: block; }
 
 /* 顶部「目录」按钮与遮罩：只在窄屏出现（见文件末尾的窄屏段） */
 .nav-btn {
