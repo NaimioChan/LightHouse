@@ -9,6 +9,15 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ---
 
+## 2026-10-08 17:05 · opencode · 按 react-lab 增量回填 README 与评估文档，并修掉六座 serve.py 的 GBK 编码
+
+- 改：`README.md`、`docs/前端演练场-方向评估与实测.md`、`docs/02-verification.md`、`DESIGN.md`、`html5-lab/serve.py`、`css-lab/serve.py`、`js-lab/serve.py`、`ts-lab/serve.py`、`vue-lab/serve.py`、`docs/screenshot-portal.png` 与 `docs/screenshot-portal-narrow.png`（重截，含六张卡）。
+- 做了什么：① 根 README 补第六座与规模数字（78 章 / 353 练习 / 310 示例 / 1294 断言），目录树、校验段、诚实说明都加上 react-lab，端口区间改 8877–8883。② 评估文档把第 0/1/2/3/4/5/6.4/8/9/10 节从「五座/React 未开工」回填成六座已交付：站表加 React 行、总览矩阵 React 行改「已交付」、2.1 加 `react-lab/vendor/` 表、2.2 把 React 两行移出候选、3 节 React 计时改落地核对、4 节 React 判题手段补全、6.4 整节重写成交付记录（含 IIFE 构建命令、判题链路五步、rAF 不触发这条坑）、8/9/10 节同步（残留候选只剩 Tailwind）。③ `docs/02-verification.md` 新增「第六座站（react-lab）接入后的对账」一节。④ `DESIGN.md` 的 Do's/Don'ts 去掉「四张卡」「第五种强调色」「四座站」等过期措辞。
+- 顺带修的跨站问题：五座老站的 `serve.py` 在 Windows 上按控制台代码页（GBK）编码 stdout，管道里变乱码，各自 `verify-quit.mjs` 按 UTF-8 读会认不出「页面已关闭」，五座一起挂 1 项（与本次增量无关，是既有问题）。给五座各加同 react-lab 一样的 `sys.stdout/stderr.reconfigure(encoding='utf-8')`，逐座 `verify-quit` 复跑全过。这与根 `AGENTS.md` 第 4 条「不许顺手统一各站代码」不冲突——改的是各站自己那份 serve.py 的输出编码，没动引擎逻辑；已征得用户同意。
+- 验证：`node tools/verify-manifest.mjs` 全过（练习总数 353）；`node tools/verify-all.mjs` 22 支全过（修 serve.py 之前是 5 支失败）；`node tools/verify-portal.mjs` 123 项全过（含六座卡片与 390px 抽屉）；`designmd lint` 根与 `react-lab/DESIGN.md` 都 0 errors 0 warnings。本轮只改文档与 serve.py，未重跑各站最慢的 `verify-browser.mjs`（react-lab 那支在 16:24 那条里刚跑过）。
+- 遗留：评估文档第 6.5 节（Tailwind）仍是候选；`docs/前端演练场-方向评估与实测.md` 第 3 节里少数非依赖型计时（如「iframe 同 URL 重载」「cache-bust 冷载」）仍标「未落地」，因为确实没在成站里量过。
+- 下一步：如需发布，`git push` 当前分支。
+
 ## 2026-10-08 16:24 · opencode · 新建 React 19 训练场（react-lab，第六座）并接入入口页
 
 - 改：新建 `react-lab/`（整座站，见下），改 `tools/labs.json`、`assets/css/portal.css`、`assets/js/manifest.js`（重跑生成）、`DESIGN.md`（补 `lab-react` 两条识别色）。

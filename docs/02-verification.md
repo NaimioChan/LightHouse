@@ -84,3 +84,23 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 各站 node 侧校验一起跑 | `node tools/verify-all.mjs` | 18 支全过（五座站） |
 | 清单与门户 | `node tools/build-manifest.mjs` → `verify-manifest.mjs` → `verify-portal.mjs` | 66 章 / 305 练习；门户全过（含 vue-lab 的星号与 390px 两项） |
 | 设计令牌 | `designmd lint`（根与 `vue-lab/DESIGN.md`） | 两处都 0 errors 0 warnings |
+
+## 第六座站（react-lab）接入后的对账
+
+`react-lab` 同样不是搬运进来的，是并入后新写的，走「加站清单」那五步。接入时实际跑过的：
+
+| 检查 | 命令 | 结果 |
+|---|---|---|
+| 内容结构 | `react-lab/node tools/verify-content.mjs` | 12 章 / 48 练习 / 38 示例 / 327 断言（含示例断言） |
+| 括号配对 | `react-lab/node tools/verify-pair.mjs` | 全过 |
+| React 运行时自检 | `react-lab/node tools/verify-compile.mjs`、`verify-vendor.mjs` | 全过；vendor 体积与 sha256 逐字节核对（`react19.iife.min.js` 224,264 B、`react19-src.js` 229,048 B） |
+| 两条路各跑一遍全部练习 | `react-lab/node tools/verify-browser.mjs` | http 与 `file://` 都是 示例 38/38、参考答案 48/48、起始代码被抓 48/48 |
+| 真实按键与四档视口 | `react-lab/node tools/verify-ui.mjs` | 全过（含 390px 抽屉、真实按键管线、`file://` 直开、完整自检） |
+| 关窗即退 | `react-lab/node tools/verify-quit.mjs` | 全过 |
+| 各站 node 侧校验一起跑 | `node tools/verify-all.mjs` | 22 支全过（六座站） |
+| 清单与门户 | `node tools/build-manifest.mjs` → `verify-manifest.mjs` → `verify-portal.mjs` | 78 章 / 353 练习；门户 123 项全过（含 react-lab 卡片、侧栏与 390px 抽屉） |
+| 设计令牌 | `designmd lint`（根与 `react-lab/DESIGN.md`） | 两处都 0 errors 0 warnings |
+
+第六座站落地时补的一个跨站修法：五座老站的 `serve.py` 在 Windows 上按控制台代码页（GBK）编码 stdout，
+被管道接走就是乱码，各自的 `verify-quit.mjs` 按 UTF-8 读会认不出「页面已关闭」。这次一并把六座站的 stdout/stderr
+都 `reconfigure(encoding='utf-8')`，`verify-all.mjs` 才从「5 支失败」回到 22 支全过。

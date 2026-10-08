@@ -29,6 +29,14 @@ import sys
 import threading
 import time
 
+# 输出统一走 UTF-8：Python 3.14 在 Windows 上仍按控制台代码页（GBK）编码 stdout，
+# 被管道接走时就是乱码，verify-quit.mjs 按 UTF-8 读会认不出「页面已关闭」。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
 START_PORT = int(os.environ.get('TSLAB_PORT', '8879'))
 IDLE_GRACE = float(os.environ.get('TSLAB_IDLE_GRACE', '6'))
