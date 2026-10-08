@@ -1,0 +1,17 @@
+#!/bin/sh
+# Handoff guard: warn when a commit lacks the Agent:/Verify: trailers.
+# See docs/agent-log.md and the shared skill project-handoff.
+msg=$(git log -1 --pretty=%B)
+missing=""
+printf '%s\n' "$msg" | grep -qE '^Agent: (hermes|opencode|human)[[:space:]]*$' || missing="$missing Agent:"
+printf '%s\n' "$msg" | grep -qE '^Verify: .+' || missing="$missing Verify:"
+if [ -n "$missing" ]; then
+  printf '\n'
+  printf '[handoff] %s is missing trailer(s):%s\n' "$(git rev-parse --short HEAD)" "$missing"
+  printf '[handoff] expected at the end of the commit message:\n'
+  printf '  Agent: hermes|opencode|human\n'
+  printf '  Verify: <command and result>\n'
+  printf '[handoff] fix: git commit --amend\n'
+  printf '[handoff] then append an entry to docs/agent-log.md if you have not.\n\n'
+fi
+exit 0

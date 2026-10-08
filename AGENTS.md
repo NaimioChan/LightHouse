@@ -80,3 +80,13 @@ cd js-lab && node tools/verify-ui.mjs        # 或该站的 verify-browser.mjs /
 - 不要把 `ts-lab/vendor/`（12.3 MB）搬到根目录或做“共享”。
 - 不要在 `index.html` 里写死站名、目录名、章节/练习数量或语言列表（一定会在下一次改动时过期）。
 - 不要为了「看起来统一」而重排各站的目录结构；各站路径是它自己工具链的一部分（`serve.py`、`verify-*.mjs` 都按自身目录解析）。
+
+## Agent 交接（Hermes 与 OpenCode 共用）
+
+本仓库会被两个 agent 轮流改：本机 Hermes、本机 OpenCode。两边看不到对方的会话记录，共享状态落在 `docs/agent-log.md`。
+
+1. **开工先读**：这份 `AGENTS.md`，再读 `docs/agent-log.md` 最近 5 条。顶部「当前占用」栏里挂着别人的条目，就先别动这个仓库。
+2. **收工必写**：在 `docs/agent-log.md` 的「当前占用」栏下面追加一条（时间 / 执行者 / 任务 / 改动文件 / 验证结果 / 遗留项），照已有条目抄格式。
+3. **提交带 trailer**：每条 commit 末尾两行，`Agent: hermes` 或 `Agent: opencode`，以及 `Verify: <跑过的校验命令与结果>`。`.githooks/post-commit` 会在缺失时提醒。
+4. 新克隆要执行一次 `git config core.hooksPath .githooks`，hook 才生效。
+5. 完整流程与工具名对照见共享技能 `project-handoff`（`~/.agents/skills/project-handoff/`）。
