@@ -2,7 +2,7 @@
 
 四座训练场的引擎是各自独立的（各自 `app.css` / `app.js` / `render.js`，见根 `AGENTS.md` 铁律 4），
 但手机上的形态必须一致，否则会出现「js-lab 能开目录抽屉、css-lab 不能」这种四不像。
-这一页是那套共享契约的**唯一来源**；改之前先读，改完四座都要跑各自的 `tools/verify-ui.mjs`。
+这一页是那套共享契约的**唯一来源**（`vue-lab` 也在内，共五座）；改之前先读，改完各座都要跑自己的 `tools/verify-ui.mjs`。
 
 ## 为什么是 900px
 
@@ -10,7 +10,7 @@
 版式就整体切成桌上电脑那一套。不用 768px——390px 的横屏手机约 844px 宽，用 768 会让它掉回桌面板式
 （240px 侧栏 + 挤扁的正文）。
 
-## 四条硬规则（四座站一致）
+## 四条硬规则（各座站一致）
 
 1. **目录栏在窄屏变成抽屉，不占正文宽度。**
    `.sidebar` 改 `position: fixed`（`top: 56px; bottom: 0`，宽 `82vw`，上限 300px），
@@ -50,7 +50,7 @@ html { height: 100%; }
 body { min-height: 100%; }
 ```
 
-四座站的 `base.css` 都已按这个写。各站 `verify-ui.mjs` 里有一条断言盯着它：
+五座站的 `base.css` 都已按这个写。各站 `verify-ui.mjs` 里有一条断言盯着它：
 滚到 1600px 后顶栏 `top` 必须仍是 0，且窄屏下「目录」按钮的位置用 `document.elementFromPoint` 命中的就是它自己。
 
 ## 验收（不能只看截图）
@@ -59,6 +59,6 @@ body { min-height: 100%; }
   ——侧栏 `position: fixed`、抽屉默认 `visibility: hidden`、正文占满 ≥98%、顶栏高 ≤60px、
   无横向溢出、编辑器字号 ≥16px、目录项 ≥44px，真点按钮展开、点章节链接自动收起、点遮罩收起。
 - 根 `tools/verify-portal.mjs`：入口页多一档 390px（卡片单列、无溢出、进入按钮够点），
-  四座站入口页各多三条窄屏断言。
+  各座站入口页都多三条窄屏断言。
 - CSS 断言只信 `getComputedStyle` 与 `getBoundingClientRect`；抽屉开合状态看 `body.nav-open`
   与 `visibility`，**不要只看 `transform`**——它受过渡动画影响，读到的可能是动画中途的值。

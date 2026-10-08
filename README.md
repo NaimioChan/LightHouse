@@ -14,7 +14,7 @@
 | 在线看（推荐） | **https://naimiochan.github.io/LightHouse/** —— 各座站都在这里，进度照样记（同一域名下） |
 | 起本地服务 | 双击 `run.bat`，浏览器打开 `http://127.0.0.1:8876/index.html?v=<每轮不同的令牌>`；关掉页面后命令行窗口自己关 |
 | 完全离线 | 双击 `index.html`（`file://` 直开，每座站都支持） |
-| 只跑某一座站 | 进那座目录双击它自己的 `run.bat`（端口 8877–8880），互不干扰 |
+| 只跑某一座站 | 进那座目录双击它自己的 `run.bat`（端口 8877–8881），互不干扰 |
 
 **在线就够了**：站点没有任何后端，GitHub Pages 上跑的就是这套文件，各座站在同一个域名下，入口页一样读得到进度。
 本地服务只在三种情况下有用——没有网、在改内容想立刻看到效果、或者要跑校验脚本（`tools/` 里的东西要 node 与本地服务）。
@@ -35,8 +35,11 @@
 | TypeScript 训练场 | 12 章 · 62 练习 · 77 示例 · 219 断言 | 类型注解与推断、收窄、接口与泛型、工具类型、类与守卫、strict 报错与模块 | 会写基本 JS | `ts-lab/` |
 | Vue 3 训练场 | 12 章 · 48 练习 · 48 示例 · 203 断言 | 单文件组件、响应式与计算属性、条件与列表、事件与表单、组件通信、生命周期 | 会写基本 JS 与 HTML | `vue-lab/` |
 
-合计 66 章 · 305 个练习 · 272 个示例。这些数字由 `tools/build-manifest.mjs` 从各站内容里读出来生成到
+合计 66 章 · 305 个练习 · 272 个示例 · 1106 条练习断言。这些数字由 `tools/build-manifest.mjs` 从各站内容里读出来生成到
 `assets/js/manifest.js`，入口页只读这份清单；改动内容后重跑生成器，数字不会过期。
+
+断言那一栏数的是**练习里的断言**，示例自带的断言不计入。`ts-lab` 与 `vue-lab` 自己的 `verify-content.mjs`
+报的数字更大（516 与 428），因为那两份把示例里的断言也算上了。
 
 ![入口页](docs/screenshot-portal.png)
 
@@ -55,29 +58,37 @@ LightHouse/
 │  ├─ labs.json               各站的文字（标题、一句话、进度键、颜色令牌名）
 │  ├─ build-manifest.mjs      清单生成器
 │  ├─ verify-manifest.mjs     清单与内容逐字节对账
-│  ├─ verify-all.mjs          各站的 node 侧校验（内容契约、括号配对、类型判题）
+│  ├─ verify-all.mjs          各站的 node 侧校验（内容契约、括号配对、类型判题、SFC 改写内核）
 │  ├─ verify-portal.mjs       真浏览器验收：入口页 + 各站入口页 + 进度分支
 │  └─ lib/cdp.mjs             起服务、起无头 Edge、连 CDP 的公共骨架
-├─ docs/                      合并架构、校验分层、语言与规模、方向评估与实测数据
-├─ html5-lab/  css-lab/  js-lab/  ts-lab/
-└─ DESIGN.md  AGENTS.md
+├─ docs/                      合并架构、校验分层、语言与规模、手机版式、方向评估与实测数据
+├─ html5-lab/  css-lab/  js-lab/  ts-lab/  vue-lab/
+│     每座站自带 AGENTS.md / DESIGN.md / 内容契约 / 引擎 / tools / serve.py / run.bat；
+│     ts-lab 与 vue-lab 另有 vendor/ 放第三方产物（类型检查器、Vue 运行时与 SFC 编译器）
+└─ DESIGN.md  AGENTS.md  LICENSE
 ```
 
 前四座站在并入时**一个字节都没改**（并入前用 `diff -r` 逐字节比对过）。它们各自带 `AGENTS.md`、`DESIGN.md`、
 内容契约、校验脚本与自己的 `serve.py`，可以单独拿出来跑；合并只加了门厅，没有动屋子（见 `docs/01-merge-architecture.md`）。
+`vue-lab` 是并入之后写的第五座，自身同样自洽，只是不经过「字节保真搬运」这一步；它接入时跑过的对账记在
+`docs/02-verification.md` 的「第五座站（vue-lab）接入后的对账」一节。
 
 ## 校验
 
 ```bash
 node tools/verify-manifest.mjs     # 清单是否与内容同步、入口页有没有写死某一座站（重算一遍逐字节比对）
-node tools/verify-all.mjs          # 各站的 node 侧校验，含各站 serve.py 的关窗即退
-node tools/verify-portal.mjs       # 真浏览器：入口页与各站入口页、进度显示、资源无 404、file:// 直开
+node tools/verify-all.mjs          # 各站的 node 侧校验：内容契约、括号配对、类型判题、SFC 改写内核（含各站 serve.py 的关窗即退）
+node tools/verify-portal.mjs       # 真浏览器：入口页与五座站入口页、进度显示、资源无 404、file:// 直开（当前 137 项）
 ```
 
-改过某一座站的内容或引擎后，还要在那座目录里跑它自己的真浏览器验收（最权威，也最慢）：
+改过某一座站的内容或引擎后，还要在那座目录里跑它自己的真浏览器验收（最权威，也最慢）。每座都有一支
+`verify-content.mjs`（内容契约）与一支 `verify-ui.mjs`（真实按键、四档视口），此外各有自己专门的一支：
 
 ```bash
-cd js-lab && node tools/verify-ui.mjs      # 另外三座：verify-browser.mjs / verify-pages.mjs
+cd html5-lab && node tools/verify-browser.mjs   # 真渲染的几何与声明（css-lab 同款）
+cd js-lab    && node tools/verify-ui.mjs        # 打字 → 自动运行 → 断言与进度
+cd ts-lab    && node tools/verify-judge.mjs     # 真类型诊断、等价判定（另 verify-types.mjs）
+cd vue-lab   && node tools/verify-browser.mjs   # http 与 file:// 各跑一遍全部练习（另 verify-compile.mjs）
 ```
 
 分层与各脚本覆盖面见 `docs/02-verification.md`。
@@ -85,7 +96,9 @@ cd js-lab && node tools/verify-ui.mjs      # 另外三座：verify-browser.mjs /
 ## 诚实说明的限制
 
 - **TypeScript 站首次打开要加载约 12 MB 的类型检查器**（`ts-lab/vendor/`）。只需一次，之后每次判题 2–8 ms；
-  `file://` 直开也能用。这也是本仓库约 15 MB 里的大头（这个目录 12.1 MB）。
+  `file://` 直开也能用。这也是本仓库 16.6 MB（`git ls-files` 口径）里的大头，这个目录占 12.0 MB。
+- **Vue 站首次打开要加载约 1 MB 的 Vue 运行时与单文件组件编译器**（`vue-lab/vendor/`，两个源码字符串包合计 0.94 MB）。
+  只需一次；`file://` 下也能加载（外链 `<script src>` 在 `file://` 读不到，所以这两个包是以源码字符串入库的）。
 - **判题不是编译器级完备的**：JS/HTML/CSS 的练习跑在 `sandbox="allow-scripts"` 的 iframe 里，
   死循环会被 5 秒超时掐掉（页面会提示「可能是循环没写终止条件」），异步示例最多等 1.5 秒。
   控制台输出格式与 DevTools 不完全一致。
@@ -94,3 +107,7 @@ cd js-lab && node tools/verify-ui.mjs      # 另外三座：verify-browser.mjs /
   强行统一是纯粹的回归风险；要不要抽公共内核是另一件事，见 `docs/01-merge-architecture.md`。
 - **进度只看得到同一浏览器**：存在 `localStorage`，换浏览器或清缓存就回到零。入口页只读，不提供重置
   （重置在每座站自己的顶栏里）。
+
+## 许可
+
+MIT，见 `LICENSE`。各站 `vendor/` 里的第三方产物随附各自的许可文本（TypeScript 为 Apache-2.0，Vue 运行时为 MIT）。
