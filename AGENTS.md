@@ -92,3 +92,17 @@ cd js-lab && node tools/verify-ui.mjs        # 或该站的 verify-browser.mjs /
 3. **提交带 trailer**：每条 commit 末尾两行，`Agent: hermes` 或 `Agent: opencode`，以及 `Verify: <跑过的校验命令与结果>`。`.githooks/post-commit` 会在缺失时提醒。
 4. 新克隆要执行一次 `git config core.hooksPath .githooks`，hook 才生效。
 5. 完整流程与工具名对照见共享技能 `project-handoff`（`~/.agents/skills/project-handoff/`）。
+
+## Agent skills
+
+### Issue tracker
+
+Issue 与 spec 都是 GitHub Issues（`NaimioChan/LightHouse`），用 `gh` CLI 读写。见 `docs/agents/issue-tracker.md`。
+
+### Triage labels
+
+沿用默认五个状态标签：`needs-triage`、`needs-info`、`ready-for-agent`、`ready-for-human`、`wontfix`。见 `docs/agents/triage-labels.md`。
+
+### Domain docs
+
+单上下文：根 `GLOSSARY.md` + `docs/adr/`，不存在就先别建，用到再写。见 `docs/agents/domain.md`。

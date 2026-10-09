@@ -9,6 +9,16 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ---
 
+## 2026-10-09 18:53 · hermes · 按 setup-matt-pocock-skills 配置本仓库（issue tracker / triage 标签 / 领域文档）
+
+- 改：`AGENTS.md`（尾部新增 `## Agent skills` 三节）；新增 `docs/agents/issue-tracker.md`、`docs/agents/triage-labels.md`、`docs/agents/domain.md`。
+- 做了什么：① 跑 `setup-matt-pocock-skills`，探明仓库是 GitHub（`NaimioChan/LightHouse`）、根只有 `AGENTS.md`（无 `CLAUDE.md`，按技能规则编辑既有的那个）、`GLOSSARY.md` / `docs/adr/` / `docs/agents/` / `.scratch/` 原本都不存在，也没有 monorepo 信号。② 用户拍板三件事：issue 放 GitHub Issues、triage 用默认五个标签串、领域文档走**单上下文**（根 `GLOSSARY.md` + `docs/adr/`）。③ 本机没有 `gh`，用 winget 装了 GitHub CLI 2.102.0，落在 `C:\Program Files\GitHub CLI\`，不在 bash 默认 PATH。④ 本机 GCM 里存的是 GitHub Desktop 的 `gho_` token，scope 只有 `gist, repo, workflow`，缺 `read:org`：`gh auth login --with-token` 被拒、`gh auth status` 直接判它无效，所以建标签改走 `GH_TOKEN` 环境变量；这条坑写进了 `docs/agents/issue-tracker.md` 的「本机注意」。⑤ 新建四个状态标签 `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human`；`wontfix` 仓库里本来就有（GitHub 默认标签，描述与技能语义一致，没动它），`bug` / `enhancement` 两个类别标签也复用默认的。
+- 验证：`gh label list` 复查，四个新标签在列、中文描述无乱码、颜色 #fbca04 / #d4c5f9 / #0e8a16 / #1d76db；`node tools/verify-manifest.mjs` 全过。本轮只动 markdown，未跑 `verify-all.mjs` / `verify-portal.mjs`——它们不覆盖 `AGENTS.md` 与 `docs/agents/`。
+- 遗留：本机 `gh` 仍未正规登录，`gh` 命令要 `GH_TOKEN=… HTTPS_PROXY=http://127.0.0.1:7897` 前缀才跑得动，用户自己跑一次 `gh auth login` 就能换成持久凭据。`GLOSSARY.md` 与 `docs/adr/` 有意留空，等 `/domain-modeling` 惰性创建。
+- 下一步：无。
+
+---
+
 ## 2026-10-09 12:26 · hermes · 补跑第七座站遗留的两项验证，并给七座站的左栏加对应语言的快速参考友链
 
 - 改：`tools/verify-portal.mjs`；七座站各自的 `assets/js/app.js`（`sideFoot()`）与 `assets/css/app.css`（新增 `.side-ref` / `.side-ref-link`）；`README.md`（新增「致谢」一节）、`AGENTS.md`（铁律 9）、`DESIGN.md`（Components 的 `side-ref`）、`docs/02-verification.md`、`docs/screenshot-portal.png` 与 `docs/screenshot-portal-narrow.png`（重截）。
