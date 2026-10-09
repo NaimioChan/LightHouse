@@ -9,6 +9,16 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ---
 
+## 2026-10-09 19:05 · hermes · 把 gh CLI 的登录补成正规凭据（keyring + read:org），改掉 issue-tracker 文档里的临时绕法
+
+- 改：`docs/agents/issue-tracker.md`（「本机注意」的凭据那一条）；`docs/agent-log.md`。
+- 做了什么：用户报「已登录」但没落地——两处 `hosts.yml`（`~/.config/gh/` 与 `%APPDATA%\GitHub CLI\`）都还是我 18:53 那条之前写的，token 哈希与 GCM 里 GitHub Desktop 的 `gho_` 一致、缺 `read:org`，也没有生成 `config.yml`。于是用 PTY 后台起官方设备流 `gh auth login --hostname github.com --git-protocol https --web --skip-ssh-key`（摘掉 `GH_TOKEN`、带 `HTTPS_PROXY`），一性代码交给用户在浏览器完成授权。现在 `%APPDATA%\GitHub CLI\hosts.yml` 只剩 91 字节（`NaimioChan: {}`），token 进了 Windows 凭据管理器，scope 变成 `gist, read:org, repo, workflow`。顺手删掉早期写歪的 `~/.config/gh/hosts.yml`（里面是明文无效 token）——gh 在 Windows 上只读 `%APPDATA%\GitHub CLI\`。
+- 验证：`env -u GH_TOKEN -u GITHUB_TOKEN gh auth status` → ✓ keyring；`gh label list` 读出四个新 triage 标签；`gh repo view` perm=ADMIN；`gh api repos/NaimioChan/LightHouse --jq '{has_issues,permissions}'` → `has_issues:true`、admin/maintain/triage 全开；`node tools/verify-manifest.mjs` 全过。直连仍被墙，命令要带 `HTTPS_PROXY=http://127.0.0.1:7897`。
+- 遗留：`gh.exe` 依旧不在 bash 默认 PATH（在 `C:\Program Files\GitHub CLI\`），要显式加 PATH 或写全路径。
+- 下一步：无。
+
+---
+
 ## 2026-10-09 18:53 · hermes · 按 setup-matt-pocock-skills 配置本仓库（issue tracker / triage 标签 / 领域文档）
 
 - 改：`AGENTS.md`（尾部新增 `## Agent skills` 三节）；新增 `docs/agents/issue-tracker.md`、`docs/agents/triage-labels.md`、`docs/agents/domain.md`。

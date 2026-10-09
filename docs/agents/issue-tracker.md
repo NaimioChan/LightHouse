@@ -18,7 +18,7 @@
 
 - GitHub 直连被墙：每条 `gh` 命令前加 `HTTPS_PROXY=http://127.0.0.1:7897`。
 - `gh.exe` 在 `C:\Program Files\GitHub CLI\`，不在 bash 默认 PATH 里：先 `export PATH="$PATH:/c/Program Files/GitHub CLI"`，或者写全路径。
-- 凭据：本机 GCM 里存的是 GitHub Desktop 的 `gho_` token，scope 只有 `gist, repo, workflow`，缺 `read:org`——`gh auth login --with-token` 会被拒，`gh auth status` 直接判它无效。临时绕法是把 token 传进 `GH_TOKEN=<token> gh …`；正经做法是自己跑一次 `gh auth login`，拿一个带 `read:org` 的 token。
+- 凭据：已用 `gh auth login --hostname github.com --git-protocol https --web` 登录（2026-10-09）。token 存在 Windows 凭据管理器里，`gh auth status` 的 backend 显示 `keyring`，scope 是 `gist, read:org, repo, workflow`；不需要再设 `GH_TOKEN`。注意 gh 在 Windows 上只读 `%APPDATA%\GitHub CLI\`，写 `~/.config/gh/hosts.yml` 不生效。若某次命令报 401，先看 `gh auth status`：backend 退回 `hosts.yml` 说明凭据被写成了文件里的明文，重跑一次上面的登录即可。
 
 ## 与 docs/agent-log.md 的分工
 
