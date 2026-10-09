@@ -1,8 +1,8 @@
 /* app.js — 外壳：路由、目录、进度、练习场、自测钩子。 */
 (function () {
-  var R = window.H5LAB_render;
+  var R = window.TWLAB_render;
 
-  var CHAPTERS = (window.H5LAB_CHAPTERS || []).slice().sort(function (a, b) {
+  var CHAPTERS = (window.TWLAB_CHAPTERS || []).slice().sort(function (a, b) {
     return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
   });
 
@@ -15,8 +15,8 @@
     });
   });
 
-  var KEY_PASSED = 'h5lab.v1.passed';
-  var KEY_PG = 'h5lab.v1.playground.';
+  var KEY_PASSED = 'twlab.v1.passed';
+  var KEY_PG = 'twlab.v1.playground.';
 
   /* ---------- 进度（只进 localStorage） ---------- */
   var passedMap = {};
@@ -139,7 +139,7 @@
   function resetProgress() {
     R.confirmBox('重置全部进度？', '练习里写过的代码与已通过记录都会被清掉，无法撤销。', '重置', function () {
       try {
-        Object.keys(localStorage).filter(function (k) { return k.indexOf('h5lab.v1.') === 0; })
+        Object.keys(localStorage).filter(function (k) { return k.indexOf('twlab.v1.') === 0; })
           .forEach(function (k) { localStorage.removeItem(k); });
       } catch (e) {}
       passedMap = {};
@@ -164,16 +164,16 @@
     c.appendChild(read);
     c.appendChild(work);
 
-    read.appendChild(R.el('h1', null, 'HTML5 训练场'));
+    read.appendChild(R.el('h1', null, 'Tailwind 训练场'));
     var intro = R.el('div', 'md');
     intro.innerHTML = R.md([
-      CHAPTERS.length + ' 章，从「一个页面该有哪些区块」写到「表单、媒体、绘图、存储」。每章三件事：读一段讲解、看一段当场渲染的示例、自己写一段 HTML 并当场检验。',
+      CHAPTERS.length + ' 章，从「第一个工具类长什么样」写到「响应式、暗色模式与设计令牌」。每章三件事：读一段讲解、看一段当场渲染的示例、自己写一段 class 并当场检验。',
       '',
       '## 怎么用',
       '1. 顺着左侧目录往下读。遇到 **练习**，就在编辑器里改代码（`HTML` / `CSS` / `JS` 三块按页签切）。',
       '2. 停手一秒，预览窗会重新渲染；点 **运行 · 检验** 或按 `Ctrl + Enter` 跑断言。',
       '3. 断言清单里每条 ✗ 都会说出「期望什么、实际什么」。改到全 ✓ 为止，进度会自动记住。',
-      '4. 想随手试标签，去 **练习场**。',
+      '4. 想随手试类名，去 **练习场**。',
       '',
       '常用键：`Ctrl + Enter` 运行检验 · `Tab` 缩进 · `Esc` 关掉弹窗。'
     ].join('\n'));
@@ -232,27 +232,22 @@
   var PG_DEFAULT = {
     html: [
       '<h1>练习场</h1>',
-      '<p>左栏写代码，这里就是真实渲染出来的结果。</p>',
+      '<p>左栏写代码，这里就是真实渲染出来的结果（Tailwind 会在预览窗里即时生成样式）。</p>',
       '<ul>',
-      '  <li>HTML 决定结构</li>',
-      '  <li>CSS 决定样子</li>',
+      '  <li>HTML 决定结构与类名</li>',
+      '  <li>CSS 里还能写自己的补充规则</li>',
       '  <li>JS 决定行为</li>',
       '</ul>',
-      '<button id="hi">点我</button>',
+      '<button class="btn">点我</button>',
       '<p id="out"></p>'
     ].join('\n'),
     css: [
       'body { font-family: system-ui; }',
-      'button {',
-      '  padding: 6px 14px;',
-      '  border: 1px solid #b04a16;',
-      '  border-radius: 4px;',
-      '  background: #faf9f5;',
-      '  color: #b04a16;',
-      '}'
+      '/* Tailwind 的类名先跑，这里写的规则覆盖它 */',
+      '.btn { padding: 6px 14px; border: 1px solid #0369a1; border-radius: 4px; background: #faf9f5; color: #0369a1; }'
     ].join('\n'),
     js: [
-      "document.getElementById('hi').addEventListener('click', () => {",
+      "document.querySelector('.btn').addEventListener('click', () => {",
       "  document.getElementById('out').textContent = '看到我了';",
       '});',
       "console.log('练习场已就绪');"
@@ -321,7 +316,7 @@
       runBtn.disabled = true;
       consoleBox.textContent = '';
       var vals = box.values();
-      window.H5LAB_RUN({
+      window.TWLAB_RUN({
         mount: mount,
         html: vals.html,
         css: vals.css,
@@ -384,7 +379,7 @@
   function selftest(filter) {
     if (selftestRunning) return selftestRunning;
     var mount = document.createElement('div');
-    mount.style.cssText = 'position:fixed;left:-9999px;top:0;width:360px;height:240px;';
+    mount.style.cssText = 'position:fixed;left:-9999px;top:0;width:1120px;height:700px;';
     document.body.appendChild(mount);
 
     var inChapter = function (chId) { return !filter || !filter.chapter || filter.chapter === chId; };
@@ -399,13 +394,14 @@
     };
 
     function attempt(job) {
-      return window.H5LAB_RUN({
+      return window.TWLAB_RUN({
         mount: mount,
         html: job.html, css: job.css, js: job.js, full: !!job.full, tests: job.tests,
+        width: job.width, widths: job.widths,
         timeoutMs: 15000, quietMs: 15, maxSettleMs: 600
       }).then(function (res) {
         if (res.error && res.error.name === 'TimeoutError') {
-          return window.H5LAB_RUN({ mount: mount, html: job.html, css: job.css, js: job.js, full: !!job.full, tests: job.tests, timeoutMs: 20000, quietMs: 15, maxSettleMs: 800 });
+          return window.TWLAB_RUN({ mount: mount, html: job.html, css: job.css, js: job.js, full: !!job.full, tests: job.tests, width: job.width, widths: job.widths, timeoutMs: 20000, quietMs: 15, maxSettleMs: 800 });
         }
         return res;
       });
@@ -431,8 +427,9 @@
         var sol = R.mergeSolution(sec.starter, sec.solution);
         var sheet = function (o) { return [{ label: 'HTML', code: o.html || '' }, { label: 'CSS', code: o.css || '' }, { label: 'JS', code: o.js || '' }].filter(function (p) { return p.code; }); };
         var base = { where: item.ch + ' ' + sec.id, ch: item.ch, chTitle: item.chTitle, secIndex: item.index, exId: sec.id };
-        return attempt({ html: sol.html, css: sol.css, js: sol.js, full: !!sec.full, tests: sec.tests }).then(function (res) {
-          var allPass = !res.error && !res.jsError && res.tests && res.tests.length === sec.tests.length && res.tests.every(function (t) { return t.pass; });
+        var want = R.flatTests(sec.tests).list.length;
+        return attempt({ html: sol.html, css: sol.css, js: sol.js, full: !!sec.full, tests: sec.tests, width: sec.width, widths: sec.widths }).then(function (res) {
+          var allPass = !res.error && !res.jsError && res.tests && res.tests.length === want && res.tests.every(function (t) { return t.pass; });
           if (allPass) report.exercises.solutionAllPass++;
           else report.problems.push(Object.assign({}, base, {
             kind: '参考解没全过',
@@ -441,7 +438,7 @@
               : (res.tests || []).filter(function (t) { return t.pass !== true; }).map(function (t) { return t.message || t.label; }).join('；'),
             sheet: sheet(sol)
           }));
-          return attempt({ html: sec.starter.html, css: sec.starter.css, js: sec.starter.js, full: !!sec.full, tests: sec.tests });
+          return attempt({ html: sec.starter.html, css: sec.starter.css, js: sec.starter.js, full: !!sec.full, tests: sec.tests, width: sec.width, widths: sec.widths });
         }).then(function (res) {
           var anyFail = !!res.error || !!res.jsError || (res.tests || []).some(function (t) { return t.pass === false; });
           if (anyFail) report.exercises.starterAllFail++;
@@ -463,7 +460,7 @@
     });
     return selftestRunning;
   }
-  window.H5LAB_SELFTEST = selftest;
+  window.TWLAB_SELFTEST = selftest;
 
   /* ---------- 本地服务模式：页面关掉 → 服务退出 → 终端窗口跟着关 ---------- */
   function staleBanner(tag) {
@@ -484,13 +481,13 @@
       var opened = false;
       es.onopen = function () { opened = true; };
       es.onerror = function () { if (!opened) es.close(); };
-      window.H5LAB_ALIVE = es;
+      window.TWLAB_ALIVE = es;
     } catch (e) {}
 
     setTimeout(function () {
-      if (window.H5LAB_ALIVE && window.H5LAB_ALIVE.readyState === 1) return;
+      if (window.TWLAB_ALIVE && window.TWLAB_ALIVE.readyState === 1) return;
       fetch('/__whoami').then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
-        if (t.indexOf('html5-lab serve.py') !== 0) return;   // 不是本服务，别误报
+        if (t.indexOf('tailwind-lab serve.py') !== 0) return;   // 不是本服务，别误报
         staleBanner(t);
       }).catch(function () {});
     }, 12000);
@@ -503,10 +500,10 @@
     initNavDrawer();
     window.addEventListener('hashchange', route);
     document.getElementById('auto-run').addEventListener('change', function (ev) {
-      try { localStorage.setItem('h5lab.v1.auto', ev.target.checked ? '1' : '0'); } catch (e) {}
+      try { localStorage.setItem('twlab.v1.auto', ev.target.checked ? '1' : '0'); } catch (e) {}
     });
     try {
-      if (localStorage.getItem('h5lab.v1.auto') === '0') document.getElementById('auto-run').checked = false;
+      if (localStorage.getItem('twlab.v1.auto') === '0') document.getElementById('auto-run').checked = false;
     } catch (e) {}
 
     document.getElementById('reset-progress').addEventListener('click', resetProgress);
@@ -514,7 +511,7 @@
     route();
 
     if (/(^|[?&])selftest/.test(location.search)) {
-      console.log('HTML5 训练场自测开始（' + ALL_DEMOS.length + ' 个示例 + ' + ALL_EXERCISES.length + ' 个练习）…');
+      console.log('Tailwind 训练场自测开始（' + ALL_DEMOS.length + ' 个示例 + ' + ALL_EXERCISES.length + ' 个练习）…');
       selftest().then(function (r) {
         console.log('SELFTEST ' + JSON.stringify(r));
       });

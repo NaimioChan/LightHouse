@@ -1,8 +1,8 @@
 # 04 · 移动端布局契约
 
-四座训练场的引擎是各自独立的（各自 `app.css` / `app.js` / `render.js`，见根 `AGENTS.md` 铁律 4），
+各座训练场的引擎是各自独立的（各自 `app.css` / `app.js` / `render.js`，见根 `AGENTS.md` 铁律 4），
 但手机上的形态必须一致，否则会出现「js-lab 能开目录抽屉、css-lab 不能」这种四不像。
-这一页是那套共享契约的**唯一来源**（`vue-lab` 也在内，共五座）；改之前先读，改完各座都要跑自己的 `tools/verify-ui.mjs`。
+这一页是那套共享契约的**唯一来源**（现有七座站都在内）；改之前先读，改完各座都要跑自己的 `tools/verify-ui.mjs`。
 
 ## 为什么是 900px
 
@@ -50,7 +50,7 @@ html { height: 100%; }
 body { min-height: 100%; }
 ```
 
-五座站的 `base.css` 都已按这个写。各站 `verify-ui.mjs` 里有一条断言盯着它：
+各站的 `base.css` 都已按这个写。各站 `verify-ui.mjs` 里有一条断言盯着它：
 滚到 1600px 后顶栏 `top` 必须仍是 0，且窄屏下「目录」按钮的位置用 `document.elementFromPoint` 命中的就是它自己。
 
 ## 验收（不能只看截图）

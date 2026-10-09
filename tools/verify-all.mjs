@@ -19,8 +19,8 @@ const fast = argv.includes('--fast');
 const only = argv.includes('--lab') ? argv[argv.indexOf('--lab') + 1] : null;
 
 /* 站列表从清单读（加站不用改这里）；每座站跑它自己有的那几支 node 侧校验。
-   缺哪支脚本就跳过哪支（verify-types 只有 ts-lab 有，verify-compile 只有 vue-lab 有）。 */
-const SCRIPTS = ['verify-content.mjs', 'verify-pair.mjs', 'verify-types.mjs', 'verify-judge.mjs', 'verify-compile.mjs', 'verify-quit.mjs'];
+   缺哪支脚本就跳过哪支（verify-types 只有 ts-lab 有，verify-compile 只有 vue-lab / react-lab 有）。 */
+const SCRIPTS = ['verify-content.mjs', 'verify-pair.mjs', 'verify-types.mjs', 'verify-judge.mjs', 'verify-compile.mjs', 'verify-vendor.mjs', 'verify-quit.mjs'];
 const PLAN = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'labs.json'), 'utf8'))
   .map((lab) => ({ dir: lab.dir, scripts: SCRIPTS }));
 

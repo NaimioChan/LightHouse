@@ -5,9 +5,25 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ## 当前占用
 
-（空。开工时在这里加一行 `- <agent> · <任务> · <开始时间>`，收工删掉。）
+（空）
 
 ---
+
+## 2026-10-09 11:30 · opencode · 补 html5-lab 无障碍章（第 13 章）与新建 Tailwind 训练场（tailwind-lab，第七座）并接入入口页
+
+- 改：`html5-lab/`（新增 `content/ch13-a11y.js`、`index.html` 引用、`app.js` 自测、`tools/verify-browser.mjs` 报告、`README.md`）；新建 `tailwind-lab/`（整座站：引擎 `harness.js`/`preview.js`/`render.js`/`app.js`、8 章内容 `content/ch01..ch08`、`tools/` 9 支校验脚本、`vendor/` 编译器产物、`serve.py`/`run.bat`、`docs/`、`DESIGN.md`、`AGENTS.md`、`README.md`）；`tools/labs.json`、`tools/verify-all.mjs`、`assets/css/portal.css`、`assets/js/manifest.js`（重跑生成）；根 `README.md`、`DESIGN.md`、`AGENTS.md`、`docs/01-merge-architecture.md`、`docs/02-verification.md`、`docs/03-languages-and-scale.md`、`docs/04-mobile-layout.md`、`docs/前端演练场-方向评估与实测.md`。
+- 做了什么：① html5-lab 第 13 章 5 个练习，纯 DOM 属性判题（ARIA、可访问名、实时区、装饰元素），离线零依赖。② tailwind-lab 按评估文档 §6.5 落成第七座：预览帧里内联 Tailwind 4 浏览器编译器（`vendor/` 282 KB + 源码字符串包），用户 CSS 走 `<style type="text/tailwindcss">` 加固定 PREAMBLE（**只引 theme+utilities、不引 preflight**，保留浏览器默认样式），`harness.js` 的 `waitTailwind()` 等编译器异步生成样式；`dark:` 走 class 策略，响应式走两阶段判题。8 章 33 练习 9 示例。③ 本轮修掉一个真实缺陷：迷你 markdown **不支持围栏代码块**，ch01/02/03/05/08 里的 ``` 块被当成巨长的行内 `code`（`white-space: nowrap`）渲染，390px 窄屏横向溢出（verify-ui 抓到 `scrollWidth 558`）。给 `render.js` 补上围栏块支持（输出 `<pre class="md-pre"><code>`）、加 `.md-pre` 样式，ch07 的断点表改用 `kind: 'table'`，并收短 ch06/ch07 的超长行内 code；schema 文档与站内 AGENTS 写作规范同步写明「行内 code 别超约 40 字符」。④ `tools/verify-all.mjs` 的 SCRIPTS 加 `verify-vendor.mjs`；各站主端口 tailwind 用 8884。
+- 验证：`html5-lab` 真浏览器 `verify-browser` 示例自检 52/52 · 参考解 63/63 · 起始代码被抓 63/63，`verify-ui --fast` 54 项全过（13 章 / 63 练习）。`tailwind-lab`：`verify-content`（8 章 · 33 练习 · 9 示例 · 19 段讲解 · 4 提示 · 6 表）通过、`verify-browser` 示例自检 9/9 · 参考解 33/33 · 起始代码被抓 33/33、`verify-ui --fast` 53 项全过（含 390px 无横向溢出）、`verify-pages` 8 章全过、`verify-pair`/`verify-vendor`/`verify-quit` 全过。根侧 `node tools/build-manifest.mjs` 生成 7 座 · 87 章 · 391 练习 · 321 示例，`verify-manifest.mjs` 全过，`verify-all.mjs` 28 支全过（含新加的 verify-vendor）。`verify-portal.mjs` 146 项全过（入口页 + 七座站，含 tailwind-lab 卡片、侧栏、390px 无横向溢出、file:// 直开）。`designmd lint` 根与 `tailwind-lab/DESIGN.md` 都 0 errors 0 warnings。
+- 遗留：HTML5 第 13 章的 a11y 章未做专门的屏幕阅读器人工核对，只做了 DOM 属性断言。Tailwind 全量 `verify-ui`（不带 `--fast`）单次超过 10 分钟，本轮只跑了 `--fast`，全量自测由 `verify-browser` 覆盖。
+- 下一步：无。
+
+---
+
+- 改：没有改任何文件内容，只重写提交元数据。重写前后 HEAD 的 tree 哈希都是 `44483173`。
+- 做了什么：全库只有 `1b50d63`（2026-10-08 10:36「docs/方向评估…」那条）带 `Co-Authored-By: Claude Code <noreply@anthropic.com>`。起了一个临时 worktree 做 `git rebase -i`，停在该提交上 `git commit --amend` 去掉 trailer，再把 `main` 软重置到重写后的 `bd1c5cb`，`--force-with-lease` 推上远端。该提交之后的 7 条提交只有哈希变了，消息与内容一字未动。
+- 验证：新旧都是 26 条提交；HEAD tree 哈希一致；`git log --all` 已无 claude 残留；`api.github.com/repos/NaimioChan/LightHouse/contributors` 现在只剩 NaimioChan (26)；工作区在飞的改动（tailwind-lab 等 11 项）重写前后逐项一致。
+- 遗留：本条目故意不提交——工作区里有 opencode 在飞的改动（tailwind-lab、agent-log 的「当前占用」行），不替它提交。旧提交对象还留在本地 reflog 里（方便回退），要彻底清掉跑 `git reflog expire --expire=now --all && git gc --prune=now`。
+- 下一步：无（分支改名由用户自己操作）。
 
 ## 2026-10-08 18:45 · opencode · 入口页页脚句子换成 GitHub 图标链接，各站版权行也加一个
 

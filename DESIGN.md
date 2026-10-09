@@ -23,6 +23,8 @@ colors:
   lab-vue-strong: "#35785F"
   lab-react: "#087EA4"
   lab-react-strong: "#046E8F"
+  lab-tailwind: "#38BDF8"
+  lab-tailwind-strong: "#0369A1"
 typography:
   h1:
     fontFamily: Source Han Serif SC
@@ -104,6 +106,9 @@ components:
   card-rule-react:
     backgroundColor: "{colors.lab-react}"
     height: 3px
+  card-rule-tailwind:
+    backgroundColor: "{colors.lab-tailwind}"
+    height: 3px
   card-button-html5:
     backgroundColor: "{colors.lab-html5-strong}"
     textColor: "{colors.panel}"
@@ -131,6 +136,11 @@ components:
     padding: 5px
   card-button-react:
     backgroundColor: "{colors.lab-react-strong}"
+    textColor: "{colors.panel}"
+    rounded: "{rounded.sm}"
+    padding: 5px
+  card-button-tailwind:
+    backgroundColor: "{colors.lab-tailwind-strong}"
     textColor: "{colors.panel}"
     rounded: "{rounded.sm}"
     padding: 5px
@@ -177,7 +187,7 @@ components:
 - **Panel (#FAF9F5) 纸白**：卡片底色。
 - **Line (#E0DBCC) 亚麻线**：全局唯一的 1px 描边色。
 - **Ink-soft (#4A453A) 柔墨**：简介与卡片上那句话的正文色。
-- **lab-html5 / lab-css / lab-js / lab-ts / lab-vue / lab-react 与各自的 -strong 深支**：各座训练场的识别色，取自各自 `DESIGN.md`；
+- **lab-html5 / lab-css / lab-js / lab-ts / lab-vue / lab-react / lab-tailwind 与各自的 -strong 深支**：各座训练场的识别色，取自各自 `DESIGN.md`；
   装饰用浅支，按钮实底与文字用深支。
 
 ## Typography
@@ -196,7 +206,7 @@ components:
 卡片网格宽屏两列、≤880px 一列，卡片间距 18px。
 手机竖屏下大标题降到 2.4rem、卡片与页脚都不许出现横向溢出（入口页自己的整页缩放交给浏览器，
 但卡片按钮必须够手指点：`.btn-enter` 一类按钮窄屏高度 ≥ 36px）。卡片内部自上而下：站名与规模（同一行，规模右对齐）、
-一句话、进度文本、进度条、按钮（进入，有进度时多一个「继续第 N 章」）；带第三方运行库的站（TS / Vue / React）
+一句话、进度文本、进度条、按钮（进入，有进度时多一个「继续第 N 章」）；带第三方运行库的站（TS / Vue / React / Tailwind）
 末尾多一行小字提示首次加载体积。
 
 ## Elevation & Depth
@@ -226,4 +236,4 @@ components:
 - 不要阴影、渐变、图标堆叠、大圆角。层级靠描边与留白。
 - 不要深色主题（与各座站一致的浅色纸感）。
 - 入口页**不写** localStorage、不提供重置：进度属于各座站，入口页只读。
-- 卡片顺序固定 HTML5 → CSS → JS → TypeScript → Vue 3 → React 19，不按字母或热度重排。
+- 卡片顺序固定 HTML5 → CSS → JS → TypeScript → Vue 3 → React 19 → Tailwind，不按字母或热度重排。

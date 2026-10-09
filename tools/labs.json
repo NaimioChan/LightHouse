@@ -64,5 +64,16 @@
     "progressKey": "rllab.v1.passed",
     "blurb": "函数组件、props、列表与 key、state 与事件、受控表单、副作用、状态提升、ref、useReducer、context",
     "note": "首次打开要加载约 220 KB 的 React 运行库，只需一次。"
+  },
+  {
+    "key": "tailwind",
+    "dir": "tailwind-lab",
+    "title": "Tailwind 训练场",
+    "registry": "TWLAB_CHAPTERS",
+    "accentToken": "lab-tailwind",
+    "entry": "tailwind-lab/index.html",
+    "progressKey": "twlab.v1.passed",
+    "blurb": "工具类、间距与尺寸、字体颜色、flex 与 grid、变体、响应式、暗色模式与设计令牌",
+    "note": "每个预览窗都要跑一次约 290 KB 的 Tailwind 浏览器编译器，单帧约 100–300 ms。"
   }
 ]

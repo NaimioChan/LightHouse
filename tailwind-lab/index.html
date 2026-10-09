@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HTML5 训练场 — 从页面骨架到表单、媒体与存储</title>
+<title>Tailwind 训练场 — 从工具类到设计令牌</title>
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/app.css">
 </head>
@@ -11,7 +11,7 @@
 
 <header class="topbar">
   <button class="nav-btn" id="nav-btn" type="button" aria-expanded="false" aria-controls="sidebar">目录</button>
-  <a class="brand" href="#home">HTML5 训练场</a>
+  <a class="brand" href="#home">Tailwind 训练场</a>
   <nav class="topnav">
     <a href="#home" data-route="home">总览</a>
     <a href="#playground" data-route="playground">练习场</a>
@@ -34,24 +34,23 @@
   <main class="main" id="main"></main>
 </div>
 
+<!-- Tailwind 浏览器编译器的源码字符串包（vendor/，自动生成）。
+     classic script 挂出 window.TWLAB_TAILWIND_SRC，preview.js 把它内联进预览 iframe 求值：
+     沙箱是 opaque origin，外链 <script src> 一律 onerror，file:// 下父页面又读不到源码。 -->
+<script src="vendor/tailwind-src.js"></script>
 <script src="assets/js/harness.js"></script>
 <script src="assets/js/preview.js"></script>
 <script src="assets/js/highlight.js"></script>
 <script src="assets/js/pair.js"></script>
 <script src="assets/js/render.js"></script>
-<script src="content/ch01-skeleton.js"></script>
-<script src="content/ch02-text-lists.js"></script>
-<script src="content/ch03-links-images.js"></script>
-<script src="content/ch04-tables.js"></script>
-<script src="content/ch05-forms-basics.js"></script>
-<script src="content/ch06-forms-validation.js"></script>
-<script src="content/ch07-media.js"></script>
-<script src="content/ch08-canvas.js"></script>
-<script src="content/ch09-svg.js"></script>
-<script src="content/ch10-modern-tags.js"></script>
-<script src="content/ch11-data-and-dom.js"></script>
-<script src="content/ch12-storage.js"></script>
-<script src="content/ch13-a11y.js"></script>
+<script src="content/ch01-utilities.js"></script>
+<script src="content/ch02-spacing-size.js"></script>
+<script src="content/ch03-typography-color.js"></script>
+<script src="content/ch04-layout.js"></script>
+<script src="content/ch05-components.js"></script>
+<script src="content/ch06-variants.js"></script>
+<script src="content/ch07-responsive.js"></script>
+<script src="content/ch08-dark-tokens.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

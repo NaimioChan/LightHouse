@@ -39,10 +39,13 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | `css-lab` | `node tools/verify-browser.mjs`、`node tools/verify-pages.mjs` | 几何断言、两阶段练习卡、媒体查询重估 |
 | `ts-lab` | `node tools/verify-judge.mjs`、`node tools/verify-types.mjs`、`node tools/verify-pages.mjs` | 真类型诊断、等价判定、逐章编译产物 |
 | `vue-lab` | `node tools/verify-compile.mjs`、`node tools/verify-browser.mjs`、`node tools/verify-ui.mjs`、`node tools/verify-pages.mjs` | SFC 改写内核单测、两条路各跑一遍全部练习、真实按键与四档视口、逐章渲染对账 |
+| `react-lab` | `node tools/verify-compile.mjs`、`node tools/verify-browser.mjs`、`node tools/verify-ui.mjs`、`node tools/verify-pages.mjs`、`node tools/verify-vendor.mjs` | React 运行时自检、两条路各跑一遍全部练习、真实按键与四档视口、逐章渲染对账、vendor 体积与哈希 |
+| `tailwind-lab` | `node tools/verify-browser.mjs`、`node tools/verify-ui.mjs`、`node tools/verify-pages.mjs`、`node tools/verify-vendor.mjs`、`node tools/verify-pair.mjs` | 两条路各跑一遍全部练习（含等编译器生成样式）、真实按键与三档视口、逐章渲染对账、vendor 体积与哈希、括号配对纯逻辑 |
 
 `vue-lab` 的 `verify-browser.mjs` 会把每个练习跑两遍（参考答案必须全过、起始代码必须至少挂一条），
 `http` 与 `file://` 各一轮 —— 第五座站的执行模型是「沙箱里跑第三方运行时」，
-`file://` 那条路尤其容易假绿（vendor 的读法只要不对，整站会静默不判题）。
+`file://` 那条路尤其容易假绿（vendor 的读法只要不对，整站会静默不判题）。`tailwind-lab` 同理，
+而且它每个预览帧里要再内联求值一次编译器，`file://` 下最容易暴露「源码字符串包没读对」。
 
 这几支脚本慢（几分钟），且要起无头 Edge 与 http.server，所以不放进每轮迭代。
 
@@ -104,3 +107,28 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 第六座站落地时补的一个跨站修法：五座老站的 `serve.py` 在 Windows 上按控制台代码页（GBK）编码 stdout，
 被管道接走就是乱码，各自的 `verify-quit.mjs` 按 UTF-8 读会认不出「页面已关闭」。这次一并把六座站的 stdout/stderr
 都 `reconfigure(encoding='utf-8')`，`verify-all.mjs` 才从「5 支失败」回到 22 支全过。
+
+## 第七座站（tailwind-lab）接入后的对账
+
+`tailwind-lab` 与 `react-lab` 一样是并入后新写的。接入时实际跑过的：
+
+| 检查 | 命令 | 结果 |
+|---|---|---|
+| 内容结构 | `tailwind-lab/node tools/verify-content.mjs` | 8 章 / 33 练习 / 9 示例 / 131 断言（含示例断言） |
+| 括号配对 | `tailwind-lab/node tools/verify-pair.mjs` | 全过 |
+| vendor 记账 | `tailwind-lab/node tools/verify-vendor.mjs` | 全过；体积与 sha256 逐字节核对（`tailwind.global.js` 282,289 B、`tailwind-src.js` 299,488 B），且字符串包里嵌的正是产物源码、无未转义的 `</script` |
+| 两条路各跑一遍全部练习 | `tailwind-lab/node tools/verify-browser.mjs` | http 与 `file://` 都是 示例自检 9/9、参考答案 33/33、起始代码被抓 33/33 |
+| 真实按键与三档视口 | `tailwind-lab/node tools/verify-ui.mjs` | 全过（含 390px 抽屉、真实按键管线、`file://` 直开、完整自测） |
+| 关窗即退 | `tailwind-lab/node tools/verify-quit.mjs` | 全过 |
+| 各站 node 侧校验一起跑 | `node tools/verify-all.mjs` | 全部通过（七座站） |
+| 清单与门户 | `node tools/build-manifest.mjs` → `verify-manifest.mjs` → `verify-portal.mjs` | 87 章 / 391 练习；门户全过（含 tailwind-lab 卡片、侧栏与 390px 抽屉） |
+| 设计令牌 | `designmd lint`（根与 `tailwind-lab/DESIGN.md`） | 两处都 0 errors 0 warnings |
+
+`html5-lab` 第 13 章（无障碍）落地时补的：`verify-browser.mjs` 加了逐章报告输出，`assets/js/app.js` 的
+`selfTest` 增强；`verify-content` 与 `verify-ui` 同步。`verify-all.mjs` 的脚本清单这次加入了 `verify-vendor.mjs`，
+让 React 与 Tailwind 两座站的 vendor 体积/哈希账也进汇总校验（缺这支脚本的站自动跳过）。
+
+`tailwind-lab` 与其余各站的一处不同：每个预览帧里要内联一份 Tailwind 浏览器编译器（源码字符串包在
+`assets/js/preview.js` 里拼进文档），样式异步生成。`assets/js/harness.js` 的 `waitTailwind()` 轮询 `<head>`
+末尾那个**无 `type`** 的 `<style>`，有内容了才跑断言；这条等待是判题成立的前提，别删（详见
+`tailwind-lab/AGENTS.md` 铁律 6）。

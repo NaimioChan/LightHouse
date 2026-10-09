@@ -13,10 +13,10 @@
       "blurb": "语义标签、文本与表格、链接与媒体、表单校验、Canvas / SVG",
       "note": "",
       "stats": {
-        "chapters": 12,
-        "exercises": 58,
-        "examples": 50,
-        "tests": 242
+        "chapters": 13,
+        "exercises": 63,
+        "examples": 52,
+        "tests": 253
       },
       "chapters": [
         {
@@ -147,6 +147,17 @@
             "ex12-2",
             "ex12-3",
             "ex12-4"
+          ]
+        },
+        {
+          "id": "ch13",
+          "title": "第 13 章 · 无障碍与语义",
+          "exercises": [
+            "ex13-1",
+            "ex13-2",
+            "ex13-3",
+            "ex13-4",
+            "ex13-5"
           ]
         }
       ]
@@ -928,6 +939,105 @@
             "ex12-2",
             "ex12-3",
             "ex12-4"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tailwind",
+      "dir": "tailwind-lab",
+      "title": "Tailwind 训练场",
+      "entry": "tailwind-lab/index.html",
+      "progressKey": "twlab.v1.passed",
+      "accentToken": "lab-tailwind",
+      "blurb": "工具类、间距与尺寸、字体颜色、flex 与 grid、变体、响应式、暗色模式与设计令牌",
+      "note": "每个预览窗都要跑一次约 290 KB 的 Tailwind 浏览器编译器，单帧约 100–300 ms。",
+      "stats": {
+        "chapters": 8,
+        "exercises": 33,
+        "examples": 9,
+        "tests": 98
+      },
+      "chapters": [
+        {
+          "id": "ch01",
+          "title": "第 1 章 · 工具类：一个类名做一件事",
+          "exercises": [
+            "ex01-1",
+            "ex01-2",
+            "ex01-3",
+            "ex01-4"
+          ]
+        },
+        {
+          "id": "ch02",
+          "title": "第 2 章 · 间距与尺寸",
+          "exercises": [
+            "ex02-1",
+            "ex02-2",
+            "ex02-3",
+            "ex02-4"
+          ]
+        },
+        {
+          "id": "ch03",
+          "title": "第 3 章 · 字体与颜色",
+          "exercises": [
+            "ex03-1",
+            "ex03-2",
+            "ex03-3",
+            "ex03-4"
+          ]
+        },
+        {
+          "id": "ch04",
+          "title": "第 4 章 · 布局：flex 与 grid",
+          "exercises": [
+            "ex04-1",
+            "ex04-2",
+            "ex04-3",
+            "ex04-4"
+          ]
+        },
+        {
+          "id": "ch05",
+          "title": "第 5 章 · 组件：把工具类拼成界面",
+          "exercises": [
+            "ex05-1",
+            "ex05-2",
+            "ex05-3",
+            "ex05-4"
+          ]
+        },
+        {
+          "id": "ch06",
+          "title": "第 6 章 · 变体：同一个类在不同条件下",
+          "exercises": [
+            "ex06-1",
+            "ex06-2",
+            "ex06-3",
+            "ex06-4",
+            "ex06-5"
+          ]
+        },
+        {
+          "id": "ch07",
+          "title": "第 7 章 · 响应式：断点前缀",
+          "exercises": [
+            "ex07-1",
+            "ex07-2",
+            "ex07-3",
+            "ex07-4"
+          ]
+        },
+        {
+          "id": "ch08",
+          "title": "第 8 章 · 暗色模式与设计令牌",
+          "exercises": [
+            "ex08-1",
+            "ex08-2",
+            "ex08-3",
+            "ex08-4"
           ]
         }
       ]
