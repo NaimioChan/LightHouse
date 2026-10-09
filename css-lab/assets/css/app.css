@@ -75,6 +75,10 @@
 .gh-link { display: inline-flex; align-items: center; color: var(--muted); }
 .gh-link:hover { color: var(--accent-strong); text-decoration: none; }
 .gh-link svg { width: 15px; height: 15px; fill: currentColor; display: block; }
+/* 友链：该座站对应语言的快速参考（quickref.me 中文版），在版权行之上 */
+.side-ref { margin: 0 0 6px; font-size: .72rem; }
+.side-ref-link { color: var(--accent-strong); }
+.side-ref-link:hover { color: var(--accent-strong); text-decoration: underline; }
 
 /* 顶部「目录」按钮与遮罩：只在窄屏出现（见文件末尾的窄屏段） */
 .nav-btn {

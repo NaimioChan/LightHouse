@@ -9,6 +9,16 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ---
 
+## 2026-10-09 12:26 · hermes · 补跑第七座站遗留的两项验证，并给七座站的左栏加对应语言的快速参考友链
+
+- 改：`tools/verify-portal.mjs`；七座站各自的 `assets/js/app.js`（`sideFoot()`）与 `assets/css/app.css`（新增 `.side-ref` / `.side-ref-link`）；`README.md`（新增「致谢」一节）、`AGENTS.md`（铁律 9）、`DESIGN.md`（Components 的 `side-ref`）、`docs/02-verification.md`、`docs/screenshot-portal.png` 与 `docs/screenshot-portal-narrow.png`（重截）。
+- 做了什么：① 先补上一条留给我的两项遗留。tailwind-lab 的 `verify-ui.mjs` 全量档（上轮只跑了 `--fast`）实跑通过。html5-lab 第 13 章「只做了 DOM 属性断言」那一层，用 CDP 的 `Accessibility.getPartialAXTree` 读浏览器自己算的无障碍树做了交叉核对：图标按钮 `role=button` / `name=搜索`、里面的 `svg` 已 `ignored`，`section[aria-labelledby]` 成 `role=region` / `name=本周安排`，`label[for]` 配 `input[id]` 让输入框成 `role=textbox` / `name=邮箱`，`.status` 上读到 `live=polite`、`atomic=true`，`.divider` 整块 `ignored` 而旁边正文照常暴露；做法与结论写进 `docs/02-verification.md`。② 七座站的目录栏底部、版权行之上加一行「快速参考」友链（`.side-ref`，`target="_blank"` + `rel="noopener"`，title 里写明 quickref.me），指向 quickref.me 中文版对应语言的备忘清单，每座站只挂自己那一门（HTML / CSS / JavaScript / TypeScript / Vue / React / Tailwind）。URL 在两处写死：各站 `app.js` 的 `sideFoot()`，以及 `verify-portal.mjs` 顶部的 `QUICKREF` 表（按 labs.json 的 key 对账）；这是纯外链，断网或对方改版不影响各站自己。③ `verify-portal.mjs` 的截图改成整页（`Page.getLayoutMetrics` 的内容尺寸 + `captureBeyondViewport`）：旧版只截视口，第七张卡（tailwind）进不了 README 的门面图，而且图里 HTML5 还停在 12 章 58 练习的旧数字。④ README 加「致谢」一节说明外链指向 quickref.me。
+- 验证：`node tools/verify-manifest.mjs` 全过；`node tools/verify-all.mjs` 27 支全过（七座站）；`node tools/verify-portal.mjs` 185 项全过（比加友链之前多 7 项，每座站一条），`--shots` 重截两张整页图（1564×1443 两列、390×2279 一列，七张卡与页脚都进图）；七座各自的 `verify-ui.mjs` 全过——html5 54 项、css 54 项、js 45 项（这三座 `--fast`），ts / vue / react 各自全过（`--fast`），tailwind-lab 跑**全量** 54 项（全量自测 示例 9/9 · 参考解 33/33 · 起始代码被抓 33/33，166s）；`designmd lint DESIGN.md` 0 errors 0 warnings；七个 quickref.me URL 当天 curl 全 200（中文页）；再用浏览器实读三座站侧栏的渲染（href / target / 占位 / 颜色正常，不换行不溢出）。
+- 遗留：无障碍那一章仍没有真读屏软件（NVDA、VoiceOver）的人工过一遍，只到「浏览器无障碍树」这一层。七座站的长跑没有统一的日志文件——带 PTY 的后台任务不能重定向输出（会报 `stdout is not a tty`），这次只从进程输出里读，方法补进了 `docs/02-verification.md` 的「CDP 验收的三条硬规矩」第 1 条。
+- 下一步：无。
+
+---
+
 ## 2026-10-09 11:30 · opencode · 补 html5-lab 无障碍章（第 13 章）与新建 Tailwind 训练场（tailwind-lab，第七座）并接入入口页
 
 - 改：`html5-lab/`（新增 `content/ch13-a11y.js`、`index.html` 引用、`app.js` 自测、`tools/verify-browser.mjs` 报告、`README.md`）；新建 `tailwind-lab/`（整座站：引擎 `harness.js`/`preview.js`/`render.js`/`app.js`、8 章内容 `content/ch01..ch08`、`tools/` 9 支校验脚本、`vendor/` 编译器产物、`serve.py`/`run.bat`、`docs/`、`DESIGN.md`、`AGENTS.md`、`README.md`）；`tools/labs.json`、`tools/verify-all.mjs`、`assets/css/portal.css`、`assets/js/manifest.js`（重跑生成）；根 `README.md`、`DESIGN.md`、`AGENTS.md`、`docs/01-merge-architecture.md`、`docs/02-verification.md`、`docs/03-languages-and-scale.md`、`docs/04-mobile-layout.md`、`docs/前端演练场-方向评估与实测.md`。

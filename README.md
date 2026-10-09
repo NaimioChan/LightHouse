@@ -45,7 +45,7 @@
 
 ![入口页](docs/screenshot-portal.png)
 
-（宽屏两列；窄屏一列见 `docs/screenshot-portal-narrow.png`。两张都是校验脚本 `node tools/verify-portal.mjs --shots` 里截的。）
+（宽屏两列；窄屏一列见 `docs/screenshot-portal-narrow.png`。两张都是校验脚本 `node tools/verify-portal.mjs --shots` 截的整页图，七张卡与页脚都在里面。）
 
 ## 目录结构
 
@@ -117,6 +117,10 @@ cd tailwind-lab && node tools/verify-browser.mjs # http 与 file:// 各跑一遍
   强行统一是纯粹的回归风险；要不要抽公共内核是另一件事，见 `docs/01-merge-architecture.md`。
 - **进度只看得到同一浏览器**：存在 `localStorage`，换浏览器或清缓存就回到零。入口页只读，不提供重置
   （重置在每座站自己的顶栏里）。
+
+## 致谢
+
+各座训练场目录栏底部的「快速参考」入口指向 [quickref.me](https://quickref.me/zh-CN/index.html)，那里收了一百多种语言与工具的备忘清单，中文版由社区翻译维护。本仓库只做外链，不复制它的内容；断网时点过去就是打不开，不影响各站自己的功能。
 
 ## 许可
 

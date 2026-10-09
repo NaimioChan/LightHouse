@@ -24,7 +24,8 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 
 `verify-portal.mjs` 检查的东西：入口页的大标题 / 副标题 / 简介长度（≤140 字）与断行（宽屏两行、每行用满）、
 页脚版权行与 GitHub 图标链接、每张卡片的数字与一句话、卡片顺序与入口链接、三档宽度下的对齐与列数；各座站入口页从根服务取到后，
-侧栏章节数与清单一致、编辑器有起始代码、目录栏底部有回入口页的按钮、版权行与 GitHub 图标链接、行内代码里的星号没被当成强调标记
+侧栏章节数与清单一致、编辑器有起始代码、目录栏底部有回入口页的按钮、版权行与 GitHub 图标链接、
+版权行之上的快速参考友链（href 与该站语言对应、`target="_blank"`、占位非零）、行内代码里的星号没被当成强调标记
 （js-lab 第 2 章的 `+ - * / %` 与 `**`）、没有未捕获错误；全站资源没有 404；读 localStorage 的进度分支能正确显示
 「已通过 N/M」与「继续第 N 章」（测试前备份、测试后还原原有的进度键）；最后再走一遍 `file://` 直开。
 
@@ -56,6 +57,9 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 ## CDP 验收的三条硬规矩（踩过）
 
 1. 前台 `terminal` 超时超过 600s 会被提升为后台进程，随后带 `stdin is not a tty` 立刻死掉——脚本输出要重定向到 `.cache/`。
+   真要跑超过 10 分钟的那几支（`verify-ui.mjs` 的全量档、`verify-browser.mjs`），得用带 PTY 的后台任务
+   （Hermes `terminal` 的 `background=true` + `pty=true`，不带 PTY 的后台任务同样立刻 `stdin is not a tty` 死掉）；
+   PTY 下再重定向输出会变成 `stdout is not a tty`，日志从进程输出里取，别写进命令行。
 2. `Page.captureScreenshot` 在隐藏标签页会一直挂着不报错，截图前先 `Page.bringToFront`，并把截图失败降级为警告。
 3. 需要真实键盘行为时用 `Input.dispatchKeyEvent`（`type: 'keyDown'` + `text`）；`Input.insertText` 不经过 keydown，
    拿它验括号配对是假绿。
@@ -118,7 +122,7 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 括号配对 | `tailwind-lab/node tools/verify-pair.mjs` | 全过 |
 | vendor 记账 | `tailwind-lab/node tools/verify-vendor.mjs` | 全过；体积与 sha256 逐字节核对（`tailwind.global.js` 282,289 B、`tailwind-src.js` 299,488 B），且字符串包里嵌的正是产物源码、无未转义的 `</script` |
 | 两条路各跑一遍全部练习 | `tailwind-lab/node tools/verify-browser.mjs` | http 与 `file://` 都是 示例自检 9/9、参考答案 33/33、起始代码被抓 33/33 |
-| 真实按键与三档视口 | `tailwind-lab/node tools/verify-ui.mjs` | 全过（含 390px 抽屉、真实按键管线、`file://` 直开、完整自测） |
+| 真实按键与三档视口 | `tailwind-lab/node tools/verify-ui.mjs`（不带 `--fast`） | 54 项全过：全量自测 示例 9/9 · 参考解 33/33 · 起始代码被抓 33/33（166s），另含 390px 抽屉、真实按键管线、`file://` 直开 |
 | 关窗即退 | `tailwind-lab/node tools/verify-quit.mjs` | 全过 |
 | 各站 node 侧校验一起跑 | `node tools/verify-all.mjs` | 全部通过（七座站） |
 | 清单与门户 | `node tools/build-manifest.mjs` → `verify-manifest.mjs` → `verify-portal.mjs` | 87 章 / 391 练习；门户全过（含 tailwind-lab 卡片、侧栏与 390px 抽屉） |
@@ -128,7 +132,44 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 `selfTest` 增强；`verify-content` 与 `verify-ui` 同步。`verify-all.mjs` 的脚本清单这次加入了 `verify-vendor.mjs`，
 让 React 与 Tailwind 两座站的 vendor 体积/哈希账也进汇总校验（缺这支脚本的站自动跳过）。
 
+这一章落地时只做了 DOM 属性断言，缺一层「浏览器到底怎么理解」的核对（当时记为遗留）。随后的交叉核对
+（2026-10-09）把五个参考解单独放进一个探针页，用 CDP 的 `Accessibility.getPartialAXTree` 读浏览器自己算出的
+无障碍树：图标按钮 `role=button` / `name=「搜索」`，里面的 `svg` 已 `ignored`；`section[aria-labelledby]`
+变成 `role=region` / `name=「本周安排」`（名字取自可见的 `h2`，不是另写的一句）；`label[for]` 配 `input[id]`
+让输入框 `role=textbox` / `name=「邮箱」`（占位符没被当名字）；`.status` 上读到 `live=polite`、`atomic=true`；
+`.divider` 整块 `ignored`，旁边的正文照常暴露。这仍不是真读屏软件的人工会话核对，但比只断言属性多走了一层。
+复现方式：探针页放这五段参考解，`DOM.getDocument` → `DOM.querySelector` → `DOM.describeNode` 拿 backendNodeId，
+再 `Accessibility.getPartialAXTree` 读 role / name / properties（live、atomic），看 `ignored` 判断是否被藏起来。
+
 `tailwind-lab` 与其余各站的一处不同：每个预览帧里要内联一份 Tailwind 浏览器编译器（源码字符串包在
 `assets/js/preview.js` 里拼进文档），样式异步生成。`assets/js/harness.js` 的 `waitTailwind()` 轮询 `<head>`
 末尾那个**无 `type`** 的 `<style>`，有内容了才跑断言；这条等待是判题成立的前提，别删（详见
 `tailwind-lab/AGENTS.md` 铁律 6）。
+
+## 目录栏的快速参考友链
+
+各座训练场的目录栏底部、版权行之上有一行「快速参考」外链（`.side-ref`），指向
+[quickref.me](https://quickref.me/zh-CN/index.html) 中文版里该站对应语言的备忘清单。这是纯外链：对方站点
+改版或断网只影响这一行能不能点开，各站自己的功能与判题都不依赖它。URL 写死在每座站的
+`assets/js/app.js`（`sideFoot()`）里，`tools/verify-portal.mjs` 顶部的 `QUICKREF` 表里再记一份用来对账
+（静态站没有构建步骤，两处必须一起改）。
+
+| 站 | 链接 |
+|---|---|
+| html5-lab | `https://quickref.me/zh-CN/docs/html.html` |
+| css-lab | `https://quickref.me/zh-CN/docs/css.html` |
+| js-lab | `https://quickref.me/zh-CN/docs/javascript.html` |
+| ts-lab | `https://quickref.me/zh-CN/docs/typescript.html` |
+| vue-lab | `https://quickref.me/zh-CN/docs/vue.html` |
+| react-lab | `https://quickref.me/zh-CN/docs/react.html` |
+| tailwind-lab | `https://quickref.me/zh-CN/docs/tailwindcss.html` |
+
+| 检查 | 命令 | 结果 |
+|---|---|---|
+| 七个 URL 当天可达、且是中文页 | `curl` 逐个取一次 | 七个都 200（标题形如「HTML 备忘清单」），2026-10-09 实测 |
+| 侧栏友链的 href 与该站语言对应、新窗口打开、占位非零 | `node tools/verify-portal.mjs` | 185 项全过（比补这行之前多 7 项，每座站一条） |
+| 侧栏版式与 390px 抽屉没被这行挤坏 | 七座各自的 `node tools/verify-ui.mjs`（六座 `--fast`，tailwind 跑全量） | html5 / css 54 项、js 45 项、ts / vue / react 各自全过、tailwind 54 项（含全量自测） |
+| 入口页截图 | `node tools/verify-portal.mjs --shots` | 截图改成整页（`Page.captureScreenshot` 带 `captureBeyondViewport`），`docs/screenshot-portal*.png` 重截，七张卡与页脚都进图 |
+
+`verify-portal.mjs` 的截图以前只截视口，入口页长到七张卡之后最后一张进不了图（README 拿这两张当门面）。
+现在按 `Page.getLayoutMetrics` 的内容尺寸整页截，宽屏是两列、窄屏是一列，两张都是完整页面。

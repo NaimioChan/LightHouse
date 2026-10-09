@@ -91,6 +91,15 @@
     resetDrawer.setAttribute('data-reset', 'drawer');
     resetDrawer.addEventListener('click', resetProgress);
     box.appendChild(resetDrawer);
+    /* 友链：这一座站对应语言的快速参考（quickref.me 中文版），排在版权行之上 */
+    var ref = R.el('p', 'side-ref');
+    var refA = R.el('a', 'side-ref-link', 'JavaScript 快速参考 ↗');
+    refA.href = 'https://quickref.me/zh-CN/docs/javascript.html';
+    refA.target = '_blank';
+    refA.rel = 'noopener';
+    refA.title = 'JavaScript 快速参考（quickref.me，新窗口打开）';
+    ref.appendChild(refA);
+    box.appendChild(ref);
     var credit = R.el('p', 'side-credit', '© 2026 非茗 · Naimio');
     var gh = R.el('a', 'gh-link');
     gh.href = 'https://github.com/NaimioChan/LightHouse';

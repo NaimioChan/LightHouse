@@ -33,6 +33,18 @@ const RENDER_GLOBAL = Object.fromEntries(
     .map((l) => [l.dir, l.registry.replace('_CHAPTERS', '_render')]),
 );
 
+/* 侧栏底部的「快速参考」友链：每座站对应语言在 quickref.me 中文版的备忘清单页。
+ * key 与 labs.json 的 key 一一对应；各站 app.js 的 sideFoot() 里是同一批 URL（静态站没有构建步骤，两处都得写死）。 */
+const QUICKREF = {
+  html5: 'https://quickref.me/zh-CN/docs/html.html',
+  css: 'https://quickref.me/zh-CN/docs/css.html',
+  js: 'https://quickref.me/zh-CN/docs/javascript.html',
+  ts: 'https://quickref.me/zh-CN/docs/typescript.html',
+  vue: 'https://quickref.me/zh-CN/docs/vue.html',
+  react: 'https://quickref.me/zh-CN/docs/react.html',
+  tailwind: 'https://quickref.me/zh-CN/docs/tailwindcss.html',
+};
+
 /* 各站的入口页都请求过 favicon，缺它只是 404 噪音，不算缺陷 */
 const isNoise = (line) => /favicon/.test(line);
 
@@ -46,7 +58,14 @@ async function navigate(cdp, url) {
 async function shot(cdp, name) {
   try {
     await cdp.send('Page.bringToFront');
-    const r = await cdp.send('Page.captureScreenshot', { format: 'png' }, 30000);
+    /* 整页截图：入口页有七张卡，只截视口会漏掉最后一张（README 与 docs/ 拿这些图当文档） */
+    const m = await cdp.send('Page.getLayoutMetrics');
+    const size = m.cssContentSize || m.contentSize;
+    const r = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: true,
+      clip: { x: 0, y: 0, width: Math.ceil(size.width), height: Math.ceil(size.height), scale: 1 },
+    }, 30000);
     if (r && r.data) fs.writeFileSync(path.join(CACHE, name + '.png'), Buffer.from(r.data, 'base64'));
   } catch (e) { console.log('  （截图失败，忽略：' + e.message + '）'); }
 }
@@ -283,14 +302,17 @@ async function checkLabs(cdp) {
     const bad = cdp.failedRequests().filter((l) => !isNoise(l));
     record(`${prefix} 资源没有 404`, bad.length === 0, bad.slice(0, 3).join(' ｜ '));
 
-    /* 目录栏底部：回入口页的按钮 + 版权行 + GitHub 图标链接（侧栏是静态骨架，每个路由都在） */
+    /* 目录栏底部：回入口页的按钮 + 版权行 + GitHub 图标链接 + 对应语言的快速参考友链
+       （侧栏是静态骨架，每个路由都在） */
     const foot = await cdp.eval(`(() => {
       const rect = (el) => (el ? el.getBoundingClientRect() : null);
       const back = document.querySelector('#sidebar .side-back');
       const credit = document.querySelector('#sidebar .side-credit');
       const gh = document.querySelector('#sidebar .side-credit .gh-link');
+      const refA = document.querySelector('#sidebar .side-ref a');
       const lastNav = [...document.querySelectorAll('#sidebar a[data-ch]')].pop();
       const ghRect = rect(gh);
+      const refRect = rect(refA);
       return {
         backText: back ? back.textContent.trim() : null,
         backHref: back ? back.getAttribute('href') : null,
@@ -301,6 +323,11 @@ async function checkLabs(cdp) {
         ghHref: gh ? gh.getAttribute('href') : null,
         ghW: ghRect ? Math.round(ghRect.width) : 0,
         ghH: ghRect ? Math.round(ghRect.height) : 0,
+        refText: refA ? refA.textContent.trim() : null,
+        refHref: refA ? refA.getAttribute('href') : null,
+        refTarget: refA ? refA.getAttribute('target') : null,
+        refW: refRect ? Math.round(refRect.width) : 0,
+        refH: refRect ? Math.round(refRect.height) : 0,
       };
     })()`);
     const resolved = foot.backHref ? new URL(foot.backHref, `${ctx.base}/${lab.entry}`).pathname : '';
@@ -312,6 +339,9 @@ async function checkLabs(cdp) {
     record(`${prefix} 版权行旁有 GitHub 图标链接（指向上游仓库、占位非零）`,
       foot.ghHref === 'https://github.com/NaimioChan/LightHouse' && foot.ghW > 0 && foot.ghH > 0,
       `${foot.ghHref}　${foot.ghW}×${foot.ghH}`);
+    record(`${prefix} 侧栏底部有对应语言的快速参考友链（指向 quickref.me、新窗口打开、占位非零）`,
+      foot.refHref === QUICKREF[lab.key] && foot.refTarget === '_blank' && foot.refW > 0 && foot.refH > 0,
+      `${foot.refText}　${foot.refHref}　target=${foot.refTarget}　${foot.refW}×${foot.refH}`);
 
     /* 手机竖屏：目录栏必须能收成抽屉。竖屏下侧栏是 240px 固定列，正文只剩 ~140px，
        宽表与代码块会把整页撑出横向滚动（实测 539–638px），这是移动端最直接的坏法。 */

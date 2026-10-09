@@ -226,6 +226,7 @@ components:
 - `button-ghost`：纸白底 + 该站深支文字，只在有进度时出现（继续第 N 章）。
 - `stale-banner`：整条金色横幅，插在页面最顶端，只在检测到「打开的是缓存里的旧版本」时出现一次（本地 serve.py 专有）。
 - `side-back`：各座训练场目录栏底部的「← LightHouse 目录」按钮，纸白底 + 亚麻描边 + 该站深支文字，hover 换成该站识别色描边。
+- `side-ref`：目录栏底部、版权行之上的快速参考友链，指向 quickref.me 中文版里该站对应语言的备忘清单，用该站深支文字，`target="_blank"`；每座站只挂自己那一门语言。
 - `side-credit`：目录栏底部那行 `© 2026 非茗 · Naimio`，比次要信息再小一档，灰褐；行尾跟着一个小号 GitHub 图标链接（`.gh-link`，`https://github.com/NaimioChan/LightHouse`）。
 
 ## Do's and Don'ts
