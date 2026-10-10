@@ -9,6 +9,16 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ---
 
+## 2026-10-10 · hermes · 方向评估文档移出版本管理（本机保留）
+
+- 改：`.gitignore`（新增一节，忽略 `docs/前端演练场-方向评估与实测.md`）、`README.md`（目录树描述里去掉「方向评估与实测数据」）、`docs/agent-log.md`；`git rm --cached docs/前端演练场-方向评估与实测.md`（工作区文件保留，67 KB 仍在本地 `docs/`）。
+- 做了什么：这份文档是个人决策/考察材料（含本机路径与选型结论），不适合放在公开仓库，改为忽略 + 不入库。历史提交里仍有它，不回改历史；`docs/agent-log.md` 里对它的历史提及属于记录，保持原样。
+- 验证：`git check-ignore -v` 命中 `.gitignore:8`；`git status --short` 只有上述三处改动（该文档显示为 `D`，且不再出现在未跟踪列表）；`node tools/verify-manifest.mjs` 全过。本次只动 markdown 与忽略规则，未跑浏览器侧脚本。
+- 遗留：无
+- 下一步：无
+
+---
+
 ## 2026-10-10 · opencode · 七座训练场编辑器加引号自动补全（单/双/反引号），单引号撇号场景克制
 
 - 改：七座站各 `assets/js/pair.js`（新增 `QUOTES` 与引号分支、`decideBackspace` 支持成对删除引号、导出 `QUOTES`）、各 `tools/verify-pair.mjs`（新增引号用例）、各 `tools/verify-ui.mjs`（把「引号不补」断言改成「补另一半」，js-lab/html5/css/tailwind 的 `KEYDEF` 补 `"` 与 `` ` `` 键）、各 `assets/js/render.js`（注释）、各 `AGENTS.md` 与 `README.md`；根 `AGENTS.md`、`README.md`、`docs/02-verification.md`；`docs/agent-log.md`。

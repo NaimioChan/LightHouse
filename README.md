@@ -63,7 +63,7 @@ LightHouse/
 │  ├─ verify-all.mjs          各站的 node 侧校验（内容契约、括号与引号配对、类型判题、SFC 改写内核、React 运行时自检）
 │  ├─ verify-portal.mjs       真浏览器验收：入口页 + 各站入口页 + 进度分支
 │  └─ lib/cdp.mjs             起服务、起无头 Edge、连 CDP 的公共骨架
-├─ docs/                      合并架构、校验分层、语言与规模、手机版式、方向评估与实测数据
+├─ docs/                      合并架构、校验分层、语言与规模、手机版式
 ├─ html5-lab/  css-lab/  js-lab/  ts-lab/  vue-lab/  react-lab/  tailwind-lab/
 │     每座站自带 AGENTS.md / DESIGN.md / 内容契约 / 引擎 / tools / serve.py / run.bat；
 │     ts-lab、vue-lab、react-lab、tailwind-lab 另有 vendor/ 放第三方产物
