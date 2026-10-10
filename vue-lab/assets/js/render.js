@@ -114,7 +114,7 @@
         return;
       }
 
-      /* 括号配对（判定在 pair.js）。SFC 里 `<` 既可能是标签也可能是小于号，不能补 */
+      /* 括号与引号配对（判定在 pair.js）。SFC 里 `<` 既可能是标签也可能是小于号，不能补 */
       var st = { key: ev.key, value: v, start: start, end: end, html: false, ctrlKey: ev.ctrlKey, metaKey: ev.metaKey, altKey: ev.altKey };
       var edit = ev.key === 'Backspace' ? autopair.decideBackspace(st) : autopair.decide(st);
       if (edit) {

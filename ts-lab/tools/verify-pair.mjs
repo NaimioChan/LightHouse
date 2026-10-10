@@ -1,8 +1,8 @@
 /* verify-pair.mjs — 括号配对的纯逻辑校验，不起浏览器，秒级跑完。
  *
  * 用法：node tools/verify-pair.mjs
- * 覆盖：开括号补对 / 选区包裹 / 闭括号跳过 / Backspace 成对删除 /
- *       修饰键与输入法组合放行 / 引号与尖括号不插手 / 不修改入参。
+ * 覆盖：开括号补对 / 选区包裹 / 闭括号跳过 / 引号补另一半与跳过 / Backspace 成对删除 /
+ *       修饰键与输入法组合放行 / 尖括号与标签闭合 / 不修改入参。
  * 浏览器里的真实按键路径由 tools/verify-ui.mjs 验（含 CSS 页签里的花括号），这里只管判定逻辑。
  */
 import fs from 'node:fs';
@@ -77,11 +77,24 @@ check('JS 页签的 < 是小于号，不补', type('<', 'a ', 2, null, { html: f
 check('HTML 页签里括号照样补', inHtml('(', '', 0), edit('()', 1, 1));
 check('HTML 页签里花括号照样补', inHtml('{', 'x', 1), edit('x{}', 2, 2));
 
+/* ---------- 引号：补另一半 / 跳过 / 撇号不补（双引号与反引号照补） ---------- */
+check('空文本敲单引号补出一对', type("'", '', 0), edit("''", 1, 1));
+check('空文本敲双引号补出一对', type('"', '', 0), edit('""', 1, 1));
+check('空文本敲反引号补出一对', type('`', '', 0), edit('``', 1, 1));
+check('文末敲引号补在末尾', type("'", 'foo ', 4), edit("foo ''", 5, 5));
+check('选中内容用引号包住', type("'", 'abc', 0, 3), edit("'abc'", 1, 4));
+check('选中内容用双引号包住', type('"', 'abc', 0, 3), edit('"abc"', 1, 4));
+check('引号后紧跟同一引号：跳过不重复', type("'", "''", 1), edit("''", 2, 2));
+check('双引号后紧跟同一引号：跳过', type('"', '""', 1), edit('""', 2, 2));
+check('撇号不补（don 后敲单引号）', type("'", 'don', 3), null);
+check('字母后敲双引号照补（属性值）', type('"', 'a', 1), edit('a""', 2, 2));
+check('标识符后敲反引号照补（标签模板）', type('`', 'x_', 2), edit('x_``', 3, 3));
+check('空格后敲引号照补', type("'", 'a ', 2), edit("a ''", 3, 3));
+check('反引号后面是别的字符：照补', type('`', 'a', 0), edit('``a', 1, 1));
+check('HTML 页签里引号也补', inHtml("'", '', 0), edit("''", 1, 1));
+
 /* ---------- 不插手的输入 ---------- */
 check('普通字符不插手', type('a', '', 0), null);
-check('单引号不补', type("'", '', 0), null);
-check('双引号不补（HTML 属性常用）', type('"', '<a href=', 8), null);
-check('反引号不补', type('`', '', 0), null);
 check('左尖括号在非 HTML 页签不补', type('<', '', 0), null);
 check('右尖括号在非 HTML 页签不补', type('>', '<p', 2), null);
 check('Enter 不插手', type('Enter', 'ab', 1), null);
@@ -97,6 +110,11 @@ check('输入法组合期间敲 ) 也不跳', type(')', '()', 1, null, { composi
 check('空括号中间 Backspace 删一对', back('()', 1), edit('', 0, 0));
 check('空方括号同样', back('[]', 1), edit('', 0, 0));
 check('空花括号同样', back('{}', 1), edit('', 0, 0));
+check('空单引号中间 Backspace 删一对', back("''", 1), edit('', 0, 0));
+check('空双引号中间 Backspace 删一对', back('""', 1), edit('', 0, 0));
+check('空反引号中间 Backspace 删一对', back('``', 1), edit('', 0, 0));
+check('引号里有内容时只删一个字', back("'a'", 2), null);
+check('跨行的一对引号不误删', back("'\n'", 2), null);
 check('括号里有内容时只删一个字', back('(a)', 2), null);
 check('光标在闭括号之后照常删', back('(a)', 3), null);
 check('跨行的一对括号不误删', back('(\n)', 2), null);

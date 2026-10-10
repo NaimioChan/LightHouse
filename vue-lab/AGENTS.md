@@ -47,7 +47,7 @@
    单双引号两种分隔符）、`export default` 改写、`__isScriptSetup`、`__scopeId`、
    坏代码要报出真实错误位置。改 `assets/js/compile.js` 后必跑。
 3. `node tools/verify-pages.mjs` / `verify-ui.mjs` / `verify-quit.mjs` / `verify-pair.mjs` ——
-   逐章渲染检查、真实按键输入管线与四档视口排版（含 390px）、关窗即退、括号配对。
+   逐章渲染检查、真实按键输入管线与四档视口排版（含 390px）、关窗即退、括号与引号配对。
 4. `node tools/verify-browser.mjs` —— 真浏览器（无头 Edge + CDP）：走 http 与 `file://` 两条路，
    用页面里的 `VUELAB_SELFTEST()` 把每个练习跑两遍（参考答案必须全过、起始代码必须挂）。
 
@@ -84,6 +84,9 @@ CDP 验收的硬规矩（否则假失败）：
     是练习卡（可编辑 + 判题）。
 12. **手机版式与其余四座一致**，契约在根 `docs/04-mobile-layout.md`：≤900px 目录栏收成抽屉、
     顶栏只留三样、宽表包 `.tbl-wrap`、编辑器字号 ≥16px。
+13. **编辑器辅助只做括号与引号配对**（`assets/js/pair.js`，纯函数，浏览器与 node 共用）。
+    `()` `[]` `{}` 与 `' " \`` 三种引号都补另一半、都能成对删除；单引号紧跟在标识符字符后（撇号 don't）时不补。
+    SFC 里 `<` 既可能是标签也可能是小于号，一律不补。
 
 ## 禁区
 

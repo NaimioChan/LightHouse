@@ -37,7 +37,7 @@
 ```bash
 node tools/verify-content.mjs      # 结构：字段、id、数量、index.html 的 script 清单
 node tools/verify-compile.mjs      # 改写内核自己的单测（默认 / 命名 / 别名 / 命名空间导入、export default 三种形态）
-node tools/verify-pair.mjs         # 括号配对的纯逻辑
+node tools/verify-pair.mjs         # 括号与引号配对的纯逻辑
 node tools/verify-vendor.mjs       # vendor 产物的体积与哈希没变
 node tools/verify-browser.mjs      # 真浏览器：http 与 file:// 两条路各跑一遍全部练习
 node tools/verify-ui.mjs           # 真实按键输入 + 四档视口排版 + 离线直开

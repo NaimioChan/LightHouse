@@ -51,7 +51,7 @@ Tailwind 浏览器编译器，它扫描 DOM 里的 `class` 异步生成样式，
    可 `--chapter ch05` 只跑一章。慢，但唯一说得上话。
 3. `node tools/verify-ui.mjs [--fast]` —— 真实按键输入管线、页签、练习场、三档视口排版（含 390px）、死循环保护、离线直开。
 4. `node tools/verify-pages.mjs [--shots]` —— 逐章渲染对账（示例自检有没有挂、预览窗有没有缺、有没有未捕获错误）。
-5. `node tools/verify-pair.mjs` —— 括号配对的纯逻辑（秒级），与浏览器无关。
+5. `node tools/verify-pair.mjs` —— 括号与引号配对的纯逻辑（秒级），与浏览器无关。
 6. `node tools/verify-vendor.mjs` —— vendor 产物的体积与哈希没变，且字符串包与产物同源。
 7. 关窗即退：`node tools/verify-quit.mjs`。
 
@@ -96,7 +96,8 @@ CDP 验收的硬规矩（否则假失败）：
 14. **两种代码块别搞混**：`kind:'demo'` 是讲解区的示例（静态展示 + 当场判题），`kind:'exercise'` 是练习卡（可编辑 + 判题）。
     示例不许引用练习里的东西，必须自包含。
 15. 每一章必须自洽：只使用本章及之前章节讲过的能力。
-16. **编辑器的括号配对**只做 `() [] {}` 与 HTML 页签的标签闭合，判定在 `assets/js/pair.js`（纯函数，`TWLAB_pairs`）。
+16. **编辑器的括号、引号配对与 HTML 标签闭合**，判定在 `assets/js/pair.js`（纯函数，`TWLAB_pairs`）。
+    `()` `[]` `{}` 与 `' " \`` 三种引号都补另一半、都能成对删除；单引号紧跟在标识符字符后（撇号 don't）时不补。
     不引第三方编辑器（CodeMirror 之类是 ESM + 需要打包，会破坏 `file://` 直开），不做关键字补全。
 17. **窄屏形态所有站点一致**，契约在根 `docs/04-mobile-layout.md`：≤900px 目录栏收成抽屉（顶栏 `#nav-btn` + `body.nav-open`）、
     顶栏只留「目录/进度/自动运行」、「重置进度」进抽屉、表格包 `.tbl-wrap`、编辑器字号 ≥16px。

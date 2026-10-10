@@ -52,7 +52,7 @@ UMD 尾巴挂到 `TWLAB_CHAPTERS`，段落分 `prose` / `note` / `table` / `demo
 | `node tools/verify-browser.mjs` | 行为：真浏览器里跑每个示例的自检、每个练习的参考解（必须全过）与起始代码（必须至少挂一条） | 示例自检 9/9 · 参考解 33/33 · 起始代码被抓住 33/33 |
 | `node tools/verify-ui.mjs [--fast]` | 交互与排版：真实键盘输入 → 自动判题、页签、练习场、三档视口对齐、死循环保护、file:// 直开 | 全通过 |
 | `node tools/verify-pages.mjs [--shots]` | 逐章打开：示例有没有自检失败、预览窗有没有缺、有没有未捕获错误 | 8 章 + 练习场全通过 |
-| `node tools/verify-pair.mjs` | 括号配对的纯逻辑（秒级） | 全通过 |
+| `node tools/verify-pair.mjs` | 括号与引号配对的纯逻辑（秒级） | 全通过 |
 | `node tools/verify-vendor.mjs` | vendor 产物的体积与哈希、字符串包与产物同源 | 全通过 |
 | `node tools/verify-quit.mjs` | 关窗即退出 | 全通过 |
 

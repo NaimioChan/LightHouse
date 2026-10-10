@@ -41,7 +41,7 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | `ts-lab` | `node tools/verify-judge.mjs`、`node tools/verify-types.mjs`、`node tools/verify-pages.mjs` | 真类型诊断、等价判定、逐章编译产物 |
 | `vue-lab` | `node tools/verify-compile.mjs`、`node tools/verify-browser.mjs`、`node tools/verify-ui.mjs`、`node tools/verify-pages.mjs` | SFC 改写内核单测、两条路各跑一遍全部练习、真实按键与四档视口、逐章渲染对账 |
 | `react-lab` | `node tools/verify-compile.mjs`、`node tools/verify-browser.mjs`、`node tools/verify-ui.mjs`、`node tools/verify-pages.mjs`、`node tools/verify-vendor.mjs` | React 运行时自检、两条路各跑一遍全部练习、真实按键与四档视口、逐章渲染对账、vendor 体积与哈希 |
-| `tailwind-lab` | `node tools/verify-browser.mjs`、`node tools/verify-ui.mjs`、`node tools/verify-pages.mjs`、`node tools/verify-vendor.mjs`、`node tools/verify-pair.mjs` | 两条路各跑一遍全部练习（含等编译器生成样式）、真实按键与三档视口、逐章渲染对账、vendor 体积与哈希、括号配对纯逻辑 |
+| `tailwind-lab` | `node tools/verify-browser.mjs`、`node tools/verify-ui.mjs`、`node tools/verify-pages.mjs`、`node tools/verify-vendor.mjs`、`node tools/verify-pair.mjs` | 两条路各跑一遍全部练习（含等编译器生成样式）、真实按键与三档视口、逐章渲染对账、vendor 体积与哈希、括号与引号配对纯逻辑 |
 
 `vue-lab` 的 `verify-browser.mjs` 会把每个练习跑两遍（参考答案必须全过、起始代码必须至少挂一条），
 `http` 与 `file://` 各一轮 —— 第五座站的执行模型是「沙箱里跑第三方运行时」，
@@ -62,7 +62,7 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
    PTY 下再重定向输出会变成 `stdout is not a tty`，日志从进程输出里取，别写进命令行。
 2. `Page.captureScreenshot` 在隐藏标签页会一直挂着不报错，截图前先 `Page.bringToFront`，并把截图失败降级为警告。
 3. 需要真实键盘行为时用 `Input.dispatchKeyEvent`（`type: 'keyDown'` + `text`）；`Input.insertText` 不经过 keydown，
-   拿它验括号配对是假绿。
+   拿它验括号与引号配对是假绿。
 
 ## 这次合并用到的对账
 
@@ -75,7 +75,7 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 设计令牌无拼写/对比度问题 | `npx -y -p @google/design.md designmd lint DESIGN.md` | 0 errors 0 warnings |
 | 入口页在三种宽度下对齐 | `node tools/verify-portal.mjs` | 101 项全过：2000/1200px 两列、760px 一列，同列卡片左右边缘极差 0px，同一行按钮底边齐平，三种宽度都没有横向溢出；含 `file://` 直开的一轮 |
 | 入口页对站数与领域保持中立 | `node tools/verify-manifest.mjs`、`verify-portal.mjs` | 大标题/副标题/卡片内容里不出现任何一座站的名字、目录名、语言列表与「前端/四个」这类限定 |
-| 四座站并入后仍各自通过自己的校验 | `node tools/verify-all.mjs --fast` | 10 支（内容契约、括号配对、类型判题与编译器自检）全过 |
+| 四座站并入后仍各自通过自己的校验 | `node tools/verify-all.mjs --fast` | 10 支（内容契约、括号与引号配对、类型判题与编译器自检）全过 |
 
 ## 第五座站（vue-lab）接入后的对账
 
@@ -99,7 +99,7 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 检查 | 命令 | 结果 |
 |---|---|---|
 | 内容结构 | `react-lab/node tools/verify-content.mjs` | 12 章 / 48 练习 / 38 示例 / 327 断言（含示例断言） |
-| 括号配对 | `react-lab/node tools/verify-pair.mjs` | 全过 |
+| 括号与引号配对 | `react-lab/node tools/verify-pair.mjs` | 全过 |
 | React 运行时自检 | `react-lab/node tools/verify-compile.mjs`、`verify-vendor.mjs` | 全过；vendor 体积与 sha256 逐字节核对（`react19.iife.min.js` 224,264 B、`react19-src.js` 229,048 B） |
 | 两条路各跑一遍全部练习 | `react-lab/node tools/verify-browser.mjs` | http 与 `file://` 都是 示例 38/38、参考答案 48/48、起始代码被抓 48/48 |
 | 真实按键与四档视口 | `react-lab/node tools/verify-ui.mjs` | 全过（含 390px 抽屉、真实按键管线、`file://` 直开、完整自检） |
@@ -119,7 +119,7 @@ node tools/verify-portal.mjs     # 起根 serve.py + 无头 Edge（CDP）：入�
 | 检查 | 命令 | 结果 |
 |---|---|---|
 | 内容结构 | `tailwind-lab/node tools/verify-content.mjs` | 8 章 / 33 练习 / 9 示例 / 131 断言（含示例断言） |
-| 括号配对 | `tailwind-lab/node tools/verify-pair.mjs` | 全过 |
+| 括号与引号配对 | `tailwind-lab/node tools/verify-pair.mjs` | 全过 |
 | vendor 记账 | `tailwind-lab/node tools/verify-vendor.mjs` | 全过；体积与 sha256 逐字节核对（`tailwind.global.js` 282,289 B、`tailwind-src.js` 299,488 B），且字符串包里嵌的正是产物源码、无未转义的 `</script` |
 | 两条路各跑一遍全部练习 | `tailwind-lab/node tools/verify-browser.mjs` | http 与 `file://` 都是 示例自检 9/9、参考答案 33/33、起始代码被抓 33/33 |
 | 真实按键与三档视口 | `tailwind-lab/node tools/verify-ui.mjs`（不带 `--fast`） | 54 项全过：全量自测 示例 9/9 · 参考解 33/33 · 起始代码被抓 33/33（166s），另含 390px 抽屉、真实按键管线、`file://` 直开 |

@@ -327,6 +327,8 @@ async function main() {
     '<': { code: 'Comma', vk: 188, text: '<' },
     '>': { code: 'Period', vk: 190, text: '>' },
     "'": { code: 'Quote', vk: 222, text: "'" },
+    '"': { code: 'Quote', vk: 222, text: '"' },
+    '`': { code: 'Backquote', vk: 192, text: '`' },
   };
   const setEditor = (sel, text, selStart, selEnd) => cdp.eval(`(() => {
     const ta = document.querySelector('${sel}');
@@ -376,6 +378,21 @@ async function main() {
   await pressKey('[');
   ap = await readEditor(taSel);
   record('选中内容被括号包住且保持选中', ap.value === '[段落文字]' && ap.start === 1 && ap.end === 5, JSON.stringify(ap));
+
+  /* 引号补另一半，且不打扰 class 值里的引号与撇号 */
+  await setEditor(taSel, '');
+  await pressKey('"');
+  ap = await readEditor(taSel);
+  record('敲双引号补出另一半，光标留在中间', ap.value === '""' && ap.start === 1 && ap.end === 1, JSON.stringify(ap));
+
+  await pressKey('"');
+  ap = await readEditor(taSel);
+  record('引号已经等在光标后：跳过不重复', ap.value === '""' && ap.start === 2, JSON.stringify(ap));
+
+  await setEditor(taSel, 'don', 3, 3);
+  await pressKey("'");
+  ap = await readEditor(taSel);
+  record('撇号（词字符后）不自动补', ap.value === "don'" && ap.start === 4, JSON.stringify(ap));
 
   /* 尖括号与标签闭合只在 HTML 页签里出现 */
   await setEditor(taSel, '');

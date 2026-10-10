@@ -290,6 +290,8 @@ async function main() {
     ']': { code: 'BracketRight', vk: 219, text: ']' },
     '{': { code: 'BracketRight', vk: 221, text: '{' },
     "'": { code: 'Quote', vk: 222, text: "'" },
+    '"': { code: 'Quote', vk: 222, text: '"' },
+    '`': { code: 'Backquote', vk: 192, text: '`' },
   };
   const setEditor = (text, selStart, selEnd) => cdp.eval(`(() => {
     const ta = document.querySelector('${taSel}');
@@ -343,7 +345,22 @@ async function main() {
   await setEditor('');
   await pressKey("'");
   ap = await readEditor();
-  record('引号不自动补', ap.value === "'" && ap.start === 1, JSON.stringify(ap));
+  record('敲引号补出另一半，光标留在中间', ap.value === "''" && ap.start === 1 && ap.end === 1, JSON.stringify(ap));
+
+  await pressKey("'");
+  ap = await readEditor();
+  record('引号已经等在光标后：跳过不重复', ap.value === "''" && ap.start === 2, JSON.stringify(ap));
+
+  await setEditor('don', 3, 3);
+  await pressKey("'");
+  ap = await readEditor();
+  record('撇号（词字符后）不自动补', ap.value === "don'" && ap.start === 4, JSON.stringify(ap));
+
+  await setEditor('');
+  await pressKey('"');
+  await pressNamedKey('Backspace', 8);
+  ap = await readEditor();
+  record('空双引号中间 Backspace 一次删掉一对', ap.value === '' && ap.start === 0, JSON.stringify(ap));
 
   await setEditor('x', 1, 1);
   const ime = await cdp.eval(`(() => {

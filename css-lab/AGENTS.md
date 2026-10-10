@@ -41,7 +41,7 @@
   —— 每个练习的参考解必须全过、起始代码必须至少挂一条、每个示例的 `checks` 必须全过。
   它可以 `--chapter ch05` 只跑一章。同一条路径在页面 console 里也能手动跑：`await CSSLAB_SELFTEST()`。
 - 浏览器端验收（真实输入管线 + 三档视口排版 + 全量自测）：`node tools/verify-ui.mjs`（`--fast` 跳过全量自测）。
-- 括号配对逻辑（`assets/js/pair.js`）：纯函数、浏览器与 node 共用，改判定规则后跑 `node tools/verify-pair.mjs`（秒级）。
+- 括号与引号配对逻辑（`assets/js/pair.js`）：纯函数、浏览器与 node 共用，改判定规则后跑 `node tools/verify-pair.mjs`（秒级，83 项）。
 - 逐章渲染检查（示例自检有没有挂、预览窗有没有缺、有没有未捕获错误）：`node tools/verify-pages.mjs`（`--shots` 存截图）。
 - 关窗即退出：`node tools/verify-quit.mjs`；进站新鲜度：`node tools/verify-fresh.mjs`。
 
@@ -70,7 +70,8 @@ CDP 验收的三条硬规矩（否则假失败）：
 8. **两种代码块别搞混**：`kind:'demo'` 是讲解区的示例（静态展示 + 当场渲染 + 自检），`kind:'exercise'` 是练习卡（可编辑 + 判题）。
    示例不许引入练习里的东西，必须自包含。
 9. 每一章必须自洽：只使用本章及之前章节讲过的能力。
-10. **编辑器的括号配对只做 `() [] {}` 与 HTML 页签的标签闭合**，判定在 `assets/js/pair.js`（纯函数）。
+10. **编辑器的括号、引号配对与 HTML 标签闭合**，判定在 `assets/js/pair.js`（纯函数）。
+    `()` `[]` `{}` 与 `' " \`` 三种引号都补另一半、都能成对删除；单引号紧跟在标识符字符后（撇号 don't）时不补。
     不引第三方编辑器（CodeMirror 之类是 ESM + 需要打包，会破坏 `file://` 直开），不做关键字补全。
 11. **两阶段判题只改被判题那一帧的宽度**（`content` 里的 `widths`，默认 `[420]`），不许去改全局视口或别的卡片。
     两阶段的练习卡会自动走 `.ex-card-2stage`（预览占一整行）：挤在三栏里只剩三百来像素，媒体查询触发不了，

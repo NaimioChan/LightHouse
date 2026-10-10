@@ -115,7 +115,7 @@
         return;
       }
 
-      /* 括号配对（判定在 pair.js，node 侧同一份代码有断言）。TS 里 `<` 是泛型尖括号，不能补 */
+      /* 括号与引号配对（判定在 pair.js，node 侧同一份代码有 82 项断言）。TS 里 `<` 是泛型尖括号，不能补 */
       var st = { key: ev.key, value: v, start: start, end: end, html: false, ctrlKey: ev.ctrlKey, metaKey: ev.metaKey, altKey: ev.altKey };
       var edit = ev.key === 'Backspace' ? autopair.decideBackspace(st) : autopair.decide(st);
       if (edit) {

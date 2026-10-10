@@ -51,7 +51,7 @@ UMD 尾巴挂到 `CSSLAB_CHAPTERS`，段落分 `prose` / `note` / `table` / `dem
 | `node tools/verify-ui.mjs [--fast]` | 交互与排版：真实键盘输入 → 自动判题、页签、练习场、三档视口对齐、死循环保护、file:// 直开 | 43 项检查全通过 |
 | `node tools/verify-pages.mjs [--shots]` | 逐章打开：示例有没有自检失败、预览窗有没有缺、有没有未捕获错误 | 15 章 + 练习场全通过 |
 | `node tools/verify-quit.mjs` · `node tools/verify-fresh.mjs` | 关窗即退出；换 URL 保证不拿到缓存旧版 | 各 7 / 11 项全通过 |
-| `node tools/verify-pair.mjs` | 括号配对的纯逻辑（秒级） | 全通过 |
+| `node tools/verify-pair.mjs` | 括号与引号配对的纯逻辑（秒级） | 全通过 |
 
 `verify-content` 与 `verify-pair` 是纯 node 的（秒级）；其余会起无头 Edge，几十秒到六分钟。
 页面里也能手动全量自测：打开后 console 执行 `await CSSLAB_SELFTEST()`（或给地址加 `?selftest`）。

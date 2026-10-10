@@ -112,17 +112,17 @@ async function main() {
   record('敲 [ 自动补上 ]', (await val(cdp, EDITOR)) === '[]', JSON.stringify(await val(cdp, EDITOR)));
   await clearEditor(cdp);
   await typeText(cdp, '"');
-  record('引号不自动补（htm 属性里到处是引号）', (await val(cdp, EDITOR)) === '"', JSON.stringify(await val(cdp, EDITOR)));
+  record('敲双引号补出另一半', (await val(cdp, EDITOR)) === '""' && (await caret(cdp, EDITOR)) === 1, JSON.stringify(await val(cdp, EDITOR)));
   await clearEditor(cdp);
   await typeText(cdp, '<');
   record('htm 的尖括号不自动补', (await val(cdp, EDITOR)) === '<', JSON.stringify(await val(cdp, EDITOR)));
   await clearEditor(cdp);
   await typeText(cdp, '`');
-  record('htm 的反引号不自动补', (await val(cdp, EDITOR)) === '`', JSON.stringify(await val(cdp, EDITOR)));
+  record('敲反引号补出另一半', (await val(cdp, EDITOR)) === '``' && (await caret(cdp, EDITOR)) === 1, JSON.stringify(await val(cdp, EDITOR)));
 
   /* 敲一段能过的代码，等停手自动检查。第 1 章的题是「把名字插进标题里」。
-     编辑器会自动配对 () [] {}、Enter 自动缩进，所以这里只敲到花括号，让自动配对补齐 }，
-     与真人操作一致；直接敲进带 } 的整段会被补成两个 }，编译器就报错了。 */
+     编辑器会自动配对 () [] {} 与 ' " `，所以整段照原样敲，闭符号由配对补齐或跳过
+     （与真人操作一致；敲进去的闭符号会被配对逻辑识别成「跳过」，不会补成两个）。 */
   await clearEditor(cdp);
   await typeText(cdp, 'export default function App() {\nreturn html`<h1 class="t">欢迎，非茗</h1>`');
   const typed = await val(cdp, EDITOR);
@@ -138,7 +138,7 @@ async function main() {
   record('状态标签显示全部通过', /通过/.test(auto.pill), auto.pill);
   record('练习卡的圆点变成通过态', /pass/.test(auto.dot), auto.dot);
 
-  /* 写一段错的（断言应当给出「期望 X，实际 Y」）。同样只敲到花括号，让自动配对补齐。 */
+  /* 写一段错的（断言应当给出「期望 X，实际 Y」）。同样照原样敲，闭符号由配对补齐或跳过。 */
   await selectAll(cdp);
   await typeText(cdp, 'export default function App() {\nreturn html`<h1 class="t">走开</h1>`');
   await cdp.waitFor('document.querySelector("#ex01-1 .test-mark.bad") !== null', 30000, 300);

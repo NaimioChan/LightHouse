@@ -26,8 +26,8 @@
 - 指针类练习（第 15 章）：`new PointerEvent("pointermove", { clientX, clientY })` 会正常进监听器，
   可以「派发 → 读 DOM/文本」。但 `:hover` 合成不出来，别指望它。
 - 浏览器端验收：`node tools/verify-ui.mjs`（真实输入管线 + 三档视口排版 + 全量自测；`--fast` 跳过全量自测）。
-  其中包含括号配对的真实按键路径（`Input.dispatchKeyEvent`）。
-- 括号配对逻辑（`assets/js/pair.js`）：纯函数、浏览器与 node 共用，改判定规则后跑 `node tools/verify-pair.mjs`（秒级，44 项）。
+  其中包含括号与引号配对的真实按键路径（`Input.dispatchKeyEvent`）。
+- 配对逻辑（`assets/js/pair.js`）：纯函数、浏览器与 node 共用，改判定规则后跑 `node tools/verify-pair.mjs`（秒级，60 项）。
 - 关窗即退出：`node tools/verify-quit.mjs`；进站新鲜度：`node tools/verify-fresh.mjs`（毒化浏览器缓存后验新入口）。
 - 浏览器端全量自测：打开页面后在 console 执行 `await JSLAB_SELFTEST()`，跑全部练习（含 DOM 类）并返回汇总。
 
@@ -46,7 +46,8 @@
    （`renderChapter` 按段落类型分组建容器）。子元素自己写 `margin-inline: auto` 或
    `margin: 14px 0` 之类的简写，会把容器给的居中/对齐打乱——这正是踩过一次的 bug。
 8. 每一章必须自洽：只使用本章及之前章节讲过的语法（`content/CHANGELOG` 不需要，靠章节顺序保证）。
-9. **编辑器辅助只做括号配对**，判定在 `assets/js/pair.js`（纯函数），浏览器与 node 共用。
+9. **编辑器辅助只做括号与引号配对**，判定在 `assets/js/pair.js`（纯函数），浏览器与 node 共用。
+   `()` `[]` `{}` 与 `' " \`` 三种引号都补另一半、都能成对删除；单引号紧跟在标识符字符后（撇号 don't）时不补。
    不引第三方编辑器（CodeMirror 之类是 ESM + 需要打包，会破坏 `file://` 直开），不做关键字补全、不做标签自动闭合。
 10. **窄屏形态四座站一致**（`docs/04-mobile-layout.md`）：≤900px 目录栏收成抽屉（顶栏 `#nav-btn` + `body.nav-open`）、
     顶栏只留「目录/进度/自动运行」、「重置进度」进抽屉、表格包 `.tbl-wrap`、编辑器字号 ≥16px。

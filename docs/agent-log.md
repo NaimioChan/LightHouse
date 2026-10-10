@@ -9,6 +9,16 @@ Hermes 与 OpenCode 共用这一份。最新的在最上面。开工先读最近
 
 ---
 
+## 2026-10-10 · opencode · 七座训练场编辑器加引号自动补全（单/双/反引号），单引号撇号场景克制
+
+- 改：七座站各 `assets/js/pair.js`（新增 `QUOTES` 与引号分支、`decideBackspace` 支持成对删除引号、导出 `QUOTES`）、各 `tools/verify-pair.mjs`（新增引号用例）、各 `tools/verify-ui.mjs`（把「引号不补」断言改成「补另一半」，js-lab/html5/css/tailwind 的 `KEYDEF` 补 `"` 与 `` ` `` 键）、各 `assets/js/render.js`（注释）、各 `AGENTS.md` 与 `README.md`；根 `AGENTS.md`、`README.md`、`docs/02-verification.md`；`docs/agent-log.md`。
+- 做了什么：把配对逻辑从「只补 `()` `[]` `{}`」扩到「`'` `"` `` ` `` 三种引号也补另一半」。规则四条：空光标敲引号补一对、光标后正是同一引号则跳过、有选区就用引号包住、Backspace 夹在一对空引号中间时一次删掉一对。克制规则最后收敛为**只对单引号生效**——单引号紧跟标识符字符（`don't`、`l'été`）时是撇号，不补；双引号与反引号跟在标识符后是合法的（属性值、`` html`...` `` 标签模板），一律照补。这条是 react-lab 的 `verify-ui` 真敲 `html` 标签模板时暴露的：最初「引号跟在词字符后都不补」会让反引号不闭合，改成只对 `'` 生效后其余六座站同步。尖括号行为各站不变（html5/css/tailwind/vue 的 HTML 页签补标签，ts/react 不补 `<`）。
+- 验证：七座站 `node tools/verify-pair.mjs` 全过（js 60 / react 58 / ts 82 / html5 82 / css 83 / tailwind 83 / vue 83）；七座站 `node tools/verify-ui.mjs --fast` 全过（js 48 / html5 57 / css 57 / tailwind 56 / ts 45 / vue 46 / react 47）；根 `node tools/verify-manifest.mjs` 全过、`node tools/verify-all.mjs` 27 支里仅 js-lab `verify-quit.mjs` 挂（5 项，serve.py 起不来 / SSE 0 心跳 / 退出码 null——已在 pristine HEAD 用 `git stash` 复现，属本机环境问题，与本次改动无关），`node tools/verify-portal.mjs` 185 项全过（根 serve.py 默认端口 8899 被本机 Hermes 服务占着，用 `LIGHTHOUSE_HTTP_PORT` / `LIGHTHOUSE_CDP_PORT` 换端口跑）。
+- 遗留：合并六座站的 `verify-ui --fast` 并行跑时，ts-lab 与 vue-lab 会因 CPU 争用（ts-lab 要解析 12 MB 编译器）在「页面就绪」的 `waitFor` 上假失败，单跑即过；要跑就一座一座来。ts-lab `verify-quit` 那条环境故障照旧。
+- 下一步：无。
+
+---
+
 ## 2026-10-09 19:05 · hermes · 把 gh CLI 的登录补成正规凭据（keyring + read:org），改掉 issue-tracker 文档里的临时绕法
 
 - 改：`docs/agents/issue-tracker.md`（「本机注意」的凭据那一条）；`docs/agent-log.md`。

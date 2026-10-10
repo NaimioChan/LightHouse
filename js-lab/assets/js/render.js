@@ -94,8 +94,8 @@
         return;
       }
 
-      /* 括号配对（判定逻辑在 pair.js，node 侧同一份代码有 44 项断言）：
-         开括号补闭括号、光标前有闭括号就跳过、Backspace 成对删除 */
+      /* 括号与引号配对（判定逻辑在 pair.js，node 侧同一份代码有 60 项断言）：
+         开括号补闭括号、光标前有闭括号就跳过、Backspace 成对删除；引号补另一半、单引号紧跟词字符时不补 */
       var st = { key: ev.key, value: v, start: start, end: end, ctrlKey: ev.ctrlKey, metaKey: ev.metaKey, altKey: ev.altKey };
       var edit = ev.key === 'Backspace' ? autopair.decideBackspace(st) : autopair.decide(st);
       if (edit) {

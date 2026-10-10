@@ -60,7 +60,7 @@ LightHouse/
 │  ├─ labs.json               各站的文字（标题、一句话、进度键、颜色令牌名）
 │  ├─ build-manifest.mjs      清单生成器
 │  ├─ verify-manifest.mjs     清单与内容逐字节对账
-│  ├─ verify-all.mjs          各站的 node 侧校验（内容契约、括号配对、类型判题、SFC 改写内核、React 运行时自检）
+│  ├─ verify-all.mjs          各站的 node 侧校验（内容契约、括号与引号配对、类型判题、SFC 改写内核、React 运行时自检）
 │  ├─ verify-portal.mjs       真浏览器验收：入口页 + 各站入口页 + 进度分支
 │  └─ lib/cdp.mjs             起服务、起无头 Edge、连 CDP 的公共骨架
 ├─ docs/                      合并架构、校验分层、语言与规模、手机版式、方向评估与实测数据
@@ -80,7 +80,7 @@ LightHouse/
 
 ```bash
 node tools/verify-manifest.mjs     # 清单是否与内容同步、入口页有没有写死某一座站（重算一遍逐字节比对）
-node tools/verify-all.mjs          # 各站的 node 侧校验：内容契约、括号配对、类型判题、SFC 改写内核、React 运行时自检（含各站 serve.py 的关窗即退）
+node tools/verify-all.mjs          # 各站的 node 侧校验：内容契约、括号与引号配对、类型判题、SFC 改写内核、React 运行时自检（含各站 serve.py 的关窗即退）
 node tools/verify-portal.mjs       # 真浏览器：入口页与七座站入口页、进度显示、资源无 404、file:// 直开
 ```
 

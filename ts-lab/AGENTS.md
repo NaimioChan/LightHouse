@@ -46,7 +46,7 @@
 4. `node tools/verify-browser.mjs` —— 真浏览器（无头 Edge + CDP）：走 http 与 `file://` 两条路，
    用页面里的 `TSLAB_SELFTEST()` 重跑一遍。`--chapter ch05`、`--skip-file`。
 5. `node tools/verify-pages.mjs` / `verify-ui.mjs` / `verify-quit.mjs` / `verify-fresh.mjs` / `verify-pair.mjs` ——
-   逐章渲染检查（DOM 数量与内容对账）、真实按键输入管线与三档视口排版、关窗即退、进站新鲜度、括号配对。
+   逐章渲染检查（DOM 数量与内容对账）、真实按键输入管线与三档视口排版、关窗即退、进站新鲜度、括号与引号配对。
 
 CDP 验收的三条硬规矩（否则假失败）：
 
@@ -82,8 +82,9 @@ CDP 验收的三条硬规矩（否则假失败）：
 11. **带模块语法的代码不要自动跑**：编译产物是 ESM，当普通脚本执行必然报「不能用模块语法」，只会在页面上制造假红条。
     判定规则只有一处（`render.js` 的 `wantsRun`）并三处共用（UI 渲染、页面自测、node 校验）：
     作者明确要 `run: true`、或断言里有 `run(`、或代码里没有 `import`/`export`。
-12. **编辑器辅助只做括号配对**（`assets/js/pair.js`，纯函数，浏览器与 node 共用）。
-    `()` `[]` `{}` 三种都补；**TS 的 `<` 是泛型尖括号，一律不补**（`html: false` 走到底），引号也不补。
+12. **编辑器辅助只做括号与引号配对**（`assets/js/pair.js`，纯函数，浏览器与 node 共用）。
+    `()` `[]` `{}` 与 `' " \`` 三种引号都补另一半、都能成对删除；单引号紧跟在标识符字符后（撇号 don't）时不补。
+    **TS 的 `<` 是泛型尖括号，一律不补**（`html: false` 走到底）。
     不引第三方编辑器（CodeMirror 之类是 ESM + 需要打包，会破坏 `file://` 直开），不做关键字补全。
 10. **窄屏形态四座站一致**（`docs/04-mobile-layout.md`）：≤900px 目录栏收成抽屉（顶栏 `#nav-btn` + `body.nav-open`）、
     顶栏只留「目录/进度/自动运行」、「重置进度」进抽屉、表格包 `.tbl-wrap`、编辑器字号 ≥16px。

@@ -46,7 +46,7 @@ node tools/verify-pages.mjs        # 逐章渲染检查（数量与内容对账�
 node tools/verify-ui.mjs           # 真实输入管线 + 三档视口排版（--fast 跳过全量自测）
 node tools/verify-quit.mjs         # 关窗即退
 node tools/verify-fresh.mjs        # 每次进站都拿到最新代码（先毒化缓存再验）
-node tools/verify-pair.mjs         # 括号配对逻辑
+node tools/verify-pair.mjs         # 括号与引号配对逻辑
 ```
 
 交付时的实测输出（2026-10，Windows 11 + 无头 Edge）：
@@ -58,8 +58,8 @@ node tools/verify-pair.mjs         # 括号配对逻辑
 | `verify-types` | 示例 77/77 全过；练习 62 道：参考解全过 62、起始代码至少挂一条 62（3.8s） |
 | `verify-browser` | http：77/77 · 62/62 · 62/62（118s，编译器就绪 187 ms）；file:// 那一章 4/4 · 5/5 · 5/5（编译器就绪 256 ms） |
 | `verify-pages` | 134 项全过（逐章 DOM 与内容对账） |
-| `verify-ui --fast` | 34 项全过：真按键输入、括号配对、失败信息「期望/实际」、进度持久化、2000/1200/760 三档视口排版、file:// 直开 |
-| `verify-quit` / `verify-fresh` / `verify-pair` | 全过（关窗即退、进站拿新代码、配对 66 项） |
+| `verify-ui --fast` | 34 项全过：真按键输入、括号与引号配对、失败信息「期望/实际」、进度持久化、2000/1200/760 三档视口排版、file:// 直开 |
+| `verify-quit` / `verify-fresh` / `verify-pair` | 全过（关窗即退、进站拿新代码、配对 82 项） |
 
 ## 目录
 
@@ -67,7 +67,7 @@ node tools/verify-pair.mjs         # 括号配对逻辑
 AGENTS.md           项目铁律（栈、命令、架构铁律、禁区）——动这个仓库前先读它
 index.html          入口（classic <script> 顺序加载，内容清单也在这里）
 assets/js/          format.js 值格式化 · judge.js 判题内核 · sandbox.js + harness.js 运行沙箱
-                    highlight.js 高亮 · pair.js 括号配对 · render.js 渲染 · app.js 外壳
+                    highlight.js 高亮 · pair.js 括号与引号配对 · render.js 渲染 · app.js 外壳
 assets/css/         base.css 设计令牌 · app.css 布局与组件
 content/            一章一个文件（教学内容全在这里，UMD 尾巴挂到 TSLAB_CHAPTERS）
 docs/               01-content-schema.md 内容契约（改 schema 要同时改它、校验器、判题内核、渲染）

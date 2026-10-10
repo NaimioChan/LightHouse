@@ -1,14 +1,15 @@
-/* pair.js — 括号与 HTML 标签的自动配对：纯逻辑，浏览器与 node 校验器共用同一段代码。
+/* pair.js — 括号与引号自动配对：纯逻辑，浏览器与 node 校验器共用同一段代码。
  *
  * 三种页签通用：
  *   敲开括号 → 补上闭括号，光标留在里面；有选区就把选区包起来
  *   敲闭括号 → 下一个字符正好是它，就跳过去，不补第二个
- *   Backspace → 光标夹在一对空括号中间时，一次删掉一对
+ *   敲引号 ' " ` → 补上同一个引号，光标留在中间；有选区就用引号把选区包起来
+ *   Backspace → 光标夹在一对空括号或空引号中间时，一次删掉一对
  * HTML 页签额外两件（CSS 里没有尖括号，JS 里的 `<` 是小于号，都不能补）：
  *   敲 < → 补上 >
  *   敲 > → 跳过那个 >，并在后面补上闭标签 </tag>
  *          （空元素、闭标签、DOCTYPE、注释、后面已经有闭标签的都不补）
- * 引号不补：HTML 属性与 CSS 值里到处是引号，补了更烦。
+ * 引号有两条克制规则：单引号紧跟标识符字符时不补（don't 这类撇号）；下一个字符正好是同一个引号时就跳过去。
  *
  * 编辑器 keydown 里调 decide() / decideBackspace()：返回 { value, start, end } 就采纳，
  * 返回 null 表示不插手，交给浏览器默认行为。
@@ -17,6 +18,7 @@
 (function (root) {
   var PAIRS = { '(': ')', '[': ']', '{': '}' };
   var CLOSERS = { ')': '(', ']': '[', '}': '{' };
+  var QUOTES = { "'": 1, '"': 1, '`': 1 };
 
   /* 不需要闭标签的空元素（HTML 规范里的 void elements） */
   var VOID = {
@@ -28,6 +30,10 @@
   function blocked(st) {
     return !!st.composing || !!st.ctrlKey || !!st.metaKey || !!st.altKey;
   }
+
+  /* 标识符字符（字母、数字、下划线、$ 与常见非 ASCII 词字符）。单引号跟在它后面多半是撇号
+     （don't、l'été），这时补另一半只会碍事；双引号与反引号则照补。 */
+  function isWordChar(ch) { return !!ch && /[\w$]/.test(ch); }
 
   /* 光标前（到 gt 这个 > 为止）是不是一个还没闭合的开标签，是就返回标签名 */
   function openTagAt(v, gt) {
@@ -70,6 +76,24 @@
       }
     }
 
+    /* ---------- 三种页签通用：引号补另一半 ---------- */
+    if (QUOTES[key]) {
+      /* 下一个字符就是同一个引号（多半是刚补上的那个）：跳过去，不补第二个 */
+      if (start === end && v.charAt(start) === key) return skip(v, start);
+      /* 单引号紧跟在词字符后多半是撇号（don't、l'été）：不补。双引号与反引号跟在标识符后是合法的
+         （属性值、`` html`...` `` 这类标签模板），照补 */
+      if (key === "'" && start === end && isWordChar(v.charAt(start - 1))) return null;
+      if (start === end) {
+        return { value: v.slice(0, start) + key + key + v.slice(start), start: start + 1, end: start + 1 };
+      }
+      /* 包住选区，选中的文字继续选中，方便接着改 */
+      return {
+        value: v.slice(0, start) + key + v.slice(start, end) + key + v.slice(end),
+        start: start + 1,
+        end: end + 1,
+      };
+    }
+
     /* ---------- 三种页签通用：() [] {} ---------- */
     if (PAIRS[key]) {
       if (start === end) {
@@ -94,14 +118,15 @@
     if (blocked(st)) return null;
     var v = st.value, start = st.start, end = st.end;
     if (start !== end || start === 0) return null;                  // 有选区 / 在文首：不插手
-    if (PAIRS[v.charAt(start - 1)] === v.charAt(start)) {
+    var prev = v.charAt(start - 1);
+    if (PAIRS[prev] === v.charAt(start) || (QUOTES[prev] && v.charAt(start) === prev)) {
       return { value: v.slice(0, start - 1) + v.slice(start + 1), start: start - 1, end: start - 1 };
     }
     return null;
   }
 
   root.TSLAB_pairs = {
-    PAIRS: PAIRS, CLOSERS: CLOSERS, VOID: VOID,
+    PAIRS: PAIRS, CLOSERS: CLOSERS, QUOTES: QUOTES, VOID: VOID,
     decide: decide, decideBackspace: decideBackspace, openTagAt: openTagAt,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

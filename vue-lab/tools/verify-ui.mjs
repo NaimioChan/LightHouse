@@ -112,7 +112,7 @@ async function main() {
   record('敲 [ 自动补上 ]', (await val(cdp, EDITOR)) === '[]', JSON.stringify(await val(cdp, EDITOR)));
   await clearEditor(cdp);
   await typeText(cdp, '"');
-  record('引号不自动补（SFC 里到处是引号）', (await val(cdp, EDITOR)) === '"', JSON.stringify(await val(cdp, EDITOR)));
+  record('敲双引号补出另一半', (await val(cdp, EDITOR)) === '""' && (await caret(cdp, EDITOR)) === 1, JSON.stringify(await val(cdp, EDITOR)));
   await clearEditor(cdp);
   await typeText(cdp, '<');
   record('SFC 里 < 不补尖括号', (await val(cdp, EDITOR)) === '<', JSON.stringify(await val(cdp, EDITOR)));

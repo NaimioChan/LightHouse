@@ -63,7 +63,7 @@
 
 ```bash
 node tools/verify-manifest.mjs     # 清单与内容一致；入口页没写死任何一座站
-node tools/verify-all.mjs          # 各站的 node 侧校验（内容契约、括号配对、类型判题）
+node tools/verify-all.mjs          # 各站的 node 侧校验（内容契约、括号与引号配对、类型判题）
 node tools/verify-portal.mjs       # 真浏览器：入口页与各站入口页、进度读取、资源无 404、file:// 直开
 ```
 
